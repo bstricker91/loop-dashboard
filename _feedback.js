@@ -8,6 +8,20 @@
 (function () {
   "use strict";
 
+  // ── Google Forms fallback target ──────────────────────────────────────────
+  // Used on the deployed site (where no GITHUB_TOKEN is configured). Form ID
+  // and entry IDs are not secrets — they are visible in any published Google
+  // Form. Submissions land in the linked Google Sheet for the reviewer team.
+  const GFORM = {
+    ID: "1FAIpQLSc-ooWoCA6Fu8KEIo1-A5fOChxkxu2NPYDnX6ZD2jCZJJutzA",
+    FIELDS: {
+      name:    "entry.1328229085",
+      page:    "entry.2074388010",
+      url:     "entry.1420976749",
+      comment: "entry.64728099",
+    },
+  };
+
   // ── Helpers ──────────────────────────────────────────────────────────────
 
   function cfg() {
@@ -449,6 +463,17 @@
     // Pre-fill saved name
     const savedName = localStorage.getItem("zaru_fb_reviewer_name");
     if (savedName) document.getElementById("zaru-fb-name").value = savedName;
+
+    // On the deployed site (no GitHub token), screenshots can't be uploaded
+    // anonymously via Google Forms — hide the screenshot field, and rebrand
+    // the submit button to match the simpler flow.
+    if (!hasValidToken(cfg())) {
+      const ssArea = document.getElementById("zaru-fb-screenshot-area");
+      if (ssArea && ssArea.parentElement) ssArea.parentElement.style.display = "none";
+
+      const submitBtn = document.getElementById("zaru-fb-submit");
+      if (submitBtn) submitBtn.textContent = "Send feedback";
+    }
   }
 
   // ── Screenshot helpers ────────────────────────────────────────────────────
@@ -502,47 +527,39 @@
   }
 
   // Fallback used when no token is configured (e.g. on the deployed public site).
-  // Opens GitHub's "new issue" page with title/body/labels pre-populated.
-  // Reviewer clicks "Submit new issue" themselves; if they attached a screenshot,
-  // they drag it into GitHub's editor before submitting.
-  function submitViaUrlPrefill() {
-    const config  = cfg();
-    const name    = document.getElementById("zaru-fb-name").value.trim();
-    const comment = document.getElementById("zaru-fb-comment").value.trim();
+  // Submits silently to a Google Form — reviewer stays in the modal and sees
+  // a success toast. Note: Google's endpoint doesn't return CORS headers, so
+  // we use mode:"no-cors" and can't read the response — we optimistically
+  // assume success unless the network call itself throws.
+  async function submitViaGoogleForm() {
+    const name      = document.getElementById("zaru-fb-name").value.trim();
+    const comment   = document.getElementById("zaru-fb-comment").value.trim();
+    const submitBtn = document.getElementById("zaru-fb-submit");
 
     localStorage.setItem("zaru_fb_reviewer_name", name);
 
-    const pageName = getPageName();
-    const pageFile = getPageFile();
-    const pageUrl  = window.location.href;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending…";
 
-    const screenshotNote = _selectedFile
-      ? `\n\n> 📎 Screenshot ready: please drag **${_selectedFile.name}** into this issue before submitting.`
-      : "";
+    const formData = new FormData();
+    formData.append(GFORM.FIELDS.name,    name);
+    formData.append(GFORM.FIELDS.page,    `${getPageName()} (${getPageFile()})`);
+    formData.append(GFORM.FIELDS.url,     window.location.href);
+    formData.append(GFORM.FIELDS.comment, comment);
 
-    const issueTitle = `[Review] ${pageName} — ${name}`;
-    const issueBody  = [
-      `**Page:** ${pageName} (\`${pageFile}\`)`,
-      `**Reviewer:** ${name}`,
-      `**URL:** ${pageUrl}`,
-      ``,
-      `---`,
-      ``,
-      comment,
-    ].join("\n") + screenshotNote;
+    const url = `https://docs.google.com/forms/d/e/${GFORM.ID}/formResponse`;
 
-    const params = new URLSearchParams({ title: issueTitle, body: issueBody });
-    if (config.ISSUE_LABEL) params.set("labels", config.ISSUE_LABEL);
-
-    const url = `https://github.com/${config.GITHUB_OWNER}/${config.GITHUB_REPO}/issues/new?${params.toString()}`;
-    window.open(url, "_blank", "noopener");
-
-    showStatus(
-      "success",
-      _selectedFile
-        ? `✓ GitHub opened in a new tab. <strong>Drag your screenshot into the issue</strong>, then click <em>Submit new issue</em>.`
-        : `✓ GitHub opened in a new tab. Click <em>Submit new issue</em> to finish.`
-    );
+    try {
+      await fetch(url, { method: "POST", mode: "no-cors", body: formData });
+      showStatus("success", "✓ Feedback sent. Thank you!");
+      document.getElementById("zaru-fb-comment").value = "";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Send feedback";
+    } catch (e) {
+      showStatus("error", "Network error — please try again.");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Send feedback";
+    }
   }
 
   async function uploadScreenshot(file, config) {
@@ -596,9 +613,9 @@
       return;
     }
     if (!hasValidToken(config)) {
-      // Hybrid fallback: no token available (deployed public site) — open
-      // GitHub's issue form pre-filled instead of calling the API directly.
-      submitViaUrlPrefill();
+      // Hybrid fallback: no token available (deployed public site) — submit
+      // silently to a Google Form instead of calling the GitHub API.
+      submitViaGoogleForm();
       return;
     }
 

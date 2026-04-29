@@ -304,6 +304,39 @@
     /* ── Today's history table tweaks ──────────────────────── */
     .today-row-current td { background: #FFFBEB; }
 
+    /* ── Asset selector pill ───────────────────────────────── */
+    .asset-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--ink-50);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px 4px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-700);
+      cursor: default;
+      position: relative;
+    }
+    .asset-pill svg { color: var(--ink-400); flex-shrink: 0; }
+    .asset-pill[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink-900);
+      color: white;
+      font-size: 11.5px;
+      font-weight: 400;
+      white-space: nowrap;
+      padding: 5px 10px;
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 100;
+    }
+
     /* ── Operating hours banner ─────────────────────────────── */
     .hours-banner {
       display: flex;
@@ -429,6 +462,12 @@
     <!-- ── Topbar ──────────────────────────────────────────── -->
     <header class="topbar">
       <span class="topbar-title">Mint ZARU</span>
+      <div class="asset-pill" title="Additional assets (NAMU, KES) coming 2027">
+        ZARU
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
       <div class="topbar-actions">
         <button class="bx-chip" onclick="copyToast('BX-0042')" title="Click to copy">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -468,7 +507,29 @@
         <div class="mint-left">
 
           <p class="inst-heading">Payment instructions</p>
-          <p class="inst-sub">Send a ZAR EFT to the account below. Your BX Reference must be included exactly as shown — it is how Loop matches your deposit to your account.</p>
+          <p class="inst-sub">Send a ZAR EFT to the account below. Loop detects your deposit and mints automatically — no amount entry needed.</p>
+
+          <!-- 1. BX Reference — most critical, shown first -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="ref-field-wrap" style="margin-top:0;">
+                <div class="ref-field-header">
+                  <span class="ref-field-label">Your BX Reference</span>
+                  <span class="critical-badge">Include in every payment</span>
+                </div>
+                <div class="copy-field ref-copy-field">
+                  <span class="copy-field-value">BX-0042</span>
+                  <button class="copy-btn" onclick="copyField('BX-0042', this)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+                <div class="ref-field-note">Must match exactly — including hyphens. Do not alter or abbreviate.</div>
+              </div>
+            </div>
+          </div>
 
           <!-- Warning alert -->
           <div class="alert alert-warning mb-4">
@@ -481,7 +542,7 @@
             </div>
           </div>
 
-          <!-- Bank details card -->
+          <!-- 2. Bank account details -->
           <div class="card mb-4">
             <div class="card-header">
               <span class="card-title">Loop bank account</span>
@@ -529,29 +590,9 @@
                   </div>
                 </div>
 
-                <div class="bank-field">
+                <div class="bank-field" style="border-bottom:none; padding-bottom:0;">
                   <span class="bank-field-label">Account type</span>
                   <span class="bank-field-static">Business Current</span>
-                </div>
-
-                <!-- ── CRITICAL: Reference field ─────────────── -->
-                <div class="bank-field" style="border-bottom:none; padding-bottom:0;">
-                  <div class="ref-field-wrap">
-                    <div class="ref-field-header">
-                      <span class="ref-field-label">Payment reference</span>
-                      <span class="critical-badge">Your unique reference</span>
-                    </div>
-                    <div class="copy-field ref-copy-field">
-                      <span class="copy-field-value">BX-0042</span>
-                      <button class="copy-btn" onclick="copyField('BX-0042', this)">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                        </svg>
-                        Copy
-                      </button>
-                    </div>
-                    <div class="ref-field-note">Must match exactly — including hyphens. Do not alter or abbreviate.</div>
-                  </div>
                 </div>
 
               </div>
@@ -568,9 +609,9 @@
             </div>
           </div>
 
-          <!-- Receiving wallet -->
+          <!-- 3. Where your ZARU will be sent -->
           <div class="wallet-target">
-            <div class="wallet-target-label">ZARU will be sent to</div>
+            <div class="wallet-target-label">Where your ZARU will be sent</div>
             <div class="wallet-target-card">
               <div>
                 <!-- wallet icon -->

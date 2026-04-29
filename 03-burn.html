@@ -350,6 +350,75 @@
     }
     .toast.show { opacity: 1; transform: translateY(0); }
 
+    /* ── Confirm: large amounts display ────────────────────── */
+    .confirm-amounts {
+      background: rgba(120, 53, 15, 0.06);
+      border: 1px solid #FDE68A;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-align: center;
+    }
+    .confirm-amount-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #92400E;
+    }
+    .confirm-amount-redeeming {
+      font-family: var(--font-mono);
+      font-size: 24px;
+      font-weight: 700;
+      color: #78350F;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .confirm-amount-arrow {
+      font-size: 16px;
+      color: #D97706;
+      margin: 4px 0;
+      line-height: 1;
+    }
+    .confirm-amount-net-value {
+      font-family: var(--font-mono);
+      font-size: 28px;
+      font-weight: 700;
+      color: #065F46;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    /* ── Confirm: cannot be undone strip ────────────────────── */
+    .confirm-undone {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(153, 27, 27, 0.07);
+      border: 1px solid #FECACA;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 14px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #991B1B;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── QR org note ────────────────────────────────────────── */
+    .qr-org-note {
+      font-size: 11.5px;
+      color: var(--ink-500);
+      text-align: center;
+      line-height: 1.55;
+      padding: 0 4px;
+      margin-top: 2px;
+    }
+
     /* ── Section headings ───────────────────────────────────── */
     .section-label {
       font-size: 11px;
@@ -545,7 +614,7 @@
             </div>
             <div class="card-body">
               <div class="burn-addr-sub">
-                Send ZARU only from your whitelisted wallet (FX Hot Desk). Transfers from non-whitelisted addresses are automatically rejected.
+                Unlike shared custodial deposit addresses (e.g. Circle USDC), this Solana address belongs exclusively to <strong class="burn-addr-orgname">Standard Bank Treasury</strong>. Do not share it with other organisations. Send ZARU here to initiate a redemption — only transfers from your whitelisted wallet are accepted.
               </div>
 
               <!-- Full address copy field -->
@@ -586,6 +655,7 @@
                   </svg>
                   Download PNG
                 </a>
+                <p class="qr-org-note">This address belongs only to <strong class="qr-org-name">Standard Bank Treasury</strong>.<br>Do not share it with other institutions.</p>
               </div>
 
               <!-- Non-whitelisted warning -->
@@ -664,6 +734,7 @@
                     <span class="vel-used">Used today: R 0</span>
                     <span class="vel-avail">R 15,000,000 available</span>
                   </div>
+                  <div style="font-size:11.5px;color:var(--ink-400);margin-top:5px;">Transactions over R 15M settle T+1 (next business day).</div>
                 </div>
 
                 <div class="vel-item">
@@ -789,12 +860,26 @@
                     <span class="confirm-title">500,000 ZARU received — confirm redemption</span>
                   </div>
 
-                  <p class="confirm-body">
-                    We've received 500,000 ZARU in your burn wallet. Confirm below to proceed with redemption. After confirmation, the ZARU will be burned and ZAR sent to your Standard Bank account ending ••••7412.
-                  </p>
+                  <!-- Large amounts block -->
+                  <div class="confirm-amounts">
+                    <div class="confirm-amount-label">You are redeeming</div>
+                    <div class="confirm-amount-redeeming">500,000.00 ZARU</div>
+                    <div class="confirm-amount-arrow">↓</div>
+                    <div class="confirm-amount-label">You will receive</div>
+                    <div class="confirm-amount-net-value">ZAR 499,750.00</div>
+                  </div>
 
                   <div class="confirm-fee">
-                    Fee: <strong>250.00 ZARU (0.05%)</strong> &nbsp;·&nbsp; You will receive: <strong>ZAR 499,750.00</strong>
+                    Redemption fee: <strong>250.00 ZARU (0.05%)</strong> · sent to your Standard Bank account ending ••••7412
+                  </div>
+
+                  <!-- Cannot be undone strip -->
+                  <div class="confirm-undone">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                      <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    This cannot be undone.
                   </div>
 
                   <div class="confirm-actions">
@@ -806,8 +891,6 @@
                     </button>
                     <button class="btn btn-ghost" onclick="setState(1)">Cancel</button>
                   </div>
-
-                  <div class="confirm-note">This action cannot be undone once confirmed.</div>
                 </div>
 
                 <!-- Timeline below confirmation -->
@@ -1104,12 +1187,14 @@
     var lockedNote = document.querySelector('.avail-locked-note');
     if (lockedNote) lockedNote.style.display = persona.hasLockedBalance ? '' : 'none';
 
-    // Burn address subtitle (org name)
-    var burnSubtitle = document.querySelector('.burn-addr-label + .burn-addr-sub, .card-subtitle');
+    // Burn address subtitle (org name) — card-subtitle + inline strong
     document.querySelectorAll('.card-subtitle').forEach(function (el) {
       if (el.textContent.indexOf('Standard Bank Treasury') !== -1) {
         el.textContent = el.textContent.replace('Standard Bank Treasury', persona.orgName);
       }
+    });
+    document.querySelectorAll('.burn-addr-orgname, .qr-org-name').forEach(function (el) {
+      el.textContent = persona.orgName;
     });
 
     // Whitelisted wallet warning text
@@ -1129,13 +1214,15 @@
     var recvAcct = document.querySelector('.receiving-acct');
     if (recvAcct) recvAcct.textContent = 'Account ending ' + persona.bankAccountMasked;
 
-    // Confirmation panel (state 2) bank text
-    var confirmBody = document.querySelector('.confirm-body');
-    if (confirmBody) {
-      confirmBody.innerHTML = confirmBody.innerHTML
-        .replace(/Standard Bank/g, persona.bankName)
-        .replace(/\u2022{4}7412/g, persona.bankAccountMasked);
-    }
+    // Confirmation panel (state 2) bank text — fee line + any remaining confirm-body
+    ['.confirm-fee', '.confirm-body'].forEach(function (sel) {
+      var el = document.querySelector(sel);
+      if (el) {
+        el.innerHTML = el.innerHTML
+          .replace(/Standard Bank/g, persona.bankName)
+          .replace(/\u2022{4}7412/g, persona.bankAccountMasked);
+      }
+    });
 
     // State 3 info alert bank text
     document.querySelectorAll('.alert-info div').forEach(function (div) {

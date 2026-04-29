@@ -197,6 +197,40 @@
       margin-top: 2px;
     }
 
+    /* ── 4-column stat grid ─────────────────────────────────── */
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--gap);
+    }
+
+    /* ── Float alert banner ─────────────────────────────────── */
+    .float-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      background: #FFFBEB;
+      border-bottom: 1px solid #FEF3C7;
+      font-size: 12px;
+      color: #78350F;
+      font-weight: 500;
+    }
+    .float-banner-text { flex: 1; }
+    .float-banner-dismiss {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #92400E;
+      padding: 0 2px;
+      font-size: 16px;
+      line-height: 1;
+      opacity: 0.55;
+      flex-shrink: 0;
+      font-family: var(--font-sans);
+    }
+    .float-banner-dismiss:hover { opacity: 1; }
+
     /* ── Toast ──────────────────────────────────────────────── */
     .toast {
       position: fixed;
@@ -401,7 +435,7 @@
       </div>
 
       <!-- ── 2. Balance overview ─────────────────────────────── -->
-      <div class="grid grid-3 mb-6">
+      <div class="grid-4 mb-6">
 
         <!-- Card 1: Total ZARU Balance -->
         <div class="card stat-card">
@@ -463,6 +497,26 @@
           <div class="vol-breakdown">Minted R 12M · Burned R 2.5M</div>
         </div>
 
+        <!-- Card 4: Reserve Backing -->
+        <div class="card stat-card">
+          <div class="stat-label">RESERVE BACKING</div>
+          <div class="stat-value mono">100.00%</div>
+          <div class="stat-sub">Fully reserved · Attested by Moore SA</div>
+
+          <div class="stat-delta neutral">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Last verified: 31 Mar 2026
+          </div>
+
+          <div class="mvp-note" style="margin-top:10px;">
+            <a href="07-network.html" style="color:var(--accent);font-size:12px;font-weight:600;text-decoration:none;">
+              View on Network →
+            </a>
+          </div>
+        </div>
+
       </div>
 
       <!-- ── 3. Pending transactions ─────────────────────────── -->
@@ -472,6 +526,11 @@
             <span class="card-title">Pending</span>
             <span class="count-badge">1</span>
           </div>
+        </div>
+
+        <div class="float-banner" id="float-banner">
+          <span class="float-banner-text">⚡ OTC Float: ZARU R 8.2M — within normal range (R5M–R15M)</span>
+          <button class="float-banner-dismiss" onclick="document.getElementById('float-banner').style.display='none'" aria-label="Dismiss">×</button>
         </div>
 
         <div class="pending-row">
@@ -608,7 +667,7 @@
     if (ps) ps.textContent = ps.textContent.replace('Standard Bank Treasury', persona.orgName);
 
     // Balance stat card
-    var statCards = document.querySelectorAll('.grid-3 .stat-card');
+    var statCards = document.querySelectorAll('.grid-4 .stat-card');
     if (statCards[0]) {
       var sv = statCards[0].querySelector('.stat-value.mono');
       if (sv) sv.textContent = formatZAR(persona.totalBalance);

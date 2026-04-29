@@ -413,9 +413,9 @@
 
       <a href="06-yield.html" class="nav-item">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+          <path d="M3 21h18M3 7l9-4 9 4M4 7v14M20 7v14M9 21V12h6v9"/>
         </svg>
-        Yield
+        Distributor
         <span class="nav-badge">Post-MVP</span>
       </a>
 
@@ -545,89 +545,6 @@
           </div>
         </div>
 
-      </div>
-
-      <!-- ── Proof of Reserve ───────────────────────────────── -->
-      <div class="card mb-4" style="border-color: #A7F3D0; box-shadow: 0 0 0 1px #A7F3D0, var(--shadow);">
-        <div class="card-header" style="background: var(--emerald-soft); border-bottom-color: #A7F3D0;">
-          <div>
-            <div class="card-title" style="color:#065F46;">Proof of Reserve</div>
-            <div class="card-subtitle" style="color:#047857;">Stablecoin is 100% backed by ZAR held at Standard Bank · Verified by Moore South Africa</div>
-          </div>
-          <span class="badge badge-success" style="font-size:12.5px;padding:5px 14px;">
-            <span class="dot"></span>
-            Fully reserved
-          </span>
-        </div>
-
-        <div class="por-body">
-
-          <!-- Reserve status icon -->
-          <div class="por-status-block">
-            <div class="por-check">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-              </svg>
-            </div>
-            <div class="por-status-label">Fully reserved</div>
-            <div style="font-size:11px;color:var(--emerald);margin-top:3px;">Moore South Africa</div>
-          </div>
-
-          <div class="por-divider"></div>
-
-          <!-- Metrics grid -->
-          <div class="por-metrics">
-
-            <div>
-              <div class="por-metric-label">Reserve ratio</div>
-              <div class="por-metric-value ratio">100.00%</div>
-              <div class="por-metric-sub">ZAR : Stablecoin · 1 : 1 peg</div>
-            </div>
-
-            <div>
-              <div class="por-metric-label">ZAR held in reserve</div>
-              <div class="por-metric-value">R 486,200,000</div>
-              <div class="por-metric-sub">Standard Bank custodial account</div>
-            </div>
-
-            <div>
-              <div class="por-metric-label">In circulation</div>
-              <div class="por-metric-value">486,200,000</div>
-              <div class="por-metric-sub">Solana mainnet · verified on-chain</div>
-            </div>
-
-            <div>
-              <div class="por-metric-label">Surplus / deficit</div>
-              <div class="por-metric-value" style="color:var(--emerald);">R 0.00</div>
-              <div class="por-metric-sub">No shortfall</div>
-            </div>
-
-          </div>
-
-          <div class="por-divider"></div>
-
-          <!-- Attestation block -->
-          <div class="por-attestation">
-            <div class="por-attest-row">
-              <div class="por-attest-label">Last attestation</div>
-              <div class="por-attest-value">31 March 2026</div>
-              <div style="font-size:11.5px;color:var(--ink-500);margin-top:2px;">Moore South Africa</div>
-            </div>
-            <div class="por-attest-row">
-              <div class="por-attest-label">Next attestation</div>
-              <div class="por-attest-value next">30 June 2026</div>
-              <div style="font-size:11.5px;color:var(--ink-500);margin-top:2px;">Quarterly cadence</div>
-            </div>
-            <a href="#" class="por-report-link">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-              </svg>
-              View attestation report →
-            </a>
-          </div>
-
-        </div>
       </div>
 
       <!-- ── Active corridors + Partners (side by side) ───── -->
@@ -774,26 +691,6 @@
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-body" style="padding:16px 18px;">
-              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink-400);margin-bottom:10px;">Your position</div>
-              <div style="display:flex;flex-direction:column;gap:10px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span style="font-size:12.5px;color:var(--ink-500);">Your holdings</span>
-                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--ink-900);">48,247,380</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span style="font-size:12.5px;color:var(--ink-500);">Network share</span>
-                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--accent);">9.92%</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span style="font-size:12.5px;color:var(--ink-500);">Partner tier</span>
-                  <span class="badge badge-info" style="font-size:11px;">JV Partner</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
 
       </div>
@@ -811,7 +708,7 @@
         <div class="partner-grid">
 
           <!-- Luno -->
-          <div class="partner-card">
+          <div class="partner-card" data-partner-name="Luno" data-partner-email="partnerships@luno.com" data-partner-role="Head of Institutional Partnerships">
             <div class="partner-logo luno">L</div>
             <div class="partner-info">
               <div class="partner-name">Luno</div>
@@ -820,12 +717,12 @@
               </div>
             </div>
             <div class="partner-actions">
-              <button class="btn btn-secondary btn-sm" onclick="connectToast('Luno')">Connect</button>
+              <button class="btn btn-secondary btn-sm" onclick="openConnectModal('Luno', 'partnerships@luno.com', 'Head of Institutional Partnerships')">Connect →</button>
             </div>
           </div>
 
           <!-- MoneyBadger -->
-          <div class="partner-card">
+          <div class="partner-card" data-partner-name="MoneyBadger" data-partner-email="partners@moneybadger.com" data-partner-role="Head of Business Development">
             <div class="partner-logo moneybadger">M</div>
             <div class="partner-info">
               <div class="partner-name">MoneyBadger</div>
@@ -834,12 +731,12 @@
               </div>
             </div>
             <div class="partner-actions">
-              <button class="btn btn-secondary btn-sm" onclick="connectToast('MoneyBadger')">Connect</button>
+              <button class="btn btn-secondary btn-sm" onclick="openConnectModal('MoneyBadger', 'partners@moneybadger.com', 'Head of Business Development')">Connect →</button>
             </div>
           </div>
 
           <!-- EasyEquities -->
-          <div class="partner-card">
+          <div class="partner-card" data-partner-name="EasyEquities" data-partner-email="institutional@easyequities.co.za" data-partner-role="Institutional Partnerships">
             <div class="partner-logo easyequities">E</div>
             <div class="partner-info">
               <div class="partner-name">EasyEquities</div>
@@ -848,12 +745,12 @@
               </div>
             </div>
             <div class="partner-actions">
-              <button class="btn btn-secondary btn-sm" onclick="connectToast('EasyEquities')">Connect</button>
+              <button class="btn btn-secondary btn-sm" onclick="openConnectModal('EasyEquities', 'institutional@easyequities.co.za', 'Institutional Partnerships')">Connect →</button>
             </div>
           </div>
 
           <!-- Sanlam -->
-          <div class="partner-card">
+          <div class="partner-card" data-partner-name="Sanlam Treasury" data-partner-email="partnerships@sanlam.co.za" data-partner-role="Head of Treasury Operations">
             <div class="partner-logo sanlam">S</div>
             <div class="partner-info">
               <div class="partner-name">Sanlam</div>
@@ -862,12 +759,12 @@
               </div>
             </div>
             <div class="partner-actions">
-              <button class="btn btn-secondary btn-sm" onclick="connectToast('Sanlam')">Connect</button>
+              <button class="btn btn-secondary btn-sm" onclick="openConnectModal('Sanlam Treasury', 'partnerships@sanlam.co.za', 'Head of Treasury Operations')">Connect →</button>
             </div>
           </div>
 
           <!-- 10bet -->
-          <div class="partner-card">
+          <div class="partner-card" data-partner-name="10bet" data-partner-email="finance@10bet.com" data-partner-role="Chief Financial Officer">
             <div class="partner-logo tenbet">10</div>
             <div class="partner-info">
               <div class="partner-name">10bet</div>
@@ -876,12 +773,26 @@
               </div>
             </div>
             <div class="partner-actions">
-              <button class="btn btn-secondary btn-sm" onclick="connectToast('10bet')">Connect</button>
+              <button class="btn btn-secondary btn-sm" onclick="openConnectModal('10bet', 'finance@10bet.com', 'Chief Financial Officer')">Connect →</button>
             </div>
           </div>
 
-          <!-- Standard Bank FX Desk — logged-in user -->
-          <div class="partner-card is-self">
+          <!-- Lesaka Technologies -->
+          <div class="partner-card" data-partner-name="Lesaka Technologies" data-partner-email="treasury@lesaka.com" data-partner-role="Treasury Director">
+            <div class="partner-logo" style="background:#1B5E20;color:white;">LT</div>
+            <div class="partner-info">
+              <div class="partner-name">Lesaka Technologies</div>
+              <div class="partner-type">
+                <span class="badge badge-neutral" style="font-size:11px;">Fintech</span>
+              </div>
+            </div>
+            <div class="partner-actions">
+              <button class="btn btn-secondary btn-sm" onclick="openConnectModal('Lesaka Technologies', 'treasury@lesaka.com', 'Treasury Director')">Connect →</button>
+            </div>
+          </div>
+
+          <!-- Standard Bank FX Desk — is-self applied by JS for persona A -->
+          <div class="partner-card" data-partner-name="Standard Bank" data-partner-email="zaru@standardbank.co.za" data-partner-role="Digital Assets Desk">
             <div class="partner-logo sbfx">SB</div>
             <div class="partner-info">
               <div class="partner-name">Standard Bank FX Desk</div>
@@ -890,12 +801,7 @@
               </div>
             </div>
             <div class="partner-actions">
-              <span class="badge badge-success" style="font-size:11px;padding:4px 10px;white-space:nowrap;">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                Your organisation
-              </span>
+              <button class="btn btn-secondary btn-sm" onclick="openConnectModal('Standard Bank', 'zaru@standardbank.co.za', 'Digital Assets Desk')">Connect →</button>
             </div>
           </div>
 
@@ -957,6 +863,43 @@
   </div>
 </div>
 
+<!-- ── Connect modal ────────────────────────────────────────── -->
+<div id="connect-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;">
+  <div class="card" style="max-width:440px;width:90%;padding:0;">
+    <div class="card-header">
+      <div>
+        <div class="card-title" id="modal-title">Connect with Partner</div>
+        <div class="card-subtitle" id="modal-subtitle">Send a connection request to their registered representative.</div>
+      </div>
+      <button class="icon-btn" onclick="closeConnectModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:16px;">
+      <div class="alert alert-info" style="font-size:13px;">
+        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16.01"/>
+        </svg>
+        <div>Your message will be sent to <strong id="modal-rep-role">Role</strong> at this institution. Loop will copy your relationship manager on the introduction.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">To</label>
+        <div class="form-input" style="background:var(--ink-50);color:var(--ink-500);display:flex;align-items:center;" id="modal-email">email</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea class="form-input" rows="4" style="height:auto;padding:10px 12px;resize:vertical;" placeholder="Hi, I'm reaching out via the ZARU Network Directory. We'd like to explore how our institutions can collaborate on ZARU liquidity..."></textarea>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;">
+        <button class="btn btn-secondary" onclick="closeConnectModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="handleConnectSend()">Send Introduction</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── Toast ───────────────────────────────────────────────── -->
 <div class="toast" id="toast">
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -970,6 +913,10 @@
   var persona = getPersona();
   preservePersonaLinks();
   applyPersonaBadge(persona);
+
+  /* ── Distributor nav visibility ─────────────────────────── */
+  var distNav = document.querySelector('a[href*="06-yield.html"]');
+  if (distNav) distNav.style.display = persona.isDistributor ? '' : 'none';
 
   /* ── Persona DOM updates ───────────────────────────────── */
   (function () {
@@ -1012,11 +959,25 @@
     });
   }());
 
-  function connectToast(name) {
-    var toast = document.getElementById('toast');
-    document.getElementById('toast-msg').textContent = 'Connect to ' + name + ' — coming in Release 3';
-    toast.classList.add('show');
-    setTimeout(function () { toast.classList.remove('show'); }, 2500);
+  function openConnectModal(name, email, role) {
+    var modal = document.getElementById('connect-modal');
+    document.getElementById('modal-title').textContent = 'Connect with ' + name;
+    document.getElementById('modal-email').textContent = email;
+    document.getElementById('modal-rep-role').textContent = role;
+    modal.style.display = 'flex';
+  }
+
+  function closeConnectModal() {
+    document.getElementById('connect-modal').style.display = 'none';
+  }
+
+  function handleConnectSend() {
+    closeConnectModal();
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#059669;color:white;padding:12px 20px;border-radius:8px;font-size:13.5px;font-weight:500;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15);';
+    toast.textContent = '\u2713 Introduction sent \u2014 your RM has been copied';
+    document.body.appendChild(toast);
+    setTimeout(function () { toast.remove(); }, 3500);
   }
 </script>
   <!-- Feedback widget -->

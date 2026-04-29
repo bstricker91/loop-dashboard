@@ -253,6 +253,135 @@
       box-shadow: var(--shadow-lg);
     }
     .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Notification dropdown ──────────────────────────── */
+    .notif-wrap { position: relative; }
+    .notif-btn  { position: relative; }
+    .notif-badge {
+      position: absolute;
+      top: -3px; right: -3px;
+      min-width: 16px; height: 16px;
+      background: var(--rose);
+      color: white;
+      border-radius: 999px;
+      font-size: 9px; font-weight: 700;
+      display: grid; place-items: center;
+      padding: 0 3px;
+      pointer-events: none;
+    }
+    .notif-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px); right: 0;
+      width: 320px;
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 8px 32px rgba(15,23,42,0.14), 0 2px 8px rgba(15,23,42,0.08);
+      border: 1px solid var(--ink-200);
+      z-index: 300;
+      overflow: hidden;
+    }
+    .notif-dropdown.open { display: block; }
+    .notif-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--ink-100);
+    }
+    .notif-title { font-size: 13px; font-weight: 700; color: var(--ink-900); }
+    .notif-mark-all {
+      font-size: 11.5px; font-weight: 600; color: var(--accent);
+      background: none; border: none; cursor: pointer; padding: 0;
+      font-family: var(--font-sans);
+    }
+    .notif-mark-all:hover { opacity: 0.75; }
+    .notif-list {
+      list-style: none; margin: 0; padding: 0;
+      max-height: 320px; overflow-y: auto;
+    }
+    .notif-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--ink-100);
+      transition: background var(--t-fast);
+    }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: var(--ink-50); }
+    .notif-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: transparent; flex-shrink: 0; margin-top: 5px;
+    }
+    .notif-item.unread .notif-dot { background: var(--accent); }
+    .notif-body { flex: 1; min-width: 0; }
+    .notif-msg { font-size: 12.5px; color: var(--ink-700); line-height: 1.45; }
+    .notif-item.unread .notif-msg { font-weight: 600; color: var(--ink-900); }
+    .notif-time { font-size: 11px; color: var(--ink-400); margin-top: 3px; }
+    .notif-dismiss {
+      background: none; border: none; cursor: pointer;
+      color: var(--ink-400); font-size: 15px; line-height: 1;
+      padding: 0 2px; flex-shrink: 0;
+      font-family: var(--font-sans);
+      opacity: 0; transition: opacity var(--t-fast);
+    }
+    .notif-item:hover .notif-dismiss { opacity: 1; }
+    .notif-dismiss:hover { color: var(--ink-700); }
+
+    /* ── Side panel ─────────────────────────────────────── */
+    .side-panel-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(15,23,42,0.28); z-index: 400;
+      backdrop-filter: blur(1px);
+    }
+    .side-panel-overlay.open { display: block; }
+    .side-panel {
+      position: fixed; top: 0; right: 0;
+      width: 400px; max-width: 100vw; height: 100vh;
+      background: white;
+      box-shadow: -4px 0 32px rgba(15,23,42,0.12);
+      z-index: 500;
+      display: flex; flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 220ms cubic-bezier(0.4,0,0.2,1);
+    }
+    .side-panel.open { transform: translateX(0); }
+    .sp-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 22px 18px;
+      border-bottom: 1px solid var(--ink-100);
+      flex-shrink: 0;
+    }
+    .sp-header-left { display: flex; align-items: center; gap: 10px; }
+    .sp-title { font-size: 15px; font-weight: 700; color: var(--ink-900); }
+    .sp-close {
+      background: none; border: none; cursor: pointer;
+      color: var(--ink-400); padding: 4px;
+      border-radius: var(--radius-sm);
+      display: grid; place-items: center;
+      transition: background var(--t-fast), color var(--t-fast);
+    }
+    .sp-close:hover { background: var(--ink-100); color: var(--ink-700); }
+    .sp-body { flex: 1; overflow-y: auto; padding: 22px; }
+    .sp-row {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 10px 0; border-bottom: 1px solid var(--ink-100); gap: 12px;
+    }
+    .sp-row:last-child { border-bottom: none; }
+    .sp-label {
+      font-size: 12px; color: var(--ink-400);
+      text-transform: uppercase; letter-spacing: 0.04em;
+      font-weight: 500; flex-shrink: 0;
+    }
+    .sp-value { font-size: 13px; color: var(--ink-900); font-weight: 500; text-align: right; }
+    .sp-value.mono { font-family: var(--font-mono); font-size: 13px; }
+    .sp-copy { display: flex; align-items: center; gap: 5px; }
+    .sp-copy-btn {
+      background: none; border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm); cursor: pointer;
+      color: var(--ink-400); font-size: 10px; font-weight: 600;
+      padding: 2px 7px; font-family: var(--font-sans);
+      transition: background var(--t-fast), color var(--t-fast);
+    }
+    .sp-copy-btn:hover { background: var(--ink-100); color: var(--ink-700); }
+    table.data tbody tr { cursor: pointer; }
   </style>
   <script src="_persona.js"></script>
 </head>
@@ -297,7 +426,7 @@
           <polyline points="16 12 12 8 8 12"/>
           <line x1="12" y1="16" x2="12" y2="8"/>
         </svg>
-        Mint ZARU
+        Mint
       </a>
 
       <a href="03-burn.html" class="nav-item">
@@ -307,7 +436,7 @@
           <polyline points="8 12 12 16 16 12"/>
           <line x1="12" y1="8" x2="12" y2="16"/>
         </svg>
-        Burn ZARU
+        Burn
       </a>
 
       <a href="04-transactions.html" class="nav-item">
@@ -356,6 +485,12 @@
         </svg>
         Settings
       </a>
+      <a href="changelog.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Changelog
+      </a>
 
     </nav>
 
@@ -395,12 +530,55 @@
           Live · Solana
         </div>
 
-        <button class="icon-btn" title="Notifications" aria-label="Notifications">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
-        </button>
+        <div class="notif-wrap" id="notif-wrap">
+          <button class="icon-btn notif-btn" id="notif-btn" title="Notifications" aria-label="Notifications" onclick="toggleNotif()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="notif-badge" id="notif-badge">3</span>
+          </button>
+          <div class="notif-dropdown" id="notif-dropdown">
+            <div class="notif-header">
+              <span class="notif-title">Notifications</span>
+              <button class="notif-mark-all" onclick="markAllRead()">Mark all read</button>
+            </div>
+            <ul class="notif-list" id="notif-list">
+              <li class="notif-item unread" data-id="n1">
+                <div class="notif-dot"></div>
+                <div class="notif-body">
+                  <div class="notif-msg">Mint complete — R 2,000,000 sent to FX Hot Desk</div>
+                  <div class="notif-time">25 Apr · 11:42 SAST</div>
+                </div>
+                <button class="notif-dismiss" onclick="dismissNotif('n1')" aria-label="Dismiss">×</button>
+              </li>
+              <li class="notif-item unread" data-id="n2">
+                <div class="notif-dot"></div>
+                <div class="notif-body">
+                  <div class="notif-msg">Burn settled — R 500,000 redeemed to ZAR</div>
+                  <div class="notif-time">22 Apr · 15:07 SAST</div>
+                </div>
+                <button class="notif-dismiss" onclick="dismissNotif('n2')" aria-label="Dismiss">×</button>
+              </li>
+              <li class="notif-item unread" data-id="n3">
+                <div class="notif-dot"></div>
+                <div class="notif-body">
+                  <div class="notif-msg">Attestation report published — Moore SA · 31 Mar 2026</div>
+                  <div class="notif-time">1 Apr · 09:00 SAST</div>
+                </div>
+                <button class="notif-dismiss" onclick="dismissNotif('n3')" aria-label="Dismiss">×</button>
+              </li>
+              <li class="notif-item" data-id="n4">
+                <div class="notif-dot"></div>
+                <div class="notif-body">
+                  <div class="notif-msg">Yield payment — R 24,123.60 paid to FX Hot Desk</div>
+                  <div class="notif-time">1 Apr · 00:01 SAST</div>
+                </div>
+                <button class="notif-dismiss" onclick="dismissNotif('n4')" aria-label="Dismiss">×</button>
+              </li>
+            </ul>
+          </div>
+        </div>
 
       </div>
     </header>
@@ -419,13 +597,13 @@
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/>
             </svg>
-            Mint ZARU
+            Mint
           </button>
           <button class="btn btn-secondary" id="btn-burn">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/>
             </svg>
-            Burn ZARU
+            Burn
           </button>
         </div>
       </div>
@@ -435,7 +613,7 @@
 
         <!-- Card 1: Total ZARU Balance -->
         <div class="card stat-card">
-          <div class="stat-label">TOTAL ZARU BALANCE</div>
+          <div class="stat-label">TOTAL BALANCE</div>
           <div class="stat-value mono">R 48,247,380.00</div>
           <div class="stat-sub">≈ ZAR 48,247,380</div>
 
@@ -468,7 +646,7 @@
         <div class="card stat-card">
           <div class="stat-label">YIELD ACCRUED (APR)</div>
           <div class="stat-value mono">R 24,123.60</div>
-          <div class="stat-sub">6.00% p.a. · Paid monthly in ZARU</div>
+          <div class="stat-sub">6.00% p.a. · Paid monthly in stablecoin</div>
 
           <div class="stat-delta neutral">
             <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -525,7 +703,7 @@
         </div>
 
         <div class="float-banner" id="float-banner">
-          <span class="float-banner-text">⚡ OTC Float: ZARU R 8.2M — within normal range (R5M–R15M)</span>
+          <span class="float-banner-text">⚡ OTC Float: R 8.2M — within normal range (R5M–R15M)</span>
           <button class="float-banner-dismiss" onclick="document.getElementById('float-banner').style.display='none'" aria-label="Dismiss">×</button>
         </div>
 
@@ -620,6 +798,24 @@
       </div>
 
     </main>
+
+    <!-- ── Side panel ────────────────────────────────────── -->
+    <div class="side-panel-overlay" id="side-panel-overlay" onclick="closeSidePanel()"></div>
+    <div class="side-panel" id="side-panel">
+      <div class="sp-header">
+        <div class="sp-header-left">
+          <span id="sp-badge" class="badge badge-info">MINT</span>
+          <span class="sp-title" id="sp-title">Transaction details</span>
+        </div>
+        <button class="sp-close" onclick="closeSidePanel()" aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="sp-body" id="sp-body"></div>
+    </div>
+
   </div>
 </div>
 
@@ -693,7 +889,7 @@
         var yv = statCards[1].querySelector('.stat-value.mono');
         if (yv) yv.textContent = formatZAR(persona.yieldAccruedMonth);
         var ysub = statCards[1].querySelector('.stat-sub');
-        if (ysub) ysub.textContent = persona.yieldRate + ' p.a. \xB7 Paid monthly in ZARU';
+        if (ysub) ysub.textContent = persona.yieldRate + ' p.a. \xB7 Paid monthly in stablecoin';
         var ydelta = statCards[1].querySelector('.stat-delta');
         if (ydelta) {
           var tNodes = ydelta.childNodes;
@@ -747,6 +943,96 @@
       var toast = document.getElementById('toast');
       toast.classList.add('show');
       setTimeout(function () { toast.classList.remove('show'); }, 2200);
+    });
+  }
+
+  /* ── Notifications ──────────────────────────────────────── */
+  function toggleNotif() {
+    document.getElementById('notif-dropdown').classList.toggle('open');
+  }
+  function dismissNotif(id) {
+    var item = document.querySelector('[data-id="' + id + '"]');
+    if (item) item.remove();
+    updateBadge();
+  }
+  function markAllRead() {
+    document.querySelectorAll('.notif-item.unread').forEach(function (item) {
+      item.classList.remove('unread');
+    });
+    updateBadge();
+  }
+  function updateBadge() {
+    var count = document.querySelectorAll('.notif-item.unread').length;
+    var badge = document.getElementById('notif-badge');
+    if (badge) {
+      badge.textContent = count > 0 ? count : '';
+      badge.style.display = count > 0 ? '' : 'none';
+    }
+  }
+  document.addEventListener('click', function (e) {
+    var wrap = document.getElementById('notif-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+      var dd = document.getElementById('notif-dropdown');
+      if (dd) dd.classList.remove('open');
+    }
+  });
+
+  /* ── Side panel ─────────────────────────────────────────── */
+  var SP_DATA = [
+    { type: 'MINT', amount: 'R 2,000,000.00', wallet: 'FX Hot Desk', addr: '7xKp...3mNw', status: 'Completed', date: '25 Apr 2026', ref: 'BX-0037', fee: 'R 0.00' },
+    { type: 'BURN', amount: 'R 500,000.00',   wallet: 'Primary',     addr: null,          status: 'Settled',   date: '22 Apr 2026', ref: 'BX-0035', fee: 'R 0.00' },
+    { type: 'MINT', amount: 'R 5,000,000.00', wallet: 'FX Hot Desk', addr: null,          status: 'Completed', date: '18 Apr 2026', ref: 'BX-0031', fee: 'R 0.00' },
+    { type: 'BURN', amount: 'R 1,000,000.00', wallet: 'Primary',     addr: null,          status: 'Settled',   date: '12 Apr 2026', ref: 'BX-0028', fee: 'R 0.00' },
+    { type: 'MINT', amount: 'R 7,000,000.00', wallet: 'FX Hot Desk', addr: null,          status: 'Completed', date: '5 Apr 2026',  ref: 'BX-0024', fee: 'R 0.00' }
+  ];
+
+  function openSidePanel(idx) {
+    var data = SP_DATA[idx];
+    if (!data) return;
+    var badge = document.getElementById('sp-badge');
+    var title = document.getElementById('sp-title');
+    var body  = document.getElementById('sp-body');
+    if (badge) {
+      badge.textContent = data.type;
+      badge.className = 'badge ' + (data.type === 'MINT' ? 'badge-info' : 'badge-neutral');
+    }
+    if (title) title.textContent = data.type === 'MINT' ? 'Mint transaction' : 'Burn transaction';
+    if (body) {
+      body.innerHTML =
+        '<div class="sp-row"><span class="sp-label">Amount</span><span class="sp-value mono">' + data.amount + '</span></div>' +
+        '<div class="sp-row"><span class="sp-label">Status</span><span class="sp-value">' + data.status + '</span></div>' +
+        '<div class="sp-row"><span class="sp-label">Date</span><span class="sp-value">' + data.date + '</span></div>' +
+        '<div class="sp-row"><span class="sp-label">Wallet</span><span class="sp-value">' + data.wallet + (data.addr ? '<br><span style="font-family:var(--font-mono);font-size:11.5px;color:var(--ink-400);">' + data.addr + '</span>' : '') + '</span></div>' +
+        '<div class="sp-row"><span class="sp-label">Reference</span><div class="sp-copy"><span class="sp-value mono">' + data.ref + '</span><button class="sp-copy-btn" onclick="copySpRef(\'' + data.ref + '\')">Copy</button></div></div>' +
+        '<div class="sp-row"><span class="sp-label">Network fee</span><span class="sp-value mono">' + data.fee + '</span></div>';
+    }
+    document.getElementById('side-panel').classList.add('open');
+    document.getElementById('side-panel-overlay').classList.add('open');
+  }
+
+  function closeSidePanel() {
+    document.getElementById('side-panel').classList.remove('open');
+    document.getElementById('side-panel-overlay').classList.remove('open');
+  }
+
+  function copySpRef(ref) {
+    navigator.clipboard.writeText(ref).then(function () {
+      var toast = document.getElementById('toast');
+      if (toast) { toast.classList.add('show'); setTimeout(function () { toast.classList.remove('show'); }, 2200); }
+    });
+  }
+
+  // Wire up recent activity rows
+  document.querySelectorAll('table.data tbody tr').forEach(function (row, idx) {
+    row.addEventListener('click', function () { openSidePanel(idx); });
+  });
+
+  // Wire up pending row
+  var pendingRow = document.querySelector('.pending-row');
+  if (pendingRow) {
+    pendingRow.style.cursor = 'pointer';
+    pendingRow.addEventListener('click', function (e) {
+      if (!e.target.closest('a')) openSidePanel(0);
     });
   }
 </script>

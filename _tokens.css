@@ -54,6 +54,7 @@
   --sidebar-w:   248px;
   --topbar-h:    60px;
   --content-max: none;
+  --gap:         24px;
 
   /* ── Transitions ─────────────────────────────────────────── */
   --t-fast: 120ms ease;

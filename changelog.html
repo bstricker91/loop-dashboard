@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Changelog — Loop Customer Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="_tokens.css">
+  <link rel="stylesheet" href="_components.css">
+
+  <style>
+    a.nav-item { text-decoration: none; }
+
+    /* ── Changelog timeline ────────────────────────────────── */
+    .cl-wrap {
+      max-width: 720px;
+    }
+
+    .cl-timeline {
+      position: relative;
+      padding-left: 28px;
+    }
+
+    .cl-timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 6px;
+      bottom: 0;
+      width: 1px;
+      background: var(--ink-200);
+    }
+
+    .cl-entry {
+      position: relative;
+      margin-bottom: 36px;
+    }
+
+    .cl-dot {
+      position: absolute;
+      left: -28px;
+      top: 5px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid var(--accent);
+      z-index: 1;
+    }
+
+    .cl-dot.minor {
+      border-color: var(--ink-300);
+      width: 10px;
+      height: 10px;
+      left: -25px;
+      top: 7px;
+    }
+
+    .cl-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .cl-date {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-400);
+      font-family: var(--font-mono);
+    }
+
+    .cl-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+
+    .cl-tag.feat   { background: var(--accent-soft);   color: var(--accent); border: 1px solid var(--accent-border); }
+    .cl-tag.fix    { background: var(--emerald-soft);  color: var(--emerald); border: 1px solid #A7F3D0; }
+    .cl-tag.infra  { background: var(--amber-soft);    color: var(--amber);   border: 1px solid #FDE68A; }
+    .cl-tag.design { background: #F5F3FF; color: #6D28D9; border: 1px solid #DDD6FE; }
+
+    .cl-hash {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-400);
+      background: var(--ink-100);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .cl-title {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--ink-900);
+      margin: 0 0 6px;
+    }
+
+    .cl-body {
+      font-size: 13.5px;
+      color: var(--ink-500);
+      line-height: 1.65;
+      margin: 0 0 8px;
+    }
+
+    .cl-body code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--ink-700);
+      background: var(--ink-100);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .cl-items {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .cl-items li {
+      font-size: 13px;
+      color: var(--ink-500);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .cl-items li::before {
+      content: '–';
+      color: var(--ink-300);
+      flex-shrink: 0;
+    }
+
+    .cl-items li code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--ink-700);
+      background: var(--ink-100);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    /* ── Date group divider ─────────────────────────────────── */
+    .cl-group {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-400);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .cl-group::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--ink-200);
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <!-- ══════════════════════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <img src="logo-white.png" alt="Loop" class="brand-logo" />
+      </div>
+    </div>
+
+    <div class="sidebar-org">
+      <div class="org-label">Organisation</div>
+      <div class="org-name">Standard Bank Treasury</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">CORE</span>
+      <a href="01-dashboard.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+      <a href="02-mint.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/>
+        </svg>
+        Mint
+      </a>
+      <a href="03-burn.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/>
+        </svg>
+        Burn
+      </a>
+      <a href="04-transactions.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/>
+          <circle cx="4" cy="6" r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+        Transactions
+      </a>
+      <span class="nav-section-label">INTELLIGENCE</span>
+      <a href="06-yield.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+        </svg>
+        Yield
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+      <a href="07-network.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        Network
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+      <span class="nav-section-label">ACCOUNT</span>
+      <a href="08-settings.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Settings
+      </a>
+      <a href="changelog.html" class="nav-item active">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Changelog
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="org-card">
+        <div class="org-avatar">TN</div>
+        <div>
+          <div class="org-name">Thabo Nkosi</div>
+          <div class="org-user">Admin · Standard Bank Treasury</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════════════════ -->
+  <div class="content">
+
+    <header class="topbar">
+      <span class="topbar-title">Changelog</span>
+      <div class="topbar-actions">
+        <span style="font-size:13px;color:var(--ink-400);">Loop Customer Portal · DCG Demo</span>
+      </div>
+    </header>
+
+    <main class="page">
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">What's changed</h1>
+          <p class="page-subtitle">A record of every iteration on the Loop Customer Portal prototype.</p>
+        </div>
+      </div>
+
+      <div class="cl-wrap">
+
+        <!-- ═══ APRIL 29 2026 ═══════════════════════════════════ -->
+        <div class="cl-group">29 Apr 2026</div>
+
+        <div class="cl-timeline">
+
+          <!-- Real Loop logo -->
+          <div class="cl-entry">
+            <div class="cl-dot"></div>
+            <div class="cl-meta">
+              <span class="cl-date">29 Apr 2026</span>
+              <span class="cl-tag design">Design</span>
+              <span class="cl-hash">b132ad4</span>
+            </div>
+            <div class="cl-title">Real Loop logo across all pages</div>
+            <div class="cl-body">Replaced the placeholder brand marks with the actual Loop logo (white variant) in the sidebar header on every page. Ensures the prototype looks production-faithful for DCG.</div>
+          </div>
+
+          <!-- Feedback → Google Form -->
+          <div class="cl-entry">
+            <div class="cl-dot"></div>
+            <div class="cl-meta">
+              <span class="cl-date">29 Apr 2026</span>
+              <span class="cl-tag feat">Feature</span>
+              <span class="cl-hash">09e321c</span>
+            </div>
+            <div class="cl-title">Feedback widget routed to Google Form</div>
+            <div class="cl-body">Feedback submissions from the floating review widget now post to a Google Form instead of creating GitHub issues directly, removing the need for a personal access token when the prototype is hosted on GitHub Pages.</div>
+          </div>
+
+          <!-- GitHub fallback -->
+          <div class="cl-entry">
+            <div class="cl-dot minor"></div>
+            <div class="cl-meta">
+              <span class="cl-date">29 Apr 2026</span>
+              <span class="cl-tag fix">Fix</span>
+              <span class="cl-hash">37c35e7</span>
+            </div>
+            <div class="cl-title">Fallback to GitHub issue URL when no token is set</div>
+            <div class="cl-body">When <code>_feedback-config.js</code> has no token configured the widget now opens a pre-filled GitHub new-issue URL in a new tab rather than silently failing.</div>
+          </div>
+
+          <!-- .nojekyll -->
+          <div class="cl-entry">
+            <div class="cl-dot minor"></div>
+            <div class="cl-meta">
+              <span class="cl-date">29 Apr 2026</span>
+              <span class="cl-tag infra">Infra</span>
+              <span class="cl-hash">208f907</span>
+            </div>
+            <div class="cl-title">Added <code>.nojekyll</code> for GitHub Pages</div>
+            <div class="cl-body">GitHub Pages was silently stripping underscore-prefixed files (<code>_tokens.css</code>, <code>_components.css</code>, etc.) via Jekyll processing. A <code>.nojekyll</code> file in the root bypasses this.</div>
+          </div>
+
+          <!-- Feedback widget -->
+          <div class="cl-entry">
+            <div class="cl-dot"></div>
+            <div class="cl-meta">
+              <span class="cl-date">29 Apr 2026</span>
+              <span class="cl-tag feat">Feature</span>
+              <span class="cl-hash">69bc686</span>
+            </div>
+            <div class="cl-title">Floating review feedback widget</div>
+            <div class="cl-body">Added a persistent feedback button to all pages so reviewers can leave comments directly from the prototype. Submissions create GitHub issues tagged to the page they came from.</div>
+          </div>
+
+          <!-- Persona / nav fix -->
+          <div class="cl-entry">
+            <div class="cl-dot minor"></div>
+            <div class="cl-meta">
+              <span class="cl-date">29 Apr 2026</span>
+              <span class="cl-tag fix">Fix</span>
+              <span class="cl-hash">315c6c8</span>
+            </div>
+            <div class="cl-title">Persona loading, grid layout &amp; navigation fixes</div>
+            <div class="cl-body">Fixed a race condition where the persona switcher failed to populate the org name on first load. Also corrected broken grid alignment on the dashboard overview cards and repaired several broken nav links between pages.</div>
+          </div>
+
+          <!-- Prototype updates -->
+          <div class="cl-entry">
+            <div class="cl-dot"></div>
+            <div class="cl-meta">
+              <span class="cl-date">29 Apr 2026</span>
+              <span class="cl-tag feat">Feature</span>
+              <span class="cl-hash">2c1ae7a</span>
+            </div>
+            <div class="cl-title">Prototype updates — Dashboard, Mint, Burn, Transactions, Settings</div>
+            <div class="cl-body">Major iteration pass across five pages following first internal review.</div>
+            <ul class="cl-items">
+              <li>Dashboard: added live ZAR balance ticker, supply metrics, and recent activity feed</li>
+              <li>Mint: multi-step flow with amount input, confirmation, and success state</li>
+              <li>Burn: symmetric to Mint with ZARU → ZAR redemption flow</li>
+              <li>Transactions: full table with status badges, filters, and CSV export stub</li>
+              <li>Settings: organisation details, API key management, and notification prefs</li>
+            </ul>
+          </div>
+
+          <!-- Initial build -->
+          <div class="cl-entry">
+            <div class="cl-dot"></div>
+            <div class="cl-meta">
+              <span class="cl-date">29 Apr 2026</span>
+              <span class="cl-tag feat">Feature</span>
+              <span class="cl-hash">01526ec</span>
+            </div>
+            <div class="cl-title">Initial Loop Customer Portal prototype</div>
+            <div class="cl-body">First working build of the ZARU portal. Established the full design system, navigation shell, and placeholder pages for all core flows ahead of the DCG demo.</div>
+            <ul class="cl-items">
+              <li>Design tokens (<code>_tokens.css</code>) — navy palette, Inter + JetBrains Mono typography, spacing &amp; radius system</li>
+              <li>Sidebar navigation with CORE / INTELLIGENCE / ACCOUNT sections and persona switcher</li>
+              <li>Pages scaffolded: Dashboard, Mint, Burn, Transactions, Onboarding, Yield, Network, Settings, Login</li>
+              <li>Index landing page routing to all screens</li>
+            </ul>
+          </div>
+
+        </div><!-- /cl-timeline -->
+
+      </div><!-- /cl-wrap -->
+
+    </main>
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<script src="_feedback-config.js"></script>
+<script src="_feedback.js"></script>
+</body>
+</html>

@@ -67,6 +67,73 @@
     }
     .filter-select:focus { outline: none; border-color: var(--accent); }
 
+    /* ── Currency multi-select ──────────────────────────────── */
+    .currency-filter-wrap {
+      position: relative;
+    }
+    .currency-filter-btn {
+      height: 36px;
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+      padding: 0 32px 0 11px;
+      font-size: 13px;
+      font-family: var(--font-sans);
+      color: var(--ink-900);
+      background: white;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 9px center;
+      cursor: pointer;
+      transition: border-color var(--t-fast);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      min-width: 140px;
+      text-align: left;
+    }
+    .currency-filter-btn:hover,
+    .currency-filter-btn.open { border-color: var(--accent); outline: none; }
+    .currency-filter-btn:focus { outline: none; border-color: var(--accent); }
+
+    .currency-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      background: white;
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 4px 16px rgba(15,23,42,0.10);
+      padding: 5px 0;
+      min-width: 148px;
+      z-index: 200;
+    }
+    .currency-dropdown.open { display: block; }
+    .currency-option {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 14px;
+      font-size: 13px;
+      color: var(--ink-900);
+      cursor: pointer;
+      user-select: none;
+      transition: background var(--t-fast);
+    }
+    .currency-option:hover { background: var(--ink-50); }
+    .currency-option input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+    .currency-divider {
+      border: none;
+      border-top: 1px solid var(--ink-100);
+      margin: 4px 0;
+    }
+
     /* Search input */
     .filter-search {
       height: 36px;
@@ -136,6 +203,9 @@
     .hash-link:hover { text-decoration: underline; }
     .hash-dash { font-family: var(--font-mono); font-size: 13px; color: var(--ink-300); }
 
+    /* Clickable rows */
+    #tx-body tr[data-type] { cursor: pointer; }
+
     /* ── Summary footer ─────────────────────────────────────── */
     .table-footer {
       display: flex;
@@ -171,8 +241,9 @@
     .pg-btn {
       min-width: 32px;
       height: 32px;
-      display: grid;
-      place-items: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border-radius: var(--radius-sm);
       border: 1px solid var(--ink-200);
       background: white;
@@ -183,11 +254,11 @@
       transition: var(--t-fast);
       font-family: var(--font-sans);
       padding: 0 8px;
+      gap: 5px;
     }
     .pg-btn:hover  { background: var(--ink-50); border-color: var(--ink-300); }
     .pg-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
-    .pg-btn:disabled { opacity: 0.4; cursor: default; }
-    .pg-arrow { color: var(--ink-500); gap: 5px; }
+    .pg-btn:disabled { opacity: 0.4; cursor: default; pointer-events: none; }
 
     /* ── Empty state (filtered) ─────────────────────────────── */
     .no-results {
@@ -209,15 +280,58 @@
       pointer-events: none; z-index: 1000;
       display: flex; align-items: center; gap: 8px;
       box-shadow: var(--shadow-lg);
+      max-width: 440px;
     }
     .toast.show { opacity: 1; transform: translateY(0); }
 
-    /* ── Row hidden by filter ───────────────────────────────── */
+    /* ── Row hidden by filter / pagination ──────────────────── */
     tr.row-hidden { display: none; }
 
     /* ── Approved by cell ───────────────────────────────────── */
     .approved-team { font-size: 12.5px; color: var(--ink-700); font-weight: 500; }
     .approved-name { font-size: 11.5px; color: var(--ink-400); margin-top: 2px; }
+
+    /* ── Side-panel section headings ────────────────────────── */
+    .sp-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-400);
+      margin: 20px 0 10px;
+    }
+    .sp-section-title:first-child { margin-top: 0; }
+
+    /* Related-tx mini table */
+    .related-table { width: 100%; border-collapse: collapse; }
+    .related-table th {
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      font-weight: 600;
+      color: var(--ink-400);
+      padding: 5px 0 5px 0;
+      border-bottom: 1px solid var(--ink-200);
+    }
+    .related-table th.r { text-align: right; }
+    .related-table td {
+      font-size: 12.5px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--ink-100);
+      vertical-align: middle;
+      color: var(--ink-900);
+    }
+    .related-table td.r { text-align: right; font-family: var(--font-mono); font-size: 12px; }
+    .related-table tr:last-child td { border-bottom: none; }
+    .related-ref {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .related-ref:hover { text-decoration: underline; }
   </style>
   <script src="_persona.js"></script>
 </head>
@@ -380,6 +494,39 @@
           <option value="failed">Failed</option>
         </select>
 
+        <!-- Currency multi-select -->
+        <div class="currency-filter-wrap" id="currency-filter-wrap">
+          <button class="currency-filter-btn" id="currency-filter-btn"
+                  onclick="toggleCurrencyDropdown(event)"
+                  aria-label="Filter by currency"
+                  aria-expanded="false">
+            <span id="currency-filter-label">All currencies</span>
+          </button>
+          <div class="currency-dropdown" id="currency-dropdown" role="listbox" aria-multiselectable="true">
+            <label class="currency-option">
+              <input type="checkbox" id="curr-all" checked onchange="toggleAllCurrencies(this)">
+              All currencies
+            </label>
+            <hr class="currency-divider">
+            <label class="currency-option">
+              <input type="checkbox" class="curr-cb" value="ZARU" onchange="toggleCurrency()">
+              ZARU
+            </label>
+            <label class="currency-option">
+              <input type="checkbox" class="curr-cb" value="USDC" onchange="toggleCurrency()">
+              USDC
+            </label>
+            <label class="currency-option">
+              <input type="checkbox" class="curr-cb" value="USDT" onchange="toggleCurrency()">
+              USDT
+            </label>
+            <label class="currency-option">
+              <input type="checkbox" class="curr-cb" value="ZAR" onchange="toggleCurrency()">
+              ZAR
+            </label>
+          </div>
+        </div>
+
         <!-- Date range dropdown -->
         <select class="filter-select" aria-label="Date range">
           <option>Last 30 days</option>
@@ -420,6 +567,7 @@
                 <th style="width:72px;">Type</th>
                 <th>Reference</th>
                 <th class="right">Amount (ZAR)</th>
+                <th>Stablecoin</th>
                 <th class="right">Amount (Stablecoin)</th>
                 <th>Status</th>
                 <th>Approved by</th>
@@ -431,10 +579,11 @@
             <tbody id="tx-body">
 
               <!-- Row 1 — Pending mint -->
-              <tr data-type="mint" data-status="pending">
+              <tr data-type="mint" data-status="pending" data-currency="ZARU">
                 <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
                 <td class="ref-cell">BX-0042</td>
                 <td class="amt-cell mint">R 500,000.00</td>
+                <td class="td-mono"><span class="badge badge-info">ZARU</span></td>
                 <td class="amt-cell mint">500,000.00</td>
                 <td><span class="badge badge-pending"><span class="dot"></span>Deposit received</span></td>
                 <td>
@@ -448,10 +597,11 @@
               </tr>
 
               <!-- Row 2 -->
-              <tr data-type="mint" data-status="completed">
+              <tr data-type="mint" data-status="completed" data-currency="ZARU">
                 <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
                 <td class="ref-cell">BX-0042</td>
                 <td class="amt-cell mint">R 2,000,000.00</td>
+                <td class="td-mono"><span class="badge badge-info">ZARU</span></td>
                 <td class="amt-cell mint">2,000,000.00</td>
                 <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
                 <td>
@@ -463,7 +613,7 @@
                   <span class="time">08:42 SAST</span>
                 </td>
                 <td>
-                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link" onclick="event.stopPropagation()">
                     5xKp3...f8aH
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -473,11 +623,12 @@
                 </td>
               </tr>
 
-              <!-- Row 3 — Burn settled -->
-              <tr data-type="burn" data-status="settled">
+              <!-- Row 3 — Burn settled (USDC) -->
+              <tr data-type="burn" data-status="settled" data-currency="USDC">
                 <td><span class="badge badge-neutral"><span class="dot"></span>BURN</span></td>
                 <td class="ref-cell ref-dash">—</td>
                 <td class="amt-cell burn">R 500,000.00</td>
+                <td class="td-mono"><span class="badge badge-info">USDC</span></td>
                 <td class="amt-cell burn">499,750.00</td>
                 <td><span class="badge badge-success"><span class="dot"></span>Settled</span></td>
                 <td>
@@ -489,7 +640,7 @@
                   <span class="time">14:33 SAST</span>
                 </td>
                 <td>
-                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link" onclick="event.stopPropagation()">
                     9mLqR...c2Bk
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -500,10 +651,11 @@
               </tr>
 
               <!-- Row 4 -->
-              <tr data-type="mint" data-status="completed">
+              <tr data-type="mint" data-status="completed" data-currency="ZARU">
                 <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
                 <td class="ref-cell">BX-0042</td>
                 <td class="amt-cell mint">R 5,000,000.00</td>
+                <td class="td-mono"><span class="badge badge-info">ZARU</span></td>
                 <td class="amt-cell mint">5,000,000.00</td>
                 <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
                 <td>
@@ -515,7 +667,7 @@
                   <span class="time">10:07 SAST</span>
                 </td>
                 <td>
-                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link" onclick="event.stopPropagation()">
                     3nPxB...m7Rq
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -525,11 +677,12 @@
                 </td>
               </tr>
 
-              <!-- Row 5 — Burn settled -->
-              <tr data-type="burn" data-status="settled">
+              <!-- Row 5 — Burn settled (USDT) -->
+              <tr data-type="burn" data-status="settled" data-currency="USDT">
                 <td><span class="badge badge-neutral"><span class="dot"></span>BURN</span></td>
                 <td class="ref-cell ref-dash">—</td>
                 <td class="amt-cell burn">R 1,000,000.00</td>
+                <td class="td-mono"><span class="badge badge-info">USDT</span></td>
                 <td class="amt-cell burn">999,500.00</td>
                 <td><span class="badge badge-success"><span class="dot"></span>Settled</span></td>
                 <td>
@@ -541,7 +694,7 @@
                   <span class="time">16:22 SAST</span>
                 </td>
                 <td>
-                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link" onclick="event.stopPropagation()">
                     7qRmN...p4Lx
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -552,10 +705,11 @@
               </tr>
 
               <!-- Row 6 -->
-              <tr data-type="mint" data-status="completed">
+              <tr data-type="mint" data-status="completed" data-currency="ZARU">
                 <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
                 <td class="ref-cell">BX-0042</td>
                 <td class="amt-cell mint">R 7,000,000.00</td>
+                <td class="td-mono"><span class="badge badge-info">ZARU</span></td>
                 <td class="amt-cell mint">7,000,000.00</td>
                 <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
                 <td>
@@ -567,7 +721,7 @@
                   <span class="time">09:55 SAST</span>
                 </td>
                 <td>
-                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link" onclick="event.stopPropagation()">
                     2mWxL...k9Pn
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -577,11 +731,12 @@
                 </td>
               </tr>
 
-              <!-- Row 7 -->
-              <tr data-type="mint" data-status="completed">
+              <!-- Row 7 — USDC mint -->
+              <tr data-type="mint" data-status="completed" data-currency="USDC">
                 <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
                 <td class="ref-cell">BX-0042</td>
                 <td class="amt-cell mint">R 3,000,000.00</td>
+                <td class="td-mono"><span class="badge badge-info">USDC</span></td>
                 <td class="amt-cell mint">3,000,000.00</td>
                 <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
                 <td>
@@ -593,7 +748,7 @@
                   <span class="time">11:14 SAST</span>
                 </td>
                 <td>
-                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link" onclick="event.stopPropagation()">
                     8pKnB...r3Wz
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -603,11 +758,12 @@
                 </td>
               </tr>
 
-              <!-- Row 8 — Burn settled -->
-              <tr data-type="burn" data-status="settled">
+              <!-- Row 8 — Burn settled (ZARU) -->
+              <tr data-type="burn" data-status="settled" data-currency="ZARU">
                 <td><span class="badge badge-neutral"><span class="dot"></span>BURN</span></td>
                 <td class="ref-cell ref-dash">—</td>
                 <td class="amt-cell burn">R 2,000,000.00</td>
+                <td class="td-mono"><span class="badge badge-info">ZARU</span></td>
                 <td class="amt-cell burn">1,999,000.00</td>
                 <td><span class="badge badge-success"><span class="dot"></span>Settled</span></td>
                 <td>
@@ -619,7 +775,7 @@
                   <span class="time">09:30 SAST</span>
                 </td>
                 <td>
-                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link" onclick="event.stopPropagation()">
                     4rLqP...n8Mx
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -629,11 +785,12 @@
                 </td>
               </tr>
 
-              <!-- Row 9 -->
-              <tr data-type="mint" data-status="completed">
+              <!-- Row 9 — USDT mint -->
+              <tr data-type="mint" data-status="completed" data-currency="USDT">
                 <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
                 <td class="ref-cell">BX-0042</td>
                 <td class="amt-cell mint">R 4,000,000.00</td>
+                <td class="td-mono"><span class="badge badge-info">USDT</span></td>
                 <td class="amt-cell mint">4,000,000.00</td>
                 <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
                 <td>
@@ -645,7 +802,7 @@
                   <span class="time">14:01 SAST</span>
                 </td>
                 <td>
-                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link" onclick="event.stopPropagation()">
                     6wNmR...q2Bk
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -656,10 +813,11 @@
               </tr>
 
               <!-- Row 10 -->
-              <tr data-type="mint" data-status="completed">
+              <tr data-type="mint" data-status="completed" data-currency="ZARU">
                 <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
                 <td class="ref-cell">BX-0042</td>
                 <td class="amt-cell mint">R 10,000,000.00</td>
+                <td class="td-mono"><span class="badge badge-info">ZARU</span></td>
                 <td class="amt-cell mint">10,000,000.00</td>
                 <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
                 <td>
@@ -671,7 +829,7 @@
                   <span class="time">08:58 SAST</span>
                 </td>
                 <td>
-                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link" onclick="event.stopPropagation()">
                     1kBpX...w5Qr
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -681,11 +839,12 @@
                 </td>
               </tr>
 
-              <!-- Row 11 — Burn settled -->
-              <tr data-type="burn" data-status="settled">
+              <!-- Row 11 — Burn settled (ZAR) -->
+              <tr data-type="burn" data-status="settled" data-currency="ZAR">
                 <td><span class="badge badge-neutral"><span class="dot"></span>BURN</span></td>
                 <td class="ref-cell ref-dash">—</td>
                 <td class="amt-cell burn">R 500,000.00</td>
+                <td class="td-mono"><span class="badge badge-info">ZAR</span></td>
                 <td class="amt-cell burn">499,750.00</td>
                 <td><span class="badge badge-success"><span class="dot"></span>Settled</span></td>
                 <td>
@@ -697,7 +856,7 @@
                   <span class="time">16:44 SAST</span>
                 </td>
                 <td>
-                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link" onclick="event.stopPropagation()">
                     3nQrM...h6Tz
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -708,10 +867,11 @@
               </tr>
 
               <!-- Row 12 — Large cold wallet mint -->
-              <tr data-type="mint" data-status="completed">
+              <tr data-type="mint" data-status="completed" data-currency="ZARU">
                 <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
                 <td class="ref-cell">BX-0042</td>
                 <td class="amt-cell mint">R 20,000,000.00</td>
+                <td class="td-mono"><span class="badge badge-info">ZARU</span></td>
                 <td class="amt-cell mint">20,000,000.00</td>
                 <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
                 <td>
@@ -723,7 +883,7 @@
                   <span class="time">10:22 SAST</span>
                 </td>
                 <td>
-                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link" onclick="event.stopPropagation()">
                     5mKpW...j1Xc
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -735,7 +895,7 @@
 
               <!-- No results row (hidden by default) -->
               <tr id="no-results-row" class="no-results">
-                <td colspan="9">
+                <td colspan="10">
                   <div class="empty-state">
                     <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                       <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -774,28 +934,47 @@
         </div>
 
         <!-- ── Pagination ──────────────────────────────────── -->
-        <div class="pagination">
-          <button class="pg-btn pg-arrow" disabled>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="15 18 9 12 15 6"/>
-            </svg>
-            Prev
-          </button>
-          <button class="pg-btn active">1</button>
-          <button class="pg-btn">2</button>
-          <button class="pg-btn">3</button>
-          <button class="pg-btn pg-arrow">
-            Next
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </button>
+        <div class="pagination" id="pagination-bar">
+          <!-- Rendered by renderPagination() -->
         </div>
 
       </div><!-- /card -->
     </main>
+  </div><!-- /content -->
+
+  <!-- ── Transaction detail side panel ──────────────────────── -->
+  <div class="side-panel-overlay" id="side-panel-overlay" onclick="closeSidePanel()"></div>
+  <div class="side-panel" id="side-panel">
+    <div class="sp-header">
+      <div class="sp-header-left">
+        <span id="sp-badge" class="badge badge-info">MINT</span>
+        <span class="sp-title" id="sp-title">Transaction details</span>
+        <span id="sp-flagged" class="badge badge-pending" style="display:none;">Flagged</span>
+      </div>
+      <button class="sp-close" onclick="closeSidePanel()" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="sp-body" id="sp-body"></div>
+    <div class="side-panel-footer">
+      <button class="btn btn-secondary btn-sm" id="sp-copy-hash" onclick="copyTxHash()">
+        Copy Tx Hash
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="toggleFlag()">
+        Flag / Escalate
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="downloadReceipt()">
+        Download Receipt
+      </button>
+      <a id="sp-explorer" href="#" target="_blank" rel="noopener" class="btn btn-primary btn-sm" onclick="event.stopPropagation()">
+        View on Explorer
+      </a>
+    </div>
   </div>
-</div>
+
+</div><!-- /app -->
 
 <!-- ── Toast ───────────────────────────────────────────────── -->
 <div class="toast" id="toast">
@@ -813,7 +992,6 @@
 
   /* ── Persona DOM updates ───────────────────────────────── */
   (function () {
-    // Sidebar
     var _so = document.querySelector('.sidebar-org .org-name');
     if (_so) _so.textContent = persona.orgName;
     var _av = document.querySelector('.org-avatar');
@@ -823,25 +1001,19 @@
     var _ou = document.querySelector('.org-user');
     if (_ou) _ou.textContent = persona.userRole + ' \xB7 ' + persona.orgName;
 
-    // BX chip
     document.querySelectorAll('.bx-chip').forEach(function (el) {
       el.innerHTML = el.innerHTML.replace(/BX-\d+/g, persona.bxRef);
       var oc = el.getAttribute('onclick');
       if (oc) el.setAttribute('onclick', oc.replace(/BX-\d+/g, persona.bxRef));
     });
 
-    // Page subtitle
     var ps = document.querySelector('.page-subtitle');
-    if (ps) {
-      ps.textContent = persona.orgName + ' \xB7 ' + persona.bxRef + ' \xB7 All activity';
-    }
+    if (ps) ps.textContent = persona.orgName + ' \xB7 ' + persona.bxRef + ' \xB7 All activity';
 
-    // Reference cells — MINT rows
     document.querySelectorAll('#tx-body tr[data-type="mint"] .ref-cell').forEach(function (cell) {
       if (!cell.classList.contains('ref-dash')) cell.textContent = persona.bxRef;
     });
 
-    // Wallet/account cells — MINT rows
     document.querySelectorAll('#tx-body tr[data-type="mint"]').forEach(function (row) {
       var wName = row.querySelector('.wallet-cell-name');
       if (wName) wName.textContent = persona.primaryWallet.label;
@@ -849,7 +1021,6 @@
       if (wSub) wSub.textContent = '\u2192 ' + persona.primaryWallet.addressShort;
     });
 
-    // Wallet/account cells — BURN rows
     document.querySelectorAll('#tx-body tr[data-type="burn"]').forEach(function (row) {
       var wName = row.querySelector('.wallet-cell-name');
       if (wName) wName.textContent = persona.bankName;
@@ -858,99 +1029,266 @@
     });
   }());
 
-  /* ── State ─────────────────────────────────────────────── */
-  var activeType   = 'all';
-  var activeStatus = 'all';
-  var searchQuery  = '';
-
-  /* ── Amounts keyed by row index (0-based) ─────────────── */
+  /* ════════════════════════════════════════════════════════
+     ROW DATA
+     Indices match the 12 <tr data-type> rows in DOM order.
+  ════════════════════════════════════════════════════════ */
   var rowData = [
-    { type: 'mint', zarAmt: 500000,    zaruAmt: 500000 },
-    { type: 'mint', zarAmt: 2000000,   zaruAmt: 2000000 },
-    { type: 'burn', zarAmt: 500000,    zaruAmt: 499750 },
-    { type: 'mint', zarAmt: 5000000,   zaruAmt: 5000000 },
-    { type: 'burn', zarAmt: 1000000,   zaruAmt: 999500 },
-    { type: 'mint', zarAmt: 7000000,   zaruAmt: 7000000 },
-    { type: 'mint', zarAmt: 3000000,   zaruAmt: 3000000 },
-    { type: 'burn', zarAmt: 2000000,   zaruAmt: 1999000 },
-    { type: 'mint', zarAmt: 4000000,   zaruAmt: 4000000 },
-    { type: 'mint', zarAmt: 10000000,  zaruAmt: 10000000 },
-    { type: 'burn', zarAmt: 500000,    zaruAmt: 499750 },
-    { type: 'mint', zarAmt: 20000000,  zaruAmt: 20000000 }
+    // 0 — pending mint
+    { type: 'mint',  zarAmt: 500000,    currency: 'ZARU', txHash: null,
+      walletFull: '7xKpBmNw3F9x...3mNw', kycTier: 'Institutional \u2014 Tier 3',
+      dateTimeFull: '28 Apr 2026 \xB7 09:14 SAST', status: 'pending',  ref: 'BX-0042' },
+    // 1
+    { type: 'mint',  zarAmt: 2000000,   currency: 'ZARU', txHash: '5xKp3mNwf8aHq2Bk',
+      walletFull: '7xKpBmNw3F9x...3mNw', kycTier: 'Institutional \u2014 Tier 3',
+      dateTimeFull: '25 Apr 2026 \xB7 08:42 SAST', status: 'completed', ref: 'BX-0042' },
+    // 2 — burn USDC
+    { type: 'burn',  zarAmt: 500000,    currency: 'USDC', txHash: '9mLqRc2Bkp4Lx',
+      walletFull: '\u2022\u2022\u2022\u2022\u20227412', kycTier: 'Institutional \u2014 Tier 3',
+      dateTimeFull: '22 Apr 2026 \xB7 14:33 SAST', status: 'settled',   ref: '\u2014' },
+    // 3
+    { type: 'mint',  zarAmt: 5000000,   currency: 'ZARU', txHash: '3nPxBm7Rqk9Pn',
+      walletFull: '7xKpBmNw3F9x...3mNw', kycTier: 'Institutional \u2014 Tier 3',
+      dateTimeFull: '18 Apr 2026 \xB7 10:07 SAST', status: 'completed', ref: 'BX-0042' },
+    // 4 — burn USDT
+    { type: 'burn',  zarAmt: 1000000,   currency: 'USDT', txHash: '7qRmNp4Lxr3Wz',
+      walletFull: '\u2022\u2022\u2022\u2022\u20227412', kycTier: 'Institutional \u2014 Tier 3',
+      dateTimeFull: '12 Apr 2026 \xB7 16:22 SAST', status: 'settled',   ref: '\u2014' },
+    // 5
+    { type: 'mint',  zarAmt: 7000000,   currency: 'ZARU', txHash: '2mWxLk9Pnn8Mx',
+      walletFull: '7xKpBmNw3F9x...3mNw', kycTier: 'Institutional \u2014 Tier 3',
+      dateTimeFull: '5 Apr 2026 \xB7 09:55 SAST',  status: 'completed', ref: 'BX-0042' },
+    // 6 — USDC mint
+    { type: 'mint',  zarAmt: 3000000,   currency: 'USDC', txHash: '8pKnBr3Wzq2Bk',
+      walletFull: '7xKpBmNw3F9x...3mNw', kycTier: 'Corporate \u2014 Tier 2',
+      dateTimeFull: '28 Mar 2026 \xB7 11:14 SAST', status: 'completed', ref: 'BX-0042' },
+    // 7 — burn ZARU
+    { type: 'burn',  zarAmt: 2000000,   currency: 'ZARU', txHash: '4rLqPn8Mxw5Qr',
+      walletFull: '\u2022\u2022\u2022\u2022\u20227412', kycTier: 'Institutional \u2014 Tier 3',
+      dateTimeFull: '21 Mar 2026 \xB7 09:30 SAST', status: 'settled',   ref: '\u2014' },
+    // 8 — USDT mint
+    { type: 'mint',  zarAmt: 4000000,   currency: 'USDT', txHash: '6wNmRq2Bkh6Tz',
+      walletFull: '7xKpBmNw3F9x...3mNw', kycTier: 'Institutional \u2014 Tier 3',
+      dateTimeFull: '14 Mar 2026 \xB7 14:01 SAST', status: 'completed', ref: 'BX-0042' },
+    // 9
+    { type: 'mint',  zarAmt: 10000000,  currency: 'ZARU', txHash: '1kBpXw5Qrj1Xc',
+      walletFull: '7xKpBmNw3F9x...3mNw', kycTier: 'Institutional \u2014 Tier 3',
+      dateTimeFull: '7 Mar 2026 \xB7 08:58 SAST',  status: 'completed', ref: 'BX-0042' },
+    // 10 — burn ZAR
+    { type: 'burn',  zarAmt: 500000,    currency: 'ZAR',  txHash: '3nQrMh6Tzr3Wz',
+      walletFull: '\u2022\u2022\u2022\u2022\u20227412', kycTier: 'Institutional \u2014 Tier 3',
+      dateTimeFull: '28 Feb 2026 \xB7 16:44 SAST', status: 'settled',   ref: '\u2014' },
+    // 11 — large cold wallet mint
+    { type: 'mint',  zarAmt: 20000000,  currency: 'ZARU', txHash: '5mKpWj1Xcn8Mx',
+      walletFull: '9zBrKqM8nNKp...8nKq', kycTier: 'Institutional \u2014 Tier 3',
+      dateTimeFull: '3 Feb 2026 \xB7 10:22 SAST',  status: 'completed', ref: 'BX-0042' }
   ];
 
+  /* ════════════════════════════════════════════════════════
+     FILTER + PAGINATION STATE
+  ════════════════════════════════════════════════════════ */
+  var activeType       = 'all';
+  var activeStatus     = 'all';
+  var activeCurrencies = [];   // empty = show all
+  var searchQuery      = '';
+  var currentPage      = 1;
+  var PAGE_SIZE        = 10;
+
+  /* ── Helpers ────────────────────────────────────────────── */
   function fmt(n) {
     return 'R ' + n.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  function applyFilters() {
-    var rows     = document.querySelectorAll('#tx-body tr[data-type]');
-    var visible  = 0;
-    var totalMint = 0;
-    var totalBurn = 0;
-
-    rows.forEach(function (row, i) {
-      var type   = row.getAttribute('data-type');
-      var status = row.getAttribute('data-status');
-      var text   = row.textContent.toLowerCase();
-
-      var typeOk   = activeType === 'all'   || type === activeType;
-      var statusOk = activeStatus === 'all' || status === activeStatus;
-      var searchOk = searchQuery === ''     || text.indexOf(searchQuery.toLowerCase()) !== -1;
-
-      var show = typeOk && statusOk && searchOk;
-      row.classList.toggle('row-hidden', !show);
-
-      if (show) {
-        visible++;
-        if (rowData[i].type === 'mint') totalMint += rowData[i].zarAmt;
-        if (rowData[i].type === 'burn') totalBurn += rowData[i].zarAmt;
-      }
-    });
-
-    /* no-results row */
-    var noResults = document.getElementById('no-results-row');
-    noResults.classList.toggle('visible', visible === 0);
-
-    /* update footer */
-    var net = totalMint - totalBurn;
-    document.getElementById('count-display').textContent   = visible + ' transaction' + (visible !== 1 ? 's' : '');
-    document.getElementById('minted-display').textContent  = fmt(totalMint);
-    document.getElementById('burned-display').textContent  = fmt(totalBurn);
-    document.getElementById('net-display').textContent     = (net >= 0 ? '+' : '') + fmt(net);
+  function addMins(timeStr, mins) {
+    var parts = timeStr.match(/(\d{1,2}):(\d{2})/);
+    if (!parts) return timeStr;
+    var h = parseInt(parts[1]), m = parseInt(parts[2]) + mins;
+    h += Math.floor(m / 60); m = m % 60;
+    return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
   }
 
-  /* ── Type segmented control ────────────────────────────── */
-  function setType(btn, type) {
-    document.querySelectorAll('.seg-btn').forEach(function (b) {
-      b.classList.remove('active');
+  /* ════════════════════════════════════════════════════════
+     APPLY FILTERS + RENDER PAGE
+  ════════════════════════════════════════════════════════ */
+  function applyFilters() {
+    var allRows = Array.from(document.querySelectorAll('#tx-body tr[data-type]'));
+
+    // Determine which rows pass the current filters
+    var filteredRows = allRows.filter(function (row, i) {
+      var type     = row.getAttribute('data-type');
+      var status   = row.getAttribute('data-status');
+      var currency = row.getAttribute('data-currency');
+      var text     = row.textContent.toLowerCase();
+
+      var typeOk     = activeType === 'all'        || type === activeType;
+      var statusOk   = activeStatus === 'all'      || status === activeStatus;
+      var currOk     = activeCurrencies.length === 0 || activeCurrencies.indexOf(currency) !== -1;
+      var searchOk   = searchQuery === ''          || text.indexOf(searchQuery.toLowerCase()) !== -1;
+
+      return typeOk && statusOk && currOk && searchOk;
     });
+
+    // Clamp page
+    var totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    // Page slice
+    var start    = (currentPage - 1) * PAGE_SIZE;
+    var pageRows = filteredRows.slice(start, start + PAGE_SIZE);
+
+    // Show / hide rows
+    allRows.forEach(function (row) { row.classList.add('row-hidden'); });
+    pageRows.forEach(function (row) { row.classList.remove('row-hidden'); });
+
+    // No-results row
+    document.getElementById('no-results-row').classList.toggle('visible', filteredRows.length === 0);
+
+    // Footer totals (all filtered, not just page)
+    var totalMint = 0, totalBurn = 0;
+    filteredRows.forEach(function (row) {
+      var i = allRows.indexOf(row);
+      if (rowData[i].type === 'mint') totalMint += rowData[i].zarAmt;
+      if (rowData[i].type === 'burn') totalBurn += rowData[i].zarAmt;
+    });
+    var net = totalMint - totalBurn;
+    document.getElementById('count-display').textContent  = filteredRows.length + ' transaction' + (filteredRows.length !== 1 ? 's' : '');
+    document.getElementById('minted-display').textContent = fmt(totalMint);
+    document.getElementById('burned-display').textContent = fmt(totalBurn);
+    document.getElementById('net-display').textContent    = (net >= 0 ? '+' : '') + fmt(net);
+
+    renderPagination(filteredRows.length);
+  }
+
+  /* ════════════════════════════════════════════════════════
+     RENDER PAGINATION CONTROLS
+  ════════════════════════════════════════════════════════ */
+  function renderPagination(totalVisible) {
+    var bar        = document.getElementById('pagination-bar');
+    var totalPages = Math.max(1, Math.ceil(totalVisible / PAGE_SIZE));
+    bar.innerHTML  = '';
+
+    // Prev button
+    var prevBtn = document.createElement('button');
+    prevBtn.className = 'pg-btn';
+    prevBtn.disabled  = currentPage === 1;
+    prevBtn.innerHTML =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Prev';
+    prevBtn.onclick = function () {
+      if (currentPage > 1) { currentPage--; applyFilters(); }
+    };
+    bar.appendChild(prevBtn);
+
+    // Page number buttons
+    for (var p = 1; p <= totalPages; p++) {
+      (function (page) {
+        var btn = document.createElement('button');
+        btn.className = 'pg-btn' + (page === currentPage ? ' active' : '');
+        btn.textContent = page;
+        btn.onclick = function () { currentPage = page; applyFilters(); };
+        bar.appendChild(btn);
+      }(p));
+    }
+
+    // Next button
+    var nextBtn = document.createElement('button');
+    nextBtn.className = 'pg-btn';
+    nextBtn.disabled  = currentPage === totalPages;
+    nextBtn.innerHTML =
+      'Next<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+    nextBtn.onclick = function () {
+      if (currentPage < totalPages) { currentPage++; applyFilters(); }
+    };
+    bar.appendChild(nextBtn);
+  }
+
+  /* ════════════════════════════════════════════════════════
+     FILTER CONTROLS
+  ════════════════════════════════════════════════════════ */
+  function setType(btn, type) {
+    document.querySelectorAll('.seg-btn').forEach(function (b) { b.classList.remove('active'); });
     btn.classList.add('active');
     activeType = type;
+    currentPage = 1;
     applyFilters();
   }
 
-  /* ── Status dropdown ───────────────────────────────────── */
   function filterStatus(val) {
     activeStatus = val;
+    currentPage = 1;
     applyFilters();
   }
 
-  /* ── Search ────────────────────────────────────────────── */
   function filterSearch(val) {
     searchQuery = val.trim();
+    currentPage = 1;
     applyFilters();
   }
 
-  /* ── CSV export (prototype toast) ─────────────────────── */
-  function exportCsv() {
-    var toast = document.getElementById('toast');
-    document.getElementById('toast-msg').textContent = 'In production, this exports a compliance-grade CSV including BX Reference, approving party, and on-chain tx hash for each transaction.';
-    toast.classList.add('show');
-    setTimeout(function () { toast.classList.remove('show'); }, 2800);
+  /* ── Currency multi-select ──────────────────────────────── */
+  function toggleCurrencyDropdown(e) {
+    e.stopPropagation();
+    var dd  = document.getElementById('currency-dropdown');
+    var btn = document.getElementById('currency-filter-btn');
+    var open = dd.classList.toggle('open');
+    btn.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
 
-  /* ── Approved by column ────────────────────────────────── */
+  function toggleAllCurrencies(checkbox) {
+    if (checkbox.checked) {
+      // Clear all individual checkboxes
+      document.querySelectorAll('.curr-cb').forEach(function (cb) { cb.checked = false; });
+      activeCurrencies = [];
+    } else {
+      checkbox.checked = true; // keep "All" checked if trying to uncheck with nothing selected
+    }
+    updateCurrencyLabel();
+    currentPage = 1;
+    applyFilters();
+  }
+
+  function toggleCurrency() {
+    var cbs      = Array.from(document.querySelectorAll('.curr-cb'));
+    var checked  = cbs.filter(function (cb) { return cb.checked; });
+    var allCheck = document.getElementById('curr-all');
+
+    if (checked.length === 0) {
+      // Nothing selected → revert to "All"
+      allCheck.checked = true;
+      activeCurrencies = [];
+    } else {
+      allCheck.checked = false;
+      activeCurrencies = checked.map(function (cb) { return cb.value; });
+    }
+    updateCurrencyLabel();
+    currentPage = 1;
+    applyFilters();
+  }
+
+  function updateCurrencyLabel() {
+    var label = document.getElementById('currency-filter-label');
+    if (activeCurrencies.length === 0) {
+      label.textContent = 'All currencies';
+    } else if (activeCurrencies.length === 1) {
+      label.textContent = activeCurrencies[0];
+    } else {
+      label.textContent = activeCurrencies.join(', ');
+    }
+  }
+
+  // Close currency dropdown on outside click
+  document.addEventListener('click', function (e) {
+    var wrap = document.getElementById('currency-filter-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+      document.getElementById('currency-dropdown').classList.remove('open');
+      document.getElementById('currency-filter-btn').classList.remove('open');
+      document.getElementById('currency-filter-btn').setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  /* ════════════════════════════════════════════════════════
+     APPROVED BY COLUMN (injected after Status = cells[5])
+  ════════════════════════════════════════════════════════ */
   (function () {
     document.querySelectorAll('#tx-body tr[data-type]').forEach(function (row) {
       var type   = row.getAttribute('data-type');
@@ -965,20 +1303,253 @@
         td.innerHTML = '<div class="approved-team">Loop Custody</div><div class="approved-name">R. Mokoena</div>';
       }
 
+      // Status is now at index 5 (Type=0, Ref=1, Amt ZAR=2, Stablecoin=3, Amt Stable=4, Status=5)
       var cells = row.querySelectorAll('td');
-      if (cells[4]) cells[4].after(td);
+      if (cells[5]) cells[5].after(td);
     });
   }());
 
-  /* ── BX chip copy ──────────────────────────────────────── */
-  function copyToast(value) {
-    navigator.clipboard.writeText(value).then(function () {
-      var toast = document.getElementById('toast');
-      document.getElementById('toast-msg').textContent = 'Copied to clipboard';
-      toast.classList.add('show');
-      setTimeout(function () { toast.classList.remove('show'); }, 2200);
+  /* ════════════════════════════════════════════════════════
+     SIDE PANEL
+  ════════════════════════════════════════════════════════ */
+  var currentTxIdx = -1;
+
+  function buildAuditTrail(status, dateTimeFull) {
+    var isPending  = status === 'pending';
+    var isSettled  = status === 'settled' || status === 'completed';
+    var timeMatch  = dateTimeFull.match(/(\d{1,2}:\d{2})/);
+    var baseTime   = timeMatch ? timeMatch[1] : '09:00';
+    var datePart   = dateTimeFull.split('\xB7')[0].trim();
+
+    var steps = [
+      { label: 'Submitted',  time: datePart + ' \xB7 ' + baseTime + ' SAST',              state: 'complete' },
+      { label: 'Queued',     time: datePart + ' \xB7 ' + addMins(baseTime, 1) + ' SAST',  state: 'complete' },
+      { label: 'Processing', time: datePart + ' \xB7 ' + addMins(baseTime, 3) + ' SAST',  state: isPending ? 'active' : 'complete' }
+    ];
+    if (isSettled) {
+      steps.push({ label: status === 'settled' ? 'Settled' : 'Completed',
+                   time: datePart + ' \xB7 ' + addMins(baseTime, 7) + ' SAST',
+                   state: 'complete' });
+    }
+
+    var html = '<div class="timeline">';
+    steps.forEach(function (step, i) {
+      var last = i === steps.length - 1;
+      html +=
+        '<div class="timeline-item">' +
+          (!last ? '<div class="timeline-line"></div>' : '') +
+          '<div class="timeline-dot ' + step.state + '"></div>' +
+          '<div class="timeline-body">' +
+            '<div class="timeline-label' + (step.state === 'pending' ? ' pending' : '') + '">' + step.label + '</div>' +
+            '<div class="timeline-time">' + step.time + '</div>' +
+          '</div>' +
+        '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function buildRelatedTransactions(ref) {
+    var stubs = [
+      { ref: 'BX-0039', type: 'MINT', amt: 'R 1,500,000.00', status: 'Completed', sc: 'badge-success' },
+      { ref: 'BX-0036', type: 'BURN', amt: 'R 250,000.00',   status: 'Settled',   sc: 'badge-success' }
+    ];
+    var html =
+      '<table class="related-table">' +
+        '<thead><tr>' +
+          '<th>Ref</th><th>Type</th><th class="r">Amount</th><th>Status</th>' +
+        '</tr></thead><tbody>';
+    stubs.forEach(function (r) {
+      html +=
+        '<tr>' +
+          '<td><span class="related-ref">' + r.ref + '</span></td>' +
+          '<td><span class="badge ' + (r.type === 'MINT' ? 'badge-info' : 'badge-neutral') + '">' + r.type + '</span></td>' +
+          '<td class="r">' + r.amt + '</td>' +
+          '<td><span class="badge ' + r.sc + '">' + r.status + '</span></td>' +
+        '</tr>';
+    });
+    html += '</tbody></table>';
+    return html;
+  }
+
+  function openSidePanel(rowIdx) {
+    var allRows = Array.from(document.querySelectorAll('#tx-body tr[data-type]'));
+    var row = allRows[rowIdx];
+    if (!row) return;
+
+    var data    = rowData[rowIdx];
+    var refCell = row.querySelector('.ref-cell');
+    var ref     = (refCell && !refCell.classList.contains('ref-dash'))
+                    ? refCell.textContent.trim()
+                    : (data.ref || '\u2014');
+    var wNameEl = row.querySelector('.wallet-cell-name');
+    var wSubEl  = row.querySelector('.wallet-cell-sub');
+    var wName   = wNameEl ? wNameEl.textContent.trim() : '';
+    var wSub    = wSubEl  ? wSubEl.textContent.trim()  : data.walletFull;
+
+    currentTxIdx = rowIdx;
+
+    // Badge + title
+    var badge = document.getElementById('sp-badge');
+    badge.textContent = data.type.toUpperCase();
+    badge.className   = 'badge ' + (data.type === 'mint' ? 'badge-info' : 'badge-neutral');
+    document.getElementById('sp-title').textContent =
+      data.type === 'mint' ? 'Mint transaction' : 'Burn transaction';
+
+    // Reset flagged label on each open
+    document.getElementById('sp-flagged').style.display = 'none';
+
+    // Status badge markup
+    var statusClass = { pending: 'badge-pending', processing: 'badge-pending',
+                        completed: 'badge-success', settled: 'badge-success',
+                        failed: 'badge-danger' }[data.status] || 'badge-neutral';
+    var statusLabel = { pending: 'Deposit received', processing: 'Processing',
+                        completed: 'Completed', settled: 'Settled',
+                        failed: 'Failed' }[data.status] || data.status;
+
+    // Reference field — copy-style if has a real ref
+    var refHtml = (ref === '\u2014')
+      ? '<span class="sp-value mono">\u2014</span>'
+      : '<div class="sp-copy">' +
+          '<span class="sp-value mono">' + ref + '</span>' +
+          '<button class="sp-copy-btn" onclick="copySpValue(\'' + ref + '\', this)">Copy</button>' +
+        '</div>';
+
+    // Wallet field — copy-style
+    var walletDisplay = wName + (wSub ? ' \xB7 ' + wSub : '');
+    var walletHtml =
+      '<div class="sp-copy">' +
+        '<span class="sp-value" style="font-family:var(--font-mono);font-size:12px;text-align:right;">' +
+          walletDisplay +
+        '</span>' +
+        '<button class="sp-copy-btn" onclick="copySpValue(\'' + (wSub || wName).replace(/'/g,"\\'") + '\', this)">Copy</button>' +
+      '</div>';
+
+    // Body
+    document.getElementById('sp-body').innerHTML =
+      // ── Fields ──────────────────────────────────────────────
+      '<div class="sp-row"><span class="sp-label">Type</span>' +
+        '<span class="sp-value"><span class="badge ' + (data.type === 'mint' ? 'badge-info' : 'badge-neutral') + '">' + data.type.toUpperCase() + '</span></span>' +
+      '</div>' +
+      '<div class="sp-row"><span class="sp-label">Stablecoin</span>' +
+        '<span class="sp-value"><span class="badge badge-info">' + data.currency + '</span></span>' +
+      '</div>' +
+      '<div class="sp-row"><span class="sp-label">Amount</span>' +
+        '<span class="sp-value mono">' + fmt(data.zarAmt) + '</span>' +
+      '</div>' +
+      '<div class="sp-row"><span class="sp-label">Status</span>' +
+        '<span class="sp-value"><span class="badge ' + statusClass + '"><span class="dot"></span>' + statusLabel + '</span></span>' +
+      '</div>' +
+      '<div class="sp-row"><span class="sp-label">Date</span>' +
+        '<span class="sp-value">' + data.dateTimeFull + '</span>' +
+      '</div>' +
+      '<div class="sp-row"><span class="sp-label">Reference</span>' + refHtml + '</div>' +
+      '<div class="sp-row"><span class="sp-label">Wallet</span>' + walletHtml + '</div>' +
+      '<div class="sp-row" style="border-bottom:1px solid var(--ink-100);"><span class="sp-label">KYC Tier</span>' +
+        '<span class="sp-value">' + data.kycTier + '</span>' +
+      '</div>' +
+
+      // ── Audit trail ─────────────────────────────────────────
+      '<div class="sp-section-title">Audit Trail</div>' +
+      buildAuditTrail(data.status, data.dateTimeFull) +
+
+      // ── Related transactions ─────────────────────────────────
+      '<div class="sp-section-title">Related Transactions</div>' +
+      buildRelatedTransactions(ref) +
+
+      // ── Internal notes ───────────────────────────────────────
+      '<div class="sp-section-title">Internal Notes</div>' +
+      '<textarea class="form-input" style="height:80px;resize:vertical;padding:10px 12px;" placeholder="Add a note\u2026"></textarea>' +
+      '<button class="btn btn-secondary btn-sm" style="margin-top:8px;">Save note</button>';
+
+    // Footer — Copy Tx Hash button
+    var copyHashBtn = document.getElementById('sp-copy-hash');
+    copyHashBtn.textContent = 'Copy Tx Hash';
+    copyHashBtn.disabled = !data.txHash;
+    copyHashBtn.style.opacity = data.txHash ? '' : '0.45';
+
+    // Footer — Explorer link
+    var explorerLink = document.getElementById('sp-explorer');
+    explorerLink.href = data.txHash
+      ? 'https://explorer.example.com/tx/' + data.txHash
+      : '#';
+    if (!data.txHash) explorerLink.onclick = function (e) { e.preventDefault(); };
+    else explorerLink.onclick = null;
+
+    // Open
+    document.getElementById('side-panel').classList.add('open');
+    document.getElementById('side-panel-overlay').classList.add('open');
+  }
+
+  function closeSidePanel() {
+    document.getElementById('side-panel').classList.remove('open');
+    document.getElementById('side-panel-overlay').classList.remove('open');
+  }
+
+  function copySpValue(val, btn) {
+    navigator.clipboard.writeText(val).then(function () {
+      var orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(function () { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
     });
   }
+
+  /* ── Quick actions ──────────────────────────────────────── */
+  function copyTxHash() {
+    if (currentTxIdx < 0) return;
+    var hash = rowData[currentTxIdx].txHash;
+    if (!hash) return;
+    var btn = document.getElementById('sp-copy-hash');
+    navigator.clipboard.writeText(hash).then(function () {
+      btn.textContent = 'Copied \u2713';
+      setTimeout(function () { btn.textContent = 'Copy Tx Hash'; }, 2000);
+    });
+  }
+
+  function toggleFlag() {
+    var el = document.getElementById('sp-flagged');
+    el.style.display = el.style.display === 'none' ? '' : 'none';
+  }
+
+  function downloadReceipt() {
+    showToast('In production, this downloads a compliance-grade PDF receipt including BX Reference and on-chain tx hash.');
+  }
+
+  /* ── Wire up row clicks ─────────────────────────────────── */
+  (function () {
+    var allRows = Array.from(document.querySelectorAll('#tx-body tr[data-type]'));
+    allRows.forEach(function (row, idx) {
+      row.addEventListener('click', function (e) {
+        if (e.target.closest('a') || e.target.closest('button')) return;
+        openSidePanel(idx);
+      });
+    });
+  }());
+
+  /* ════════════════════════════════════════════════════════
+     MISC ACTIONS
+  ════════════════════════════════════════════════════════ */
+  function exportCsv() {
+    showToast('In production, this exports a compliance-grade CSV including BX Reference, approving party, and on-chain tx hash for each transaction.');
+  }
+
+  function copyToast(value) {
+    navigator.clipboard.writeText(value).then(function () {
+      showToast('Copied to clipboard');
+    });
+  }
+
+  function showToast(msg) {
+    var toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(function () { toast.classList.remove('show'); }, 3000);
+  }
+
+  /* ── Initial render ─────────────────────────────────────── */
+  applyFilters();
 </script>
   <!-- Feedback widget -->
   <script src="_feedback-config.js"></script>

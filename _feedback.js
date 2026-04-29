@@ -497,6 +497,54 @@
 
   // ── GitHub API ────────────────────────────────────────────────────────────
 
+  function hasValidToken(config) {
+    return Boolean(config.GITHUB_TOKEN) && !config.GITHUB_TOKEN.startsWith("YOUR_");
+  }
+
+  // Fallback used when no token is configured (e.g. on the deployed public site).
+  // Opens GitHub's "new issue" page with title/body/labels pre-populated.
+  // Reviewer clicks "Submit new issue" themselves; if they attached a screenshot,
+  // they drag it into GitHub's editor before submitting.
+  function submitViaUrlPrefill() {
+    const config  = cfg();
+    const name    = document.getElementById("zaru-fb-name").value.trim();
+    const comment = document.getElementById("zaru-fb-comment").value.trim();
+
+    localStorage.setItem("zaru_fb_reviewer_name", name);
+
+    const pageName = getPageName();
+    const pageFile = getPageFile();
+    const pageUrl  = window.location.href;
+
+    const screenshotNote = _selectedFile
+      ? `\n\n> 📎 Screenshot ready: please drag **${_selectedFile.name}** into this issue before submitting.`
+      : "";
+
+    const issueTitle = `[Review] ${pageName} — ${name}`;
+    const issueBody  = [
+      `**Page:** ${pageName} (\`${pageFile}\`)`,
+      `**Reviewer:** ${name}`,
+      `**URL:** ${pageUrl}`,
+      ``,
+      `---`,
+      ``,
+      comment,
+    ].join("\n") + screenshotNote;
+
+    const params = new URLSearchParams({ title: issueTitle, body: issueBody });
+    if (config.ISSUE_LABEL) params.set("labels", config.ISSUE_LABEL);
+
+    const url = `https://github.com/${config.GITHUB_OWNER}/${config.GITHUB_REPO}/issues/new?${params.toString()}`;
+    window.open(url, "_blank", "noopener");
+
+    showStatus(
+      "success",
+      _selectedFile
+        ? `✓ GitHub opened in a new tab. <strong>Drag your screenshot into the issue</strong>, then click <em>Submit new issue</em>.`
+        : `✓ GitHub opened in a new tab. Click <em>Submit new issue</em> to finish.`
+    );
+  }
+
   async function uploadScreenshot(file, config) {
     const timestamp = Date.now();
     const ext       = file.name.split(".").pop() || "png";
@@ -547,8 +595,10 @@
       document.getElementById("zaru-fb-comment").focus();
       return;
     }
-    if (!config.GITHUB_TOKEN || config.GITHUB_TOKEN.startsWith("YOUR_")) {
-      showStatus("error", "GitHub token not configured. See _feedback-config.js.");
+    if (!hasValidToken(config)) {
+      // Hybrid fallback: no token available (deployed public site) — open
+      // GitHub's issue form pre-filled instead of calling the API directly.
+      submitViaUrlPrefill();
       return;
     }
 

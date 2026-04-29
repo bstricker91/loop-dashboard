@@ -197,10 +197,10 @@
       margin-top: 2px;
     }
 
-    /* ── 4-column stat grid ─────────────────────────────────── */
+    /* ── 2-column stat grid (post-MVP scope cut) ───────────── */
     .grid-4 {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: var(--gap);
     }
 
@@ -382,6 +382,42 @@
     }
     .sp-copy-btn:hover { background: var(--ink-100); color: var(--ink-700); }
     table.data tbody tr { cursor: pointer; }
+
+    /* ── Luno wallet card ───────────────────────────────────── */
+    .copy-field {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--ink-50);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+      padding: 5px 10px;
+    }
+    .copy-field-value {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--ink-700);
+    }
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--ink-300);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--ink-500);
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      font-family: var(--font-sans);
+      transition: background var(--t-fast), color var(--t-fast);
+    }
+    .copy-btn:hover { background: var(--ink-100); color: var(--ink-700); }
+    .luno-wallet-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 22px;
+    }
   </style>
   <script src="_persona.js"></script>
 </head>
@@ -455,12 +491,10 @@
       <span class="nav-section-label">INTELLIGENCE</span>
 
       <a href="06-yield.html" class="nav-item">
-        <!-- trending-up -->
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
-          <polyline points="16 7 22 7 22 13"/>
+          <path d="M3 21h18M3 7l9-4 9 4M4 7v14M20 7v14M9 21V12h6v9"/>
         </svg>
-        Yield
+        Distributor
         <span class="nav-badge">Post-MVP</span>
       </a>
 
@@ -663,34 +697,6 @@
           </div>
         </div>
 
-        <!-- Card 3: 30-Day Volume -->
-        <div class="card stat-card">
-          <div class="stat-label">30-DAY VOLUME</div>
-          <div class="stat-value mono">R 14,500,000</div>
-          <div class="stat-sub">8 transactions</div>
-          <div class="vol-breakdown">Minted R 12M · Burned R 2.5M</div>
-        </div>
-
-        <!-- Card 4: Reserve Backing -->
-        <div class="card stat-card">
-          <div class="stat-label">RESERVE BACKING</div>
-          <div class="stat-value mono">100.00%</div>
-          <div class="stat-sub">Fully reserved · Attested by Moore SA</div>
-
-          <div class="stat-delta neutral">
-            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-            Last verified: 31 Mar 2026
-          </div>
-
-          <div class="mvp-note" style="margin-top:10px;">
-            <a href="07-network.html" style="color:var(--accent);font-size:12px;font-weight:600;text-decoration:none;">
-              View on Network →
-            </a>
-          </div>
-        </div>
-
       </div>
 
       <!-- ── 3. Pending transactions ─────────────────────────── -->
@@ -797,6 +803,66 @@
         </div>
       </div>
 
+      <!-- ── 5. Luno Wallet — linked ──────────────────────────── -->
+      <div class="card" id="luno-wallet-linked" style="margin-top:20px;display:none;">
+        <div class="card-header">
+          <div>
+            <div class="card-title" style="display:flex;align-items:center;gap:8px;">
+              <span style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#4F7CFF,#2563EB);display:inline-grid;place-items:center;color:white;font-size:10px;font-weight:700;flex-shrink:0;">L</span>
+              Luno Wallet — Live Balance Feed
+            </div>
+            <div class="card-subtitle" id="luno-subtitle">Balance synced via Luno API · Last updated: 2 minutes ago</div>
+          </div>
+          <span class="badge badge-success">
+            <span class="dot"></span>
+            Connected
+          </span>
+        </div>
+        <div class="luno-wallet-body">
+          <div>
+            <div class="stat-label">ZARU BALANCE (LUNO)</div>
+            <div class="stat-value mono" id="luno-balance" style="font-size:22px;">R 12,400,000.00</div>
+            <div class="stat-sub" id="luno-wallet-label">Held in Standard Bank — Luno Custody Wallet</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="text-xs text-muted" style="margin-bottom:4px;">WALLET ADDRESS</div>
+            <div class="copy-field" style="max-width:280px;">
+              <span class="copy-field-value" id="luno-addr-short">3xLm...LqBz</span>
+              <button class="copy-btn" id="luno-copy-btn" onclick="copyLunoAddr()">Copy</button>
+            </div>
+            <div class="text-xs text-muted" style="margin-top:6px;" id="luno-network-id">Network: Solana · Luno ID: LUNO-SBT-0042</div>
+          </div>
+        </div>
+        <div style="padding:0 22px 22px;">
+          <div class="alert alert-info">
+            <svg style="width:15px;height:15px;flex-shrink:0;margin-top:1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16.01"/>
+            </svg>
+            <div style="font-size:12.5px;">This balance is your ZARU held in your Luno custody wallet, reflected live on Loop via the Luno API. To mint or redeem ZARU from this wallet, use the Mint and Burn flows above.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 5. Luno Wallet — unlinked ─────────────────────────── -->
+      <div class="card" id="luno-wallet-unlinked" style="margin-top:20px;display:none;">
+        <div class="card-header">
+          <div>
+            <div class="card-title" style="display:flex;align-items:center;gap:8px;">
+              <span style="width:20px;height:20px;border-radius:50%;background:var(--ink-200);display:inline-grid;place-items:center;color:var(--ink-500);font-size:10px;font-weight:700;flex-shrink:0;">L</span>
+              Luno Wallet
+            </div>
+            <div class="card-subtitle">Link your Luno custody wallet to view live ZARU balances here</div>
+          </div>
+          <button class="btn btn-secondary btn-sm">Connect Luno Wallet</button>
+        </div>
+        <div class="card-body">
+          <div class="empty-state" style="padding:24px;">
+            <div class="empty-state-title">No Luno wallet connected</div>
+            <div class="empty-state-desc">Link a whitelisted Luno wallet to see your ZARU balance reflected live on this dashboard. Luno becomes your preferred custody partner while Loop handles minting and redemption.</div>
+          </div>
+        </div>
+      </div>
+
     </main>
 
     <!-- ── Side panel ────────────────────────────────────── -->
@@ -832,6 +898,10 @@
   var persona = getPersona();
   preservePersonaLinks();
   applyPersonaBadge(persona);
+
+  /* ── Distributor nav visibility ─────────────────────────── */
+  var distNav = document.querySelector('a[href*="06-yield.html"]');
+  if (distNav) distNav.style.display = persona.isDistributor ? '' : 'none';
 
   /* ── Persona DOM updates ───────────────────────────────── */
   (function () {
@@ -880,22 +950,22 @@
 
     // Yield stat card
     if (statCards[1]) {
-      if (!persona.hasYield) {
+      if (!persona.isDistributor) {
         statCards[1].style.display = 'none';
-        // Adjust grid from 4 to 3 columns so remaining cards fill evenly
+        // Adjust grid to 1 column when yield card is hidden
         var g4 = document.querySelector('.grid-4');
-        if (g4) g4.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        if (g4) g4.style.gridTemplateColumns = 'repeat(1, 1fr)';
       } else {
         var yv = statCards[1].querySelector('.stat-value.mono');
-        if (yv) yv.textContent = formatZAR(persona.yieldAccruedMonth);
+        if (yv) yv.textContent = formatZAR(persona.distributorYieldAccruedMonth);
         var ysub = statCards[1].querySelector('.stat-sub');
-        if (ysub) ysub.textContent = persona.yieldRate + ' p.a. \xB7 Paid monthly in stablecoin';
+        if (ysub) ysub.textContent = persona.distributorYieldRate + ' p.a. \xB7 Paid monthly in stablecoin';
         var ydelta = statCards[1].querySelector('.stat-delta');
         if (ydelta) {
           var tNodes = ydelta.childNodes;
           for (var i = tNodes.length - 1; i >= 0; i--) {
             if (tNodes[i].nodeType === 3 && tNodes[i].nodeValue.trim()) {
-              tNodes[i].nodeValue = 'Next payment: ' + persona.yieldNextPaymentDate;
+              tNodes[i].nodeValue = 'Next payment: ' + persona.distributorYieldNextPaymentDate;
               break;
             }
           }
@@ -904,7 +974,7 @@
     }
 
     // Yield nav item
-    if (!persona.hasYield) {
+    if (!persona.isDistributor) {
       document.querySelectorAll('.nav-item').forEach(function (item) {
         if (item.textContent.indexOf('Yield') !== -1) item.style.display = 'none';
       });
@@ -928,6 +998,29 @@
         el.textContent = '\u2192 ' + persona.primaryWallet.addressShort;
       });
     }
+
+    // Luno wallet card
+    var lw = persona.lunoWallet;
+    if (lw.linked) {
+      var linked = document.getElementById('luno-wallet-linked');
+      if (linked) {
+        linked.style.display = '';
+        var el;
+        el = document.getElementById('luno-subtitle');
+        if (el) el.textContent = 'Balance synced via Luno API \xB7 Last updated: ' + lw.lastSynced;
+        el = document.getElementById('luno-balance');
+        if (el) el.textContent = formatZAR(lw.balance);
+        el = document.getElementById('luno-wallet-label');
+        if (el) el.textContent = 'Held in ' + lw.label;
+        el = document.getElementById('luno-addr-short');
+        if (el) el.textContent = lw.addressShort;
+        el = document.getElementById('luno-network-id');
+        if (el) el.textContent = 'Network: ' + lw.network + ' \xB7 Luno ID: ' + lw.lunoAccountId;
+      }
+    } else {
+      var unlinked = document.getElementById('luno-wallet-unlinked');
+      if (unlinked) unlinked.style.display = '';
+    }
   }());
 
   /* ── Header button navigation ──────────────────────────── */
@@ -943,6 +1036,16 @@
       var toast = document.getElementById('toast');
       toast.classList.add('show');
       setTimeout(function () { toast.classList.remove('show'); }, 2200);
+    });
+  }
+
+  /* ── Luno address copy ──────────────────────────────────── */
+  function copyLunoAddr() {
+    var addr = persona.lunoWallet && persona.lunoWallet.address;
+    if (!addr) return;
+    navigator.clipboard.writeText(addr).then(function () {
+      var toast = document.getElementById('toast');
+      if (toast) { toast.classList.add('show'); setTimeout(function () { toast.classList.remove('show'); }, 2200); }
     });
   }
 

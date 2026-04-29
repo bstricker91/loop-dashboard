@@ -37,12 +37,26 @@ const PERSONAS = {
     // Bank account
     bankName: 'Standard Bank',
     bankAccountMasked: '••••7412',
-    // Yield
-    hasYield: true,
-    yieldRate: '6.00%',
-    yieldAccruedMonth: 24123.60,
-    yieldNextPaymentDate: '1 May 2026',
-    yieldLifetime: 142800.00,
+    // Distributor
+    isDistributor: true,
+    distributorTier: 'Official',          // 'Official' | 'Category2' | null
+    distributorCode: 'DIST-001',
+    distributorYieldRate: '6.00%',
+    distributorYieldAccruedMonth: 24123.60,
+    distributorYieldNextPaymentDate: '1 May 2026',
+    distributorYieldLifetime: 142800.00,
+    distributorClients: 3,               // number of sub-clients under this distributor
+    // Luno wallet
+    lunoWallet: {
+      linked: true,
+      label: 'Standard Bank — Luno Custody Wallet',
+      address: '3xLm9pQrNkBv5wTy2nZsRxP7rK4mLqBz',
+      addressShort: '3xLm...LqBz',
+      lunoAccountId: 'LUNO-SBT-0042',
+      balance: 12400000.00,
+      lastSynced: '2 minutes ago',
+      network: 'Solana',
+    },
   },
 
   B1: {
@@ -64,11 +78,26 @@ const PERSONAS = {
     primaryWallet: { label: 'Primary', address: '4pKnRmLqBx7wTv2nYsZxP9rM8kNqLpRt', addressShort: '4pKn...LpRt' },
     bankName: 'Nedbank',
     bankAccountMasked: '••••3301',
-    hasYield: false,
-    yieldRate: null,
-    yieldAccruedMonth: null,
-    yieldNextPaymentDate: null,
-    yieldLifetime: null,
+    // Distributor
+    isDistributor: false,
+    distributorTier: null,
+    distributorCode: null,
+    distributorYieldRate: null,
+    distributorYieldAccruedMonth: null,
+    distributorYieldNextPaymentDate: null,
+    distributorYieldLifetime: null,
+    distributorClients: null,
+    // Luno wallet
+    lunoWallet: {
+      linked: false,
+      label: null,
+      address: null,
+      addressShort: null,
+      lunoAccountId: null,
+      balance: null,
+      lastSynced: null,
+      network: null,
+    },
   },
 
   B2: {
@@ -90,11 +119,26 @@ const PERSONAS = {
     primaryWallet: { label: 'Hot Wallet', address: '8mRpNkLxBq7wTv3nYsZrP6rN9kMqLpZb', addressShort: '8mRp...LpZb' },
     bankName: 'FNB',
     bankAccountMasked: '••••8844',
-    hasYield: true,
-    yieldRate: '6.00%',
-    yieldAccruedMonth: 3100.00,
-    yieldNextPaymentDate: '1 May 2026',
-    yieldLifetime: 8400.00,
+    // Distributor
+    isDistributor: true,
+    distributorTier: 'Category2',
+    distributorCode: 'DIST-047',
+    distributorYieldRate: '6.00%',
+    distributorYieldAccruedMonth: 3100.00,
+    distributorYieldNextPaymentDate: '1 May 2026',
+    distributorYieldLifetime: 8400.00,
+    distributorClients: 1,
+    // Luno wallet
+    lunoWallet: {
+      linked: true,
+      label: 'MoneyBadger — Luno Hot Wallet',
+      address: '6rNmPkLxBq4wTv8nYsZrQ5rN2kMpLqZt',
+      addressShort: '6rNm...LqZt',
+      lunoAccountId: 'LUNO-MB-0083',
+      balance: 3100000.00,
+      lastSynced: '5 minutes ago',
+      network: 'Solana',
+    },
   },
 };
 

@@ -572,6 +572,18 @@
               Bank Account
             </button>
 
+            <button class="settings-tab" onclick="switchTab('custodian', this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="22" x2="21" y2="22"/>
+                <line x1="6" y1="18" x2="6" y2="11"/>
+                <line x1="10" y1="18" x2="10" y2="11"/>
+                <line x1="14" y1="18" x2="14" y2="11"/>
+                <line x1="18" y1="18" x2="18" y2="11"/>
+                <polygon points="12 2 20 7 4 7"/>
+              </svg>
+              Custodian Details
+            </button>
+
             <button class="settings-tab" onclick="switchTab('org', this)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -850,6 +862,64 @@
               </svg>
               Contact support →
             </button>
+          </div>
+
+          <!-- ── Custodian Details ─────────────────────────────── -->
+          <div class="tab-panel" id="panel-custodian">
+            <div class="settings-title">Custodian &amp; Reserve Partners</div>
+            <div class="settings-sub">Loop holds ZAR reserves across the following regulated banking partners.</div>
+
+            <div class="card mb-4">
+              <div style="overflow-x:auto;">
+                <table class="data">
+                  <thead>
+                    <tr>
+                      <th>Bank</th>
+                      <th>Account type</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="font-weight:600;font-size:13.5px;">
+                        Standard Bank
+                        <span class="badge badge-info" style="font-size:10px;margin-left:6px;vertical-align:middle;">Primary</span>
+                      </td>
+                      <td class="text-muted" style="font-size:13px;">Segregated Current Account</td>
+                      <td><span class="badge badge-success"><span class="dot"></span>Active</span></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:600;font-size:13.5px;">Standard Bank</td>
+                      <td class="text-muted" style="font-size:13px;">Segregated Call Account</td>
+                      <td><span class="badge badge-success"><span class="dot"></span>Active</span></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:600;font-size:13.5px;">Standard Bank</td>
+                      <td class="text-muted" style="font-size:13px;">Custodial Account (FRNs)</td>
+                      <td><span class="badge badge-success"><span class="dot"></span>Active</span></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:600;font-size:13.5px;">ABSA</td>
+                      <td class="text-muted" style="font-size:13px;">Settlement Account</td>
+                      <td><span class="badge badge-success"><span class="dot"></span>Active</span></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:600;font-size:13.5px;">Nedbank</td>
+                      <td class="text-muted" style="font-size:13px;">Liquidity Reserve</td>
+                      <td><span class="badge badge-success"><span class="dot"></span>Active</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="card-footer" style="font-size:12.5px;color:var(--ink-500);line-height:1.6;">
+                Reserve composition is attested quarterly by Moore South Africa.
+                BCB Bank and Standard Chartered are additional banking relationships.
+                <br>
+                <a href="#" style="color:var(--accent);font-weight:600;font-size:12.5px;text-decoration:none;display:inline-block;margin-top:6px;">
+                  View latest attestation report →
+                </a>
+              </div>
+            </div>
           </div>
 
           <!-- ── Organisation ───────────────────────────────── -->
@@ -1223,6 +1293,7 @@
     bx: 'panel-bx',
     wallets: 'panel-wallets',
     bank: 'panel-bank',
+    custodian: 'panel-custodian',
     org: 'panel-org',
     security: 'panel-security',
     notifications: 'panel-notifications'

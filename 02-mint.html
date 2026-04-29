@@ -313,6 +313,7 @@
       border: 1px solid var(--ink-200);
       border-radius: var(--radius-sm);
       padding: 4px 10px 4px 10px;
+      margin-top: 16px;
       font-size: 13px;
       font-weight: 600;
       color: var(--ink-700);
@@ -335,6 +336,17 @@
       border-radius: 4px;
       pointer-events: none;
       z-index: 100;
+    }
+
+    /* ── Bank fields copy buttons — match accent style ─────── */
+    .bank-fields .copy-btn {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .bank-fields .copy-btn:hover {
+      background: var(--accent);
+      color: white;
     }
 
     /* ── Operating hours banner ─────────────────────────────── */
@@ -464,12 +476,6 @@
     <!-- ── Topbar ──────────────────────────────────────────── -->
     <header class="topbar">
       <span class="topbar-title">Mint</span>
-      <div class="asset-pill" title="Additional assets (NAMU, KES) coming 2027">
-        ZARU
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
-      </div>
       <div class="topbar-actions">
         <button class="bx-chip" onclick="copyToast('BX-0042')" title="Click to copy">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -496,7 +502,15 @@
 
       <div class="page-header">
         <div>
-          <h1 class="page-title">Mint</h1>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <h1 class="page-title">Mint</h1>
+            <div class="asset-pill" title="Additional assets (NAMU, KES) coming 2027">
+              ZARU
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+          </div>
           <p class="page-subtitle">Send a ZAR EFT — Loop detects your deposit and mints automatically</p>
         </div>
       </div>

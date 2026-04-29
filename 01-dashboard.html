@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Loop Customer Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="_tokens.css">
+  <link rel="stylesheet" href="_components.css">
+
+  <style>
+    /* ── Nav as anchor ──────────────────────────────────────── */
+    a.nav-item { text-decoration: none; }
+
+    /* ── Balance split rows ─────────────────────────────────── */
+    .balance-split {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--ink-100);
+    }
+
+    .balance-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .balance-row-label {
+      font-size: 12.5px;
+      color: var(--ink-500);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .balance-row-value {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+    .balance-row-value.emerald { color: var(--emerald); }
+    .balance-row-value.amber   { color: var(--amber); }
+
+    /* ── Tooltip ────────────────────────────────────────────── */
+    .tip-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .tip-trigger {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--ink-200);
+      color: var(--ink-500);
+      font-size: 9px;
+      font-weight: 700;
+      border: none;
+      cursor: default;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      flex-shrink: 0;
+      font-family: var(--font-sans);
+    }
+    .tip-content {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 7px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink-900);
+      color: white;
+      font-size: 11.5px;
+      font-family: var(--font-sans);
+      font-weight: 400;
+      padding: 7px 11px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 200;
+      box-shadow: var(--shadow-lg);
+    }
+    .tip-content::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--ink-900);
+    }
+    .tip-wrap:hover .tip-content { display: block; }
+
+    /* ── Stat card sizing ───────────────────────────────────── */
+    .stat-card .stat-value { font-size: 24px; }
+
+    /* ── Post-MVP note ──────────────────────────────────────── */
+    .mvp-note {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      color: var(--ink-400);
+      margin-top: 12px;
+    }
+
+    /* ── Volume breakdown ───────────────────────────────────── */
+    .vol-breakdown {
+      font-size: 12px;
+      color: var(--ink-400);
+      margin-top: 8px;
+    }
+
+    /* ── Pending transaction row ────────────────────────────── */
+    .pending-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 22px;
+    }
+    .pending-row-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+    .pending-row-meta { flex: 1; min-width: 0; }
+    .pending-row-top  { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .pending-amount {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink-900);
+    }
+    .pending-row-sub {
+      font-size: 12px;
+      color: var(--ink-500);
+      margin-top: 5px;
+      font-family: var(--font-mono);
+    }
+    .pending-row-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .pending-ts {
+      font-size: 12px;
+      color: var(--ink-400);
+    }
+
+    /* ── Ghost link ─────────────────────────────────────────── */
+    .link-ghost {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: none;
+      transition: opacity var(--t-fast);
+    }
+    .link-ghost:hover { opacity: 0.75; }
+
+    /* ── Count badge in card-header ─────────────────────────── */
+    .count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      background: var(--amber-soft);
+      color: var(--amber);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* ── Table wallet cell ──────────────────────────────────── */
+    .wallet-label { font-size: 13.5px; color: var(--ink-900); }
+    .wallet-addr  {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--ink-400);
+      margin-top: 2px;
+    }
+
+    /* ── Toast ──────────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--ink-900);
+      color: white;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 180ms ease, transform 180ms ease;
+      pointer-events: none;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-lg);
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+  <script src="_persona.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════════════════════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════════════════════ -->
+  <aside class="sidebar">
+
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-mark">L</div>
+        <div>
+          <div class="brand-name">Loop</div>
+          <div class="brand-tag">Customer Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-org">
+      <div class="org-label">Organisation</div>
+      <div class="org-name">Standard Bank Treasury</div>
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <span class="nav-section-label">CORE</span>
+
+      <a href="01-dashboard.html" class="nav-item active">
+        <!-- grid / dashboard icon -->
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <a href="02-mint.html" class="nav-item">
+        <!-- arrow-up-circle -->
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="16 12 12 8 8 12"/>
+          <line x1="12" y1="16" x2="12" y2="8"/>
+        </svg>
+        Mint ZARU
+      </a>
+
+      <a href="03-burn.html" class="nav-item">
+        <!-- arrow-down-circle -->
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="8 12 12 16 16 12"/>
+          <line x1="12" y1="8" x2="12" y2="16"/>
+        </svg>
+        Burn ZARU
+      </a>
+
+      <a href="04-transactions.html" class="nav-item">
+        <!-- list icon -->
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="9" y1="6" x2="20" y2="6"/>
+          <line x1="9" y1="12" x2="20" y2="12"/>
+          <line x1="9" y1="18" x2="20" y2="18"/>
+          <circle cx="4" cy="6"  r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+        Transactions
+      </a>
+
+      <span class="nav-section-label">INTELLIGENCE</span>
+
+      <a href="06-yield.html" class="nav-item">
+        <!-- trending-up -->
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+          <polyline points="16 7 22 7 22 13"/>
+        </svg>
+        Yield
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+
+      <a href="07-network.html" class="nav-item">
+        <!-- globe -->
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        Network
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+
+      <span class="nav-section-label">ACCOUNT</span>
+
+      <a href="08-settings.html" class="nav-item">
+        <!-- settings gear -->
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Settings
+      </a>
+
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="org-card">
+        <div class="org-avatar">TN</div>
+        <div>
+          <div class="org-name">Thabo Nkosi</div>
+          <div class="org-user">Admin · Standard Bank Treasury</div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════════════════ -->
+  <div class="content">
+
+    <!-- ── Topbar ──────────────────────────────────────────── -->
+    <header class="topbar">
+      <span class="topbar-title">Dashboard</span>
+      <div class="topbar-actions">
+
+        <button class="bx-chip" id="bx-chip" onclick="copyBxRef()" title="Click to copy BX reference">
+          <!-- link icon -->
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+          BX-0042
+        </button>
+
+        <div class="status-dot">
+          <span class="dot"></span>
+          Live · Solana
+        </div>
+
+        <button class="icon-btn" title="Notifications" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+
+      </div>
+    </header>
+
+    <!-- ── Page ────────────────────────────────────────────── -->
+    <main class="page">
+
+      <!-- ── 1. Page header ─────────────────────────────────── -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Good morning, Thabo</h1>
+          <p class="page-subtitle">Tuesday, 28 April 2026 · Standard Bank Treasury</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="btn btn-primary" onclick="location.href='02-mint.html'">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/>
+            </svg>
+            Mint ZARU
+          </button>
+          <button class="btn btn-secondary" onclick="location.href='03-burn.html'">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/>
+            </svg>
+            Burn ZARU
+          </button>
+        </div>
+      </div>
+
+      <!-- ── 2. Balance overview ─────────────────────────────── -->
+      <div class="grid grid-3 mb-6">
+
+        <!-- Card 1: Total ZARU Balance -->
+        <div class="card stat-card">
+          <div class="stat-label">TOTAL ZARU BALANCE</div>
+          <div class="stat-value mono">R 48,247,380.00</div>
+          <div class="stat-sub">≈ ZAR 48,247,380</div>
+
+          <div class="balance-split">
+            <div class="balance-row">
+              <span class="balance-row-label">Available</span>
+              <span class="balance-row-value emerald">R 8,247,380.00</span>
+            </div>
+            <div class="balance-row">
+              <span class="balance-row-label">
+                Locked (seed)
+                <span class="tip-wrap">
+                  <button class="tip-trigger" tabindex="-1">?</button>
+                  <span class="tip-content">Seed capital locked per JV Partner Agreement</span>
+                </span>
+              </span>
+              <span class="balance-row-value amber">R 40,000,000.00</span>
+            </div>
+          </div>
+
+          <div class="stat-delta up">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+            </svg>
+            R 120,000 minted today
+          </div>
+        </div>
+
+        <!-- Card 2: Yield Accrued -->
+        <div class="card stat-card">
+          <div class="stat-label">YIELD ACCRUED (APR)</div>
+          <div class="stat-value mono">R 24,123.60</div>
+          <div class="stat-sub">6.00% p.a. · Paid monthly in ZARU</div>
+
+          <div class="stat-delta neutral">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            Next payment: 1 May 2026
+          </div>
+
+          <div class="mvp-note">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            Yield dashboard available post-MVP
+          </div>
+        </div>
+
+        <!-- Card 3: 30-Day Volume -->
+        <div class="card stat-card">
+          <div class="stat-label">30-DAY VOLUME</div>
+          <div class="stat-value mono">R 14,500,000</div>
+          <div class="stat-sub">8 transactions</div>
+          <div class="vol-breakdown">Minted R 12M · Burned R 2.5M</div>
+        </div>
+
+      </div>
+
+      <!-- ── 3. Pending transactions ─────────────────────────── -->
+      <div class="card mb-6">
+        <div class="card-header">
+          <div class="flex items-center gap-2">
+            <span class="card-title">Pending</span>
+            <span class="count-badge">1</span>
+          </div>
+        </div>
+
+        <div class="pending-row">
+          <div class="pending-row-left">
+            <span class="badge badge-info" style="flex-shrink:0; margin-top:3px;">MINT</span>
+            <div class="pending-row-meta">
+              <div class="pending-row-top">
+                <span class="pending-amount">R 500,000.00</span>
+                <span class="badge badge-pending">
+                  <span class="dot"></span>
+                  Deposit received
+                </span>
+              </div>
+              <div class="pending-row-sub">BX-0042 · Awaiting mint confirmation · ~2–5 min</div>
+            </div>
+          </div>
+          <div class="pending-row-right">
+            <span class="pending-ts">Today 09:14 SAST</span>
+            <a href="02-mint.html" class="link-ghost">View details</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 4. Recent activity ──────────────────────────────── -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Recent Activity</span>
+          <a href="04-transactions.html" class="link-ghost">View all</a>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Wallet</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="badge badge-info">MINT</span></td>
+                <td class="td-mono">R 2,000,000.00</td>
+                <td>
+                  <div class="wallet-label">FX Hot Desk</div>
+                  <div class="wallet-addr">→ 7xKp...3mNw</div>
+                </td>
+                <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
+                <td class="text-muted text-sm" style="white-space:nowrap;">25 Apr 2026</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-neutral">BURN</span></td>
+                <td class="td-mono">R 500,000.00</td>
+                <td>
+                  <div class="wallet-label">Primary</div>
+                </td>
+                <td><span class="badge badge-success"><span class="dot"></span>Settled</span></td>
+                <td class="text-muted text-sm" style="white-space:nowrap;">22 Apr 2026</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-info">MINT</span></td>
+                <td class="td-mono">R 5,000,000.00</td>
+                <td>
+                  <div class="wallet-label">FX Hot Desk</div>
+                </td>
+                <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
+                <td class="text-muted text-sm" style="white-space:nowrap;">18 Apr 2026</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-neutral">BURN</span></td>
+                <td class="td-mono">R 1,000,000.00</td>
+                <td>
+                  <div class="wallet-label">Primary</div>
+                </td>
+                <td><span class="badge badge-success"><span class="dot"></span>Settled</span></td>
+                <td class="text-muted text-sm" style="white-space:nowrap;">12 Apr 2026</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-info">MINT</span></td>
+                <td class="td-mono">R 7,000,000.00</td>
+                <td>
+                  <div class="wallet-label">FX Hot Desk</div>
+                </td>
+                <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
+                <td class="text-muted text-sm" style="white-space:nowrap;">5 Apr 2026</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ── Toast ───────────────────────────────────────────────── -->
+<div class="toast" id="toast">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+  Copied to clipboard
+</div>
+
+<script>
+  /* ── Persona init ───────────────────────────────────────── */
+  var persona = getPersona();
+  preservePersonaLinks();
+  applyPersonaBadge(persona);
+
+  /* ── Persona DOM updates ───────────────────────────────── */
+  (function () {
+    // Sidebar
+    var _so = document.querySelector('.sidebar-org .org-name');
+    if (_so) _so.textContent = persona.orgName;
+    var _av = document.querySelector('.org-avatar');
+    if (_av) _av.textContent = persona.userInitials;
+    var _on = document.querySelector('.org-card .org-name');
+    if (_on) _on.textContent = persona.userName;
+    var _ou = document.querySelector('.org-user');
+    if (_ou) _ou.textContent = persona.userRole + ' \xB7 ' + persona.orgName;
+
+    // BX chip
+    document.querySelectorAll('.bx-chip').forEach(function (el) {
+      el.innerHTML = el.innerHTML.replace(/BX-\d+/g, persona.bxRef);
+      var oc = el.getAttribute('onclick');
+      if (oc) el.setAttribute('onclick', oc.replace(/BX-\d+/g, persona.bxRef));
+    });
+
+    // Greeting + subtitle
+    var pt = document.querySelector('.page-title');
+    if (pt) pt.textContent = 'Good morning, ' + persona.userName.split(' ')[0];
+    var ps = document.querySelector('.page-subtitle');
+    if (ps) ps.textContent = ps.textContent.replace('Standard Bank Treasury', persona.orgName);
+
+    // Balance stat card
+    var statCards = document.querySelectorAll('.grid-3 .stat-card');
+    if (statCards[0]) {
+      var sv = statCards[0].querySelector('.stat-value.mono');
+      if (sv) sv.textContent = formatZAR(persona.totalBalance);
+      var ssub = statCards[0].querySelector('.stat-sub');
+      if (ssub) ssub.textContent = '\u2248 ZAR ' + Math.round(persona.totalBalance).toLocaleString('en-ZA');
+      var avail = statCards[0].querySelector('.balance-row-value.emerald');
+      if (avail) avail.textContent = formatZAR(persona.availableBalance);
+      var lockedRow = statCards[0].querySelectorAll('.balance-row')[1];
+      if (lockedRow) {
+        if (!persona.hasLockedBalance) {
+          lockedRow.style.display = 'none';
+        } else {
+          var amber = statCards[0].querySelector('.balance-row-value.amber');
+          if (amber) amber.textContent = formatZAR(persona.lockedBalance);
+        }
+      }
+    }
+
+    // Yield stat card
+    if (statCards[1]) {
+      if (!persona.hasYield) {
+        statCards[1].style.display = 'none';
+      } else {
+        var yv = statCards[1].querySelector('.stat-value.mono');
+        if (yv) yv.textContent = formatZAR(persona.yieldAccruedMonth);
+        var ysub = statCards[1].querySelector('.stat-sub');
+        if (ysub) ysub.textContent = persona.yieldRate + ' p.a. \xB7 Paid monthly in ZARU';
+        var ydelta = statCards[1].querySelector('.stat-delta');
+        if (ydelta) {
+          var tNodes = ydelta.childNodes;
+          for (var i = tNodes.length - 1; i >= 0; i--) {
+            if (tNodes[i].nodeType === 3 && tNodes[i].nodeValue.trim()) {
+              tNodes[i].nodeValue = 'Next payment: ' + persona.yieldNextPaymentDate;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    // Yield nav item
+    if (!persona.hasYield) {
+      document.querySelectorAll('.nav-item').forEach(function (item) {
+        if (item.textContent.indexOf('Yield') !== -1) item.style.display = 'none';
+      });
+    }
+
+    // Pending row BX ref
+    var psub = document.querySelector('.pending-row-sub');
+    if (psub) psub.textContent = psub.textContent.replace(/BX-\d+/, persona.bxRef);
+
+    // Recent activity wallet labels
+    var recentCard = null;
+    document.querySelectorAll('.card').forEach(function (c) {
+      var title = c.querySelector('.card-title');
+      if (title && title.textContent.trim() === 'Recent Activity') recentCard = c;
+    });
+    if (recentCard) {
+      recentCard.querySelectorAll('.wallet-label').forEach(function (el) {
+        el.textContent = persona.primaryWallet.label;
+      });
+      recentCard.querySelectorAll('.wallet-addr').forEach(function (el) {
+        el.textContent = '\u2192 ' + persona.primaryWallet.addressShort;
+      });
+    }
+  }());
+
+  /* ── BX copy ────────────────────────────────────────────── */
+  function copyBxRef() {
+    navigator.clipboard.writeText(persona.bxRef).then(function () {
+      var toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(function () { toast.classList.remove('show'); }, 2200);
+    });
+  }
+</script>
+</body>
+</html>

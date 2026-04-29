@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yield — Loop Customer Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="_tokens.css">
+  <link rel="stylesheet" href="_components.css">
+
+  <style>
+    a.nav-item { text-decoration: none; }
+
+    /* ── Post-MVP banner ────────────────────────────────────── */
+    .postmvp-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 13px 16px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-border);
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      color: #1E3A8A;
+      margin-bottom: 24px;
+    }
+    .postmvp-banner-icon { flex-shrink: 0; margin-top: 1px; color: var(--accent); }
+    .postmvp-banner strong { color: var(--accent); }
+
+    /* ── Next payment card ──────────────────────────────────── */
+    .payment-card-body {
+      padding: 22px;
+      display: flex;
+      align-items: flex-start;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .payment-date-block { flex: 1; min-width: 180px; }
+    .payment-date-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--ink-500);
+      margin-bottom: 6px;
+    }
+    .payment-date-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--ink-900);
+      line-height: 1.15;
+    }
+    .payment-date-days {
+      font-size: 13px;
+      color: var(--ink-500);
+      margin-top: 4px;
+    }
+    .payment-amount-block { flex: 1; min-width: 180px; }
+    .payment-amount-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--ink-500);
+      margin-bottom: 6px;
+    }
+    .payment-amount-value {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--emerald);
+      line-height: 1.15;
+    }
+    .payment-amount-note {
+      font-size: 12.5px;
+      color: var(--ink-500);
+      margin-top: 4px;
+    }
+    .payment-divider {
+      width: 1px;
+      align-self: stretch;
+      background: var(--ink-100);
+      flex-shrink: 0;
+    }
+    .payment-info-block { flex: 2; min-width: 240px; }
+
+    /* ── Yield basis breakdown ──────────────────────────────── */
+    .yield-basis {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 16px;
+      background: var(--ink-50);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+      margin-top: 10px;
+    }
+    .yield-basis-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .yield-basis-label { font-size: 12.5px; color: var(--ink-500); display: flex; align-items: center; gap: 5px; }
+    .yield-basis-value { font-family: var(--font-mono); font-size: 12.5px; font-weight: 600; color: var(--ink-900); }
+    .yield-basis-total .yield-basis-label { font-weight: 700; color: var(--ink-700); }
+    .yield-basis-total .yield-basis-value { color: var(--accent); }
+    .yield-basis-divider { border: none; border-top: 1px solid var(--ink-200); margin: 2px 0; }
+    .dot-amber { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
+    .dot-emerald { width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); flex-shrink: 0; }
+
+    /* ── SVG chart card ─────────────────────────────────────── */
+    .chart-wrap {
+      padding: 22px 22px 10px;
+      overflow-x: auto;
+    }
+    .chart-svg { display: block; width: 100%; max-width: 680px; margin: 0 auto; overflow: visible; }
+
+    /* ── Payment history table tweaks ───────────────────────── */
+    .hash-link {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .hash-link:hover { text-decoration: underline; }
+
+    .history-footer {
+      padding: 12px 18px;
+      background: var(--ink-50);
+      border-top: 1px solid var(--ink-100);
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+      font-size: 12px;
+      color: var(--ink-400);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    /* ── Stat card rate display ─────────────────────────────── */
+    .rate-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--ink-900);
+      margin-top: 6px;
+      line-height: 1.15;
+    }
+    .rate-attribution {
+      font-size: 12px;
+      color: var(--ink-400);
+      margin-top: 5px;
+      font-style: italic;
+    }
+
+    /* ── Toast ──────────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--ink-900); color: white;
+      padding: 10px 16px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 180ms ease, transform 180ms ease;
+      pointer-events: none; z-index: 1000;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: var(--shadow-lg);
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+  <script src="_persona.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════════════════════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-mark">L</div>
+        <div>
+          <div class="brand-name">Loop</div>
+          <div class="brand-tag">Customer Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-org">
+      <div class="org-label">Organisation</div>
+      <div class="org-name">Standard Bank Treasury</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">CORE</span>
+
+      <a href="01-dashboard.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <a href="02-mint.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/>
+        </svg>
+        Mint ZARU
+      </a>
+
+      <a href="03-burn.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/>
+        </svg>
+        Burn ZARU
+      </a>
+
+      <a href="04-transactions.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/>
+          <circle cx="4" cy="6"  r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+        Transactions
+      </a>
+
+      <span class="nav-section-label">INTELLIGENCE</span>
+
+      <a href="06-yield.html" class="nav-item active">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+        </svg>
+        Yield
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+
+      <a href="07-network.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        Network
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+
+      <span class="nav-section-label">ACCOUNT</span>
+
+      <a href="08-settings.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="org-card">
+        <div class="org-avatar">TN</div>
+        <div>
+          <div class="org-name">Thabo Nkosi</div>
+          <div class="org-user">Admin · Standard Bank Treasury</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════════════════ -->
+  <div class="content">
+
+    <!-- ── Topbar ──────────────────────────────────────────── -->
+    <header class="topbar">
+      <span class="topbar-title">Yield</span>
+      <div class="topbar-actions">
+        <button class="bx-chip" onclick="copyToast('BX-0042')" title="Click to copy">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+          BX-0042
+        </button>
+        <div class="status-dot">
+          <span class="dot"></span>
+          Live · Solana
+        </div>
+        <button class="icon-btn" title="Notifications" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ── Page ────────────────────────────────────────────── -->
+    <main class="page">
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Yield</h1>
+          <p class="page-subtitle">6.00% p.a. on average daily ZARU balance · Paid monthly in ZARU</p>
+        </div>
+        <span class="badge badge-neutral" style="font-size:12px;padding:5px 12px;margin-top:4px;">Release 3</span>
+      </div>
+
+      <!-- ── Post-MVP banner ────────────────────────────────── -->
+      <div class="postmvp-banner">
+        <svg class="postmvp-banner-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <div>
+          <strong>Yield Dashboard · Post-MVP</strong> — This feature is coming in Release 3.
+          The data below reflects your <strong>projected yield</strong> based on current balances and your commercial agreement. No action is required.
+        </div>
+      </div>
+
+      <!-- ── Stat cards ─────────────────────────────────────── -->
+      <div class="grid grid-3 mb-4">
+
+        <!-- Card 1: Rate -->
+        <div class="card stat-card">
+          <div class="stat-label">YIELD RATE</div>
+          <div class="rate-value">6.00%<span style="font-size:16px;font-weight:600;color:var(--ink-500);"> p.a.</span></div>
+          <div class="stat-sub">On average daily ZARU balance</div>
+          <div class="rate-attribution">As per your commercial agreement with Loop</div>
+          <div class="stat-delta neutral" style="margin-top:12px;">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            Daily snapshot at 09:00 SAST
+          </div>
+        </div>
+
+        <!-- Card 2: Accrued this month -->
+        <div class="card stat-card">
+          <div class="stat-label">ACCRUED (APRIL 2026)</div>
+          <div class="stat-value mono">R 24,123.60</div>
+          <div class="stat-sub">= 24,123.60 ZARU at time of payment</div>
+          <div class="stat-delta up" style="margin-top:12px;">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+            </svg>
+            28 days accrued · 2 remaining
+          </div>
+        </div>
+
+        <!-- Card 3: Lifetime -->
+        <div class="card stat-card">
+          <div class="stat-label">LIFETIME YIELD</div>
+          <div class="stat-value mono">R 142,800.00</div>
+          <div class="stat-sub">Since Feb 2026 · 3 payments</div>
+          <div class="stat-delta up" style="margin-top:12px;">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+            </svg>
+            +R 24,123.60 accruing
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Next payment card ───────────────────────────────── -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <span class="card-title">Next yield payment</span>
+          <span class="badge badge-success">
+            <span class="dot"></span>
+            Scheduled
+          </span>
+        </div>
+
+        <div class="payment-card-body">
+
+          <div class="payment-date-block">
+            <div class="payment-date-label">PAYMENT DATE</div>
+            <div class="payment-date-value">1 May 2026</div>
+            <div class="payment-date-days">3 days from now</div>
+          </div>
+
+          <div class="payment-divider"></div>
+
+          <div class="payment-amount-block">
+            <div class="payment-amount-label">ESTIMATED AMOUNT</div>
+            <div class="payment-amount-value">~25,800.00 ZARU</div>
+            <div class="payment-amount-note">≈ R 25,800.00 at peg</div>
+          </div>
+
+          <div class="payment-divider"></div>
+
+          <div class="payment-info-block">
+            <div style="font-size:13px;color:var(--ink-700);line-height:1.6;margin-bottom:14px;">
+              Yield is automatically minted as new ZARU and sent to your
+              <strong>FX Hot Desk</strong> wallet on the first business day of each month.
+              No action is required.
+            </div>
+
+            <div class="alert alert-warning" style="padding:10px 13px;">
+              <svg style="width:15px;height:15px;flex-shrink:0;margin-top:1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <div style="font-size:12.5px;">
+                ZARU deposited after <strong>09:00 SAST</strong> does not earn yield for that day.
+                Today's snapshot has already been taken.
+              </div>
+            </div>
+
+            <!-- Yield basis breakdown -->
+            <div class="yield-basis" style="margin-top:14px;">
+              <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink-400);margin-bottom:4px;">Yield basis</div>
+              <div class="yield-basis-row">
+                <span class="yield-basis-label">
+                  <span class="dot-emerald"></span>
+                  Available ZARU
+                </span>
+                <span class="yield-basis-value">8,247,380.00</span>
+              </div>
+              <div class="yield-basis-row">
+                <span class="yield-basis-label">
+                  <span class="dot-amber"></span>
+                  Locked seed ZARU
+                </span>
+                <span class="yield-basis-value">40,000,000.00</span>
+              </div>
+              <hr class="yield-basis-divider">
+              <div class="yield-basis-row yield-basis-total">
+                <span class="yield-basis-label">Total earning balance</span>
+                <span class="yield-basis-value">48,247,380.00 ZARU</span>
+              </div>
+              <div class="yield-basis-row" style="margin-top:2px;">
+                <span class="yield-basis-label" style="color:var(--ink-400);font-size:11.5px;">Daily accrual @ 6% p.a.</span>
+                <span style="font-family:var(--font-mono);font-size:11.5px;color:var(--ink-400);">≈ R 7,928.00 / day</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Yield chart ────────────────────────────────────── -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Monthly accrual — 2026</div>
+            <div class="card-subtitle">Actual payments + April in-progress + May projected</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <!--
+            Chart layout:
+            viewBox: 0 0 600 200
+            4 bars at x = 60, 195, 330, 465 (width 100 each, gap 35)
+            max value = 25800 → maps to bar height 140px
+            bar bottom y = 170
+          -->
+          <svg class="chart-svg" viewBox="0 0 600 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Monthly yield accrual bar chart 2026">
+
+            <!-- ── Subtle baseline ──────────────────────────── -->
+            <line x1="30" y1="172" x2="570" y2="172" stroke="#E2E8F0" stroke-width="1.5"/>
+
+            <!-- ── Bar: February · R 5,600 ─────────────────── -->
+            <!-- height = (5600/25800)*140 ≈ 30.4 → use 30 -->
+            <rect x="60" y="142" width="100" height="30" rx="4" fill="#059669" opacity="0.9"/>
+            <text x="110" y="133" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600" fill="#334155">R 5,600</text>
+            <text x="110" y="190" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#64748B">Feb</text>
+
+            <!-- ── Bar: March · R 11,200 ───────────────────── -->
+            <!-- height = (11200/25800)*140 ≈ 60.8 → use 61 -->
+            <rect x="195" y="111" width="100" height="61" rx="4" fill="#059669" opacity="0.9"/>
+            <text x="245" y="102" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600" fill="#334155">R 11,200</text>
+            <text x="245" y="190" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#64748B">Mar</text>
+
+            <!-- ── Bar: April · R 24,123 (in-progress) ──────── -->
+            <!-- height = (24123/25800)*140 ≈ 131 -->
+            <rect x="330" y="41" width="100" height="131" rx="4" fill="#2563EB"/>
+            <!-- In-progress shimmer stripe -->
+            <rect x="330" y="41" width="100" height="18" rx="4" fill="white" opacity="0.12"/>
+            <text x="380" y="32" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#2563EB">R 24,123</text>
+            <text x="380" y="190" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#2563EB">Apr</text>
+            <!-- In-progress label -->
+            <rect x="334" y="155" width="56" height="14" rx="3" fill="white" opacity="0.25"/>
+            <text x="362" y="165" text-anchor="middle" font-family="'Inter', sans-serif" font-size="9.5" font-weight="700" fill="white" letter-spacing="0.04em">IN PROGRESS</text>
+
+            <!-- ── Bar: May · R 25,800 (projected) ──────────── -->
+            <!-- height = 140 (max) -->
+            <rect x="465" y="32" width="100" height="140" rx="4" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="5 3"/>
+            <text x="515" y="23" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600" fill="#94A3B8">~R 25,800</text>
+            <text x="515" y="190" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#94A3B8">May</text>
+            <!-- Projected label -->
+            <rect x="472" y="100" width="62" height="14" rx="3" fill="#CBD5E1"/>
+            <text x="503" y="110" text-anchor="middle" font-family="'Inter', sans-serif" font-size="9.5" font-weight="700" fill="#64748B" letter-spacing="0.04em">PROJECTED</text>
+
+            <!-- ── Legend ────────────────────────────────────── -->
+            <rect x="30" y="200" width="10" height="10" rx="2" fill="#059669"/>
+            <text x="45" y="210" font-family="'Inter', sans-serif" font-size="11" fill="#64748B">Paid</text>
+            <rect x="90" y="200" width="10" height="10" rx="2" fill="#2563EB"/>
+            <text x="105" y="210" font-family="'Inter', sans-serif" font-size="11" fill="#64748B">In progress</text>
+            <rect x="185" y="200" width="10" height="10" rx="2" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+            <text x="200" y="210" font-family="'Inter', sans-serif" font-size="11" fill="#94A3B8">Projected</text>
+
+          </svg>
+        </div>
+      </div>
+
+      <!-- ── Payment history ────────────────────────────────── -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Payment history</span>
+          <span class="text-muted text-xs">Auto-minted · sent to FX Hot Desk</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th style="text-align:right;">Amount (ZARU)</th>
+                <th style="text-align:right;">Amount (ZAR equiv.)</th>
+                <th>Wallet</th>
+                <th>Tx Hash</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="white-space:nowrap;">
+                  <span style="font-size:13.5px;color:var(--ink-900);">1 Apr 2026</span>
+                </td>
+                <td style="text-align:right;" class="td-mono">11,200.00</td>
+                <td style="text-align:right;" class="td-mono">R 11,200.00</td>
+                <td>
+                  <div style="font-size:13.5px;color:var(--ink-900);">FX Hot Desk</div>
+                  <div style="font-family:var(--font-mono);font-size:11.5px;color:var(--ink-400);margin-top:2px;">→ 7xKp...3mNw</div>
+                </td>
+                <td>
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                    3xNmQ...w4Pk
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td style="white-space:nowrap;">
+                  <span style="font-size:13.5px;color:var(--ink-900);">1 Mar 2026</span>
+                </td>
+                <td style="text-align:right;" class="td-mono">5,600.00</td>
+                <td style="text-align:right;" class="td-mono">R 5,600.00</td>
+                <td>
+                  <div style="font-size:13.5px;color:var(--ink-900);">FX Hot Desk</div>
+                  <div style="font-family:var(--font-mono);font-size:11.5px;color:var(--ink-400);margin-top:2px;">→ 7xKp...3mNw</div>
+                </td>
+                <td>
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                    7pKrB...m2Tz
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="history-footer">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Yield payments appear in Transaction History as MINT transactions with type "Yield payment".
+          <a href="04-transactions.html" style="color:var(--accent);font-weight:600;text-decoration:none;margin-left:2px;">View all transactions →</a>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ── Toast ───────────────────────────────────────────────── -->
+<div class="toast" id="toast">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+  <span id="toast-msg">Copied to clipboard</span>
+</div>
+
+<script>
+  /* ── Persona init ───────────────────────────────────────── */
+  var persona = getPersona();
+  preservePersonaLinks();
+  applyPersonaBadge(persona);
+
+  /* ── Guard: yield not available ─────────────────────────── */
+  if (!persona.hasYield) {
+    document.body.innerHTML = '<div style="display:grid;place-items:center;height:100vh;font-family:sans-serif;color:#64748B;font-size:15px;">Yield is not available for this account type.</div>';
+  }
+
+  /* ── Persona DOM updates ───────────────────────────────── */
+  if (persona.hasYield) (function () {
+    // Sidebar
+    var _so = document.querySelector('.sidebar-org .org-name');
+    if (_so) _so.textContent = persona.orgName;
+    var _av = document.querySelector('.org-avatar');
+    if (_av) _av.textContent = persona.userInitials;
+    var _on = document.querySelector('.org-card .org-name');
+    if (_on) _on.textContent = persona.userName;
+    var _ou = document.querySelector('.org-user');
+    if (_ou) _ou.textContent = persona.userRole + ' \xB7 ' + persona.orgName;
+
+    // BX chip
+    document.querySelectorAll('.bx-chip').forEach(function (el) {
+      el.innerHTML = el.innerHTML.replace(/BX-\d+/g, persona.bxRef);
+      var oc = el.getAttribute('onclick');
+      if (oc) el.setAttribute('onclick', oc.replace(/BX-\d+/g, persona.bxRef));
+    });
+
+    // Stat cards
+    var statCards = document.querySelectorAll('.grid-3 .stat-card');
+    // Card 1: rate
+    if (statCards[0]) {
+      var rateVal = statCards[0].querySelector('.rate-value');
+      if (rateVal) {
+        rateVal.innerHTML = persona.yieldRate + '<span style="font-size:16px;font-weight:600;color:var(--ink-500);"> p.a.</span>';
+      }
+    }
+    // Card 2: accrued
+    if (statCards[1]) {
+      var accrued = statCards[1].querySelector('.stat-value.mono');
+      if (accrued) accrued.textContent = formatZAR(persona.yieldAccruedMonth);
+    }
+    // Card 3: lifetime
+    if (statCards[2]) {
+      var lifetime = statCards[2].querySelector('.stat-value.mono');
+      if (lifetime) lifetime.textContent = formatZAR(persona.yieldLifetime);
+    }
+
+    // Next payment date
+    var payDateVal = document.querySelector('.payment-date-value');
+    if (payDateVal) payDateVal.textContent = persona.yieldNextPaymentDate;
+
+    // Next payment wallet
+    document.querySelectorAll('.payment-info-block strong').forEach(function (el) {
+      if (el.textContent.indexOf('FX Hot Desk') !== -1 || el.textContent.indexOf('Primary') !== -1 || el.textContent.indexOf('Hot Wallet') !== -1) {
+        el.textContent = persona.primaryWallet.label;
+      }
+    });
+
+    // Payment history wallet column
+    document.querySelectorAll('table.data tbody tr').forEach(function (row) {
+      var walletCell = row.cells[3];
+      if (walletCell) {
+        var nameDiv = walletCell.querySelector('div:first-child');
+        if (nameDiv) nameDiv.textContent = persona.primaryWallet.label;
+        var addrDiv = walletCell.querySelector('div:last-child');
+        if (addrDiv) addrDiv.textContent = '\u2192 ' + persona.primaryWallet.addressShort;
+      }
+    });
+
+    // Payment history card subtitle
+    var histHeader = document.querySelector('.card-header .text-xs');
+    if (histHeader) {
+      histHeader.textContent = 'Auto-minted \xB7 sent to ' + persona.primaryWallet.label;
+    }
+  }());
+
+  function copyToast(value) {
+    navigator.clipboard.writeText(value).then(function () {
+      var toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = 'Copied to clipboard';
+      toast.classList.add('show');
+      setTimeout(function () { toast.classList.remove('show'); }, 2200);
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transactions — Loop Customer Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="_tokens.css">
+  <link rel="stylesheet" href="_components.css">
+
+  <style>
+    a.nav-item { text-decoration: none; }
+
+    /* ── Filter bar ─────────────────────────────────────────── */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    /* Segmented control */
+    .seg-control {
+      display: flex;
+      background: var(--ink-100);
+      border-radius: var(--radius-sm);
+      padding: 3px;
+      gap: 2px;
+    }
+    .seg-btn {
+      padding: 5px 13px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 4px;
+      border: none;
+      background: none;
+      color: var(--ink-500);
+      cursor: pointer;
+      transition: var(--t-fast);
+      font-family: var(--font-sans);
+      white-space: nowrap;
+    }
+    .seg-btn:hover  { color: var(--ink-900); }
+    .seg-btn.active { background: white; color: var(--ink-900); box-shadow: var(--shadow-sm); }
+
+    /* Filter select */
+    .filter-select {
+      height: 36px;
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+      padding: 0 32px 0 11px;
+      font-size: 13px;
+      font-family: var(--font-sans);
+      color: var(--ink-900);
+      background: white;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 9px center;
+      appearance: none;
+      cursor: pointer;
+      transition: border-color var(--t-fast);
+    }
+    .filter-select:focus { outline: none; border-color: var(--accent); }
+
+    /* Search input */
+    .filter-search {
+      height: 36px;
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+      padding: 0 12px 0 34px;
+      font-size: 13px;
+      font-family: var(--font-sans);
+      color: var(--ink-900);
+      background: white;
+      width: 240px;
+      transition: border-color var(--t-fast), width var(--t-base);
+    }
+    .filter-search:focus { outline: none; border-color: var(--accent); width: 280px; }
+
+    .search-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      color: var(--ink-400);
+      pointer-events: none;
+    }
+
+    .filter-spacer { flex: 1; }
+
+    /* ── Table tweaks ───────────────────────────────────────── */
+    .amt-cell {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--ink-900);
+      white-space: nowrap;
+    }
+    .amt-cell.burn { color: var(--rose); }
+    .amt-cell.mint { color: var(--ink-900); }
+
+    th.right { text-align: right; }
+
+    .ref-cell {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--ink-700);
+    }
+    .ref-dash { color: var(--ink-300); }
+
+    .wallet-cell-name { font-size: 13.5px; color: var(--ink-900); }
+    .wallet-cell-sub  { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-400); margin-top: 2px; }
+
+    .date-cell { white-space: nowrap; font-size: 13px; color: var(--ink-700); }
+    .date-cell .time { font-size: 11.5px; color: var(--ink-400); display: block; margin-top: 1px; }
+
+    /* Tx hash cell */
+    .hash-link {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .hash-link:hover { text-decoration: underline; }
+    .hash-dash { font-family: var(--font-mono); font-size: 13px; color: var(--ink-300); }
+
+    /* ── Summary footer ─────────────────────────────────────── */
+    .table-footer {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 13px 18px;
+      background: var(--ink-50);
+      border-top: 1px solid var(--ink-200);
+      flex-wrap: wrap;
+    }
+    .footer-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+    }
+    .footer-stat-label { color: var(--ink-500); }
+    .footer-stat-value { font-family: var(--font-mono); font-weight: 600; color: var(--ink-900); }
+    .footer-stat-value.mint-val { color: var(--emerald); }
+    .footer-stat-value.burn-val { color: var(--rose); }
+    .footer-stat-value.net-val  { color: var(--accent); }
+    .footer-sep { color: var(--ink-300); font-size: 12px; }
+
+    /* ── Pagination ─────────────────────────────────────────── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      padding: 14px 18px;
+      border-top: 1px solid var(--ink-100);
+    }
+    .pg-btn {
+      min-width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--ink-200);
+      background: white;
+      color: var(--ink-700);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--t-fast);
+      font-family: var(--font-sans);
+      padding: 0 8px;
+    }
+    .pg-btn:hover  { background: var(--ink-50); border-color: var(--ink-300); }
+    .pg-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+    .pg-btn:disabled { opacity: 0.4; cursor: default; }
+    .pg-arrow { color: var(--ink-500); gap: 5px; }
+
+    /* ── Empty state (filtered) ─────────────────────────────── */
+    .no-results {
+      text-align: center;
+      padding: 40px 24px;
+      display: none;
+    }
+    .no-results.visible { display: table-row; }
+    .no-results td { border-bottom: none !important; }
+
+    /* ── Toast ──────────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--ink-900); color: white;
+      padding: 10px 16px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 180ms ease, transform 180ms ease;
+      pointer-events: none; z-index: 1000;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: var(--shadow-lg);
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Row hidden by filter ───────────────────────────────── */
+    tr.row-hidden { display: none; }
+  </style>
+  <script src="_persona.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════════════════════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-mark">L</div>
+        <div>
+          <div class="brand-name">Loop</div>
+          <div class="brand-tag">Customer Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-org">
+      <div class="org-label">Organisation</div>
+      <div class="org-name">Standard Bank Treasury</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">CORE</span>
+
+      <a href="01-dashboard.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <a href="02-mint.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/>
+        </svg>
+        Mint ZARU
+      </a>
+
+      <a href="03-burn.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/>
+        </svg>
+        Burn ZARU
+      </a>
+
+      <a href="04-transactions.html" class="nav-item active">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/>
+          <circle cx="4" cy="6"  r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+        Transactions
+      </a>
+
+      <span class="nav-section-label">INTELLIGENCE</span>
+
+      <a href="06-yield.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+        </svg>
+        Yield
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+
+      <a href="07-network.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        Network
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+
+      <span class="nav-section-label">ACCOUNT</span>
+
+      <a href="08-settings.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="org-card">
+        <div class="org-avatar">TN</div>
+        <div>
+          <div class="org-name">Thabo Nkosi</div>
+          <div class="org-user">Admin · Standard Bank Treasury</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════════════════ -->
+  <div class="content">
+
+    <!-- ── Topbar ──────────────────────────────────────────── -->
+    <header class="topbar">
+      <span class="topbar-title">Transactions</span>
+      <div class="topbar-actions">
+        <button class="bx-chip" onclick="copyToast('BX-0042')" title="Click to copy">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+          BX-0042
+        </button>
+        <div class="status-dot">
+          <span class="dot"></span>
+          Live · Solana
+        </div>
+        <button class="icon-btn" title="Notifications" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ── Page ────────────────────────────────────────────── -->
+    <main class="page">
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Transaction History</h1>
+          <p class="page-subtitle">Standard Bank Treasury · BX-0042 · All activity</p>
+        </div>
+      </div>
+
+      <!-- ── Filter bar ─────────────────────────────────────── -->
+      <div class="filter-bar">
+
+        <!-- Type segmented control -->
+        <div class="seg-control" role="group" aria-label="Filter by type">
+          <button class="seg-btn active" data-type="all"  onclick="setType(this, 'all')">All</button>
+          <button class="seg-btn"        data-type="mint" onclick="setType(this, 'mint')">Mint</button>
+          <button class="seg-btn"        data-type="burn" onclick="setType(this, 'burn')">Burn</button>
+        </div>
+
+        <!-- Status dropdown -->
+        <select class="filter-select" aria-label="Filter by status" onchange="filterStatus(this.value)">
+          <option value="all">All statuses</option>
+          <option value="completed">Completed</option>
+          <option value="settled">Settled</option>
+          <option value="pending">Deposit received</option>
+          <option value="processing">Processing</option>
+          <option value="failed">Failed</option>
+        </select>
+
+        <!-- Date range dropdown -->
+        <select class="filter-select" aria-label="Date range">
+          <option>Last 30 days</option>
+          <option>Today</option>
+          <option>Last 7 days</option>
+          <option>Last 90 days</option>
+          <option>This year</option>
+          <option>Custom range…</option>
+        </select>
+
+        <!-- Search -->
+        <div class="search-wrap">
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input class="filter-search" type="search" placeholder="Search by reference, amount, or tx hash" oninput="filterSearch(this.value)" aria-label="Search transactions">
+        </div>
+
+        <div class="filter-spacer"></div>
+
+        <!-- Export -->
+        <button class="btn btn-secondary btn-sm" onclick="exportCsv()">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export CSV
+        </button>
+
+      </div>
+
+      <!-- ── Transactions card ───────────────────────────────── -->
+      <div class="card">
+        <div style="overflow-x: auto;">
+          <table class="data" id="tx-table">
+            <thead>
+              <tr>
+                <th style="width:72px;">Type</th>
+                <th>Reference</th>
+                <th class="right">Amount (ZAR)</th>
+                <th class="right">Amount (ZARU)</th>
+                <th>Status</th>
+                <th>Wallet / Account</th>
+                <th>Date &amp; Time</th>
+                <th>Tx Hash</th>
+              </tr>
+            </thead>
+            <tbody id="tx-body">
+
+              <!-- Row 1 — Pending mint -->
+              <tr data-type="mint" data-status="pending">
+                <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
+                <td class="ref-cell">BX-0042</td>
+                <td class="amt-cell mint">R 500,000.00</td>
+                <td class="amt-cell mint">500,000.00</td>
+                <td><span class="badge badge-pending"><span class="dot"></span>Deposit received</span></td>
+                <td>
+                  <div class="wallet-cell-name">FX Hot Desk</div>
+                </td>
+                <td class="date-cell">
+                  28 Apr 2026
+                  <span class="time">09:14 SAST</span>
+                </td>
+                <td><span class="hash-dash">—</span></td>
+              </tr>
+
+              <!-- Row 2 -->
+              <tr data-type="mint" data-status="completed">
+                <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
+                <td class="ref-cell">BX-0042</td>
+                <td class="amt-cell mint">R 2,000,000.00</td>
+                <td class="amt-cell mint">2,000,000.00</td>
+                <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
+                <td>
+                  <div class="wallet-cell-name">FX Hot Desk</div>
+                  <div class="wallet-cell-sub">→ 7xKp...3mNw</div>
+                </td>
+                <td class="date-cell">
+                  25 Apr 2026
+                  <span class="time">08:42 SAST</span>
+                </td>
+                <td>
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                    5xKp3...f8aH
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+
+              <!-- Row 3 — Burn settled -->
+              <tr data-type="burn" data-status="settled">
+                <td><span class="badge badge-neutral"><span class="dot"></span>BURN</span></td>
+                <td class="ref-cell ref-dash">—</td>
+                <td class="amt-cell burn">R 500,000.00</td>
+                <td class="amt-cell burn">499,750.00</td>
+                <td><span class="badge badge-success"><span class="dot"></span>Settled</span></td>
+                <td>
+                  <div class="wallet-cell-name">Standard Bank</div>
+                  <div class="wallet-cell-sub">••••••7412</div>
+                </td>
+                <td class="date-cell">
+                  22 Apr 2026
+                  <span class="time">14:33 SAST</span>
+                </td>
+                <td>
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                    9mLqR...c2Bk
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+
+              <!-- Row 4 -->
+              <tr data-type="mint" data-status="completed">
+                <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
+                <td class="ref-cell">BX-0042</td>
+                <td class="amt-cell mint">R 5,000,000.00</td>
+                <td class="amt-cell mint">5,000,000.00</td>
+                <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
+                <td>
+                  <div class="wallet-cell-name">FX Hot Desk</div>
+                  <div class="wallet-cell-sub">→ 7xKp...3mNw</div>
+                </td>
+                <td class="date-cell">
+                  18 Apr 2026
+                  <span class="time">10:07 SAST</span>
+                </td>
+                <td>
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                    3nPxB...m7Rq
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+
+              <!-- Row 5 — Burn settled -->
+              <tr data-type="burn" data-status="settled">
+                <td><span class="badge badge-neutral"><span class="dot"></span>BURN</span></td>
+                <td class="ref-cell ref-dash">—</td>
+                <td class="amt-cell burn">R 1,000,000.00</td>
+                <td class="amt-cell burn">999,500.00</td>
+                <td><span class="badge badge-success"><span class="dot"></span>Settled</span></td>
+                <td>
+                  <div class="wallet-cell-name">Standard Bank</div>
+                  <div class="wallet-cell-sub">••••••7412</div>
+                </td>
+                <td class="date-cell">
+                  12 Apr 2026
+                  <span class="time">16:22 SAST</span>
+                </td>
+                <td>
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                    7qRmN...p4Lx
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+
+              <!-- Row 6 -->
+              <tr data-type="mint" data-status="completed">
+                <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
+                <td class="ref-cell">BX-0042</td>
+                <td class="amt-cell mint">R 7,000,000.00</td>
+                <td class="amt-cell mint">7,000,000.00</td>
+                <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
+                <td>
+                  <div class="wallet-cell-name">FX Hot Desk</div>
+                  <div class="wallet-cell-sub">→ 7xKp...3mNw</div>
+                </td>
+                <td class="date-cell">
+                  5 Apr 2026
+                  <span class="time">09:55 SAST</span>
+                </td>
+                <td>
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                    2mWxL...k9Pn
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+
+              <!-- Row 7 -->
+              <tr data-type="mint" data-status="completed">
+                <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
+                <td class="ref-cell">BX-0042</td>
+                <td class="amt-cell mint">R 3,000,000.00</td>
+                <td class="amt-cell mint">3,000,000.00</td>
+                <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
+                <td>
+                  <div class="wallet-cell-name">FX Hot Desk</div>
+                  <div class="wallet-cell-sub">→ 7xKp...3mNw</div>
+                </td>
+                <td class="date-cell">
+                  28 Mar 2026
+                  <span class="time">11:14 SAST</span>
+                </td>
+                <td>
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                    8pKnB...r3Wz
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+
+              <!-- Row 8 — Burn settled -->
+              <tr data-type="burn" data-status="settled">
+                <td><span class="badge badge-neutral"><span class="dot"></span>BURN</span></td>
+                <td class="ref-cell ref-dash">—</td>
+                <td class="amt-cell burn">R 2,000,000.00</td>
+                <td class="amt-cell burn">1,999,000.00</td>
+                <td><span class="badge badge-success"><span class="dot"></span>Settled</span></td>
+                <td>
+                  <div class="wallet-cell-name">Standard Bank</div>
+                  <div class="wallet-cell-sub">••••••7412</div>
+                </td>
+                <td class="date-cell">
+                  21 Mar 2026
+                  <span class="time">09:30 SAST</span>
+                </td>
+                <td>
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                    4rLqP...n8Mx
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+
+              <!-- Row 9 -->
+              <tr data-type="mint" data-status="completed">
+                <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
+                <td class="ref-cell">BX-0042</td>
+                <td class="amt-cell mint">R 4,000,000.00</td>
+                <td class="amt-cell mint">4,000,000.00</td>
+                <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
+                <td>
+                  <div class="wallet-cell-name">FX Hot Desk</div>
+                  <div class="wallet-cell-sub">→ 7xKp...3mNw</div>
+                </td>
+                <td class="date-cell">
+                  14 Mar 2026
+                  <span class="time">14:01 SAST</span>
+                </td>
+                <td>
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                    6wNmR...q2Bk
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+
+              <!-- Row 10 -->
+              <tr data-type="mint" data-status="completed">
+                <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
+                <td class="ref-cell">BX-0042</td>
+                <td class="amt-cell mint">R 10,000,000.00</td>
+                <td class="amt-cell mint">10,000,000.00</td>
+                <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
+                <td>
+                  <div class="wallet-cell-name">FX Hot Desk</div>
+                  <div class="wallet-cell-sub">→ 7xKp...3mNw</div>
+                </td>
+                <td class="date-cell">
+                  7 Mar 2026
+                  <span class="time">08:58 SAST</span>
+                </td>
+                <td>
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                    1kBpX...w5Qr
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+
+              <!-- Row 11 — Burn settled -->
+              <tr data-type="burn" data-status="settled">
+                <td><span class="badge badge-neutral"><span class="dot"></span>BURN</span></td>
+                <td class="ref-cell ref-dash">—</td>
+                <td class="amt-cell burn">R 500,000.00</td>
+                <td class="amt-cell burn">499,750.00</td>
+                <td><span class="badge badge-success"><span class="dot"></span>Settled</span></td>
+                <td>
+                  <div class="wallet-cell-name">Standard Bank</div>
+                  <div class="wallet-cell-sub">••••••7412</div>
+                </td>
+                <td class="date-cell">
+                  28 Feb 2026
+                  <span class="time">16:44 SAST</span>
+                </td>
+                <td>
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                    3nQrM...h6Tz
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+
+              <!-- Row 12 — Large cold wallet mint -->
+              <tr data-type="mint" data-status="completed">
+                <td><span class="badge badge-info"><span class="dot"></span>MINT</span></td>
+                <td class="ref-cell">BX-0042</td>
+                <td class="amt-cell mint">R 20,000,000.00</td>
+                <td class="amt-cell mint">20,000,000.00</td>
+                <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
+                <td>
+                  <div class="wallet-cell-name">Cold Wallet</div>
+                  <div class="wallet-cell-sub">→ 9zBr...8nKq</div>
+                </td>
+                <td class="date-cell">
+                  3 Feb 2026
+                  <span class="time">10:22 SAST</span>
+                </td>
+                <td>
+                  <a href="https://solscan.io" target="_blank" rel="noopener" class="hash-link">
+                    5mKpW...j1Xc
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+
+              <!-- No results row (hidden by default) -->
+              <tr id="no-results-row" class="no-results">
+                <td colspan="8">
+                  <div class="empty-state">
+                    <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <div class="empty-state-title">No transactions found</div>
+                    <div class="empty-state-desc">Try adjusting your filters or search query.</div>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ── Summary footer ──────────────────────────────── -->
+        <div class="table-footer" id="summary-footer">
+          <div class="footer-stat">
+            <span class="footer-stat-label">Showing</span>
+            <span class="footer-stat-value" id="count-display">12 transactions</span>
+          </div>
+          <span class="footer-sep">·</span>
+          <div class="footer-stat">
+            <span class="footer-stat-label">Total minted</span>
+            <span class="footer-stat-value mint-val" id="minted-display">R 51,500,000.00</span>
+          </div>
+          <span class="footer-sep">·</span>
+          <div class="footer-stat">
+            <span class="footer-stat-label">Total burned</span>
+            <span class="footer-stat-value burn-val" id="burned-display">R 4,000,000.00</span>
+          </div>
+          <span class="footer-sep">·</span>
+          <div class="footer-stat">
+            <span class="footer-stat-label">Net</span>
+            <span class="footer-stat-value net-val" id="net-display">+R 47,500,000.00</span>
+          </div>
+        </div>
+
+        <!-- ── Pagination ──────────────────────────────────── -->
+        <div class="pagination">
+          <button class="pg-btn pg-arrow" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            Prev
+          </button>
+          <button class="pg-btn active">1</button>
+          <button class="pg-btn">2</button>
+          <button class="pg-btn">3</button>
+          <button class="pg-btn pg-arrow">
+            Next
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </button>
+        </div>
+
+      </div><!-- /card -->
+    </main>
+  </div>
+</div>
+
+<!-- ── Toast ───────────────────────────────────────────────── -->
+<div class="toast" id="toast">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+  <span id="toast-msg">Copied to clipboard</span>
+</div>
+
+<script>
+  /* ── Persona init ───────────────────────────────────────── */
+  var persona = getPersona();
+  preservePersonaLinks();
+  applyPersonaBadge(persona);
+
+  /* ── Persona DOM updates ───────────────────────────────── */
+  (function () {
+    // Sidebar
+    var _so = document.querySelector('.sidebar-org .org-name');
+    if (_so) _so.textContent = persona.orgName;
+    var _av = document.querySelector('.org-avatar');
+    if (_av) _av.textContent = persona.userInitials;
+    var _on = document.querySelector('.org-card .org-name');
+    if (_on) _on.textContent = persona.userName;
+    var _ou = document.querySelector('.org-user');
+    if (_ou) _ou.textContent = persona.userRole + ' \xB7 ' + persona.orgName;
+
+    // BX chip
+    document.querySelectorAll('.bx-chip').forEach(function (el) {
+      el.innerHTML = el.innerHTML.replace(/BX-\d+/g, persona.bxRef);
+      var oc = el.getAttribute('onclick');
+      if (oc) el.setAttribute('onclick', oc.replace(/BX-\d+/g, persona.bxRef));
+    });
+
+    // Page subtitle
+    var ps = document.querySelector('.page-subtitle');
+    if (ps) {
+      ps.textContent = persona.orgName + ' \xB7 ' + persona.bxRef + ' \xB7 All activity';
+    }
+
+    // Reference cells — MINT rows
+    document.querySelectorAll('#tx-body tr[data-type="mint"] .ref-cell').forEach(function (cell) {
+      if (!cell.classList.contains('ref-dash')) cell.textContent = persona.bxRef;
+    });
+
+    // Wallet/account cells — MINT rows
+    document.querySelectorAll('#tx-body tr[data-type="mint"]').forEach(function (row) {
+      var wName = row.querySelector('.wallet-cell-name');
+      if (wName) wName.textContent = persona.primaryWallet.label;
+      var wSub = row.querySelector('.wallet-cell-sub');
+      if (wSub) wSub.textContent = '\u2192 ' + persona.primaryWallet.addressShort;
+    });
+
+    // Wallet/account cells — BURN rows
+    document.querySelectorAll('#tx-body tr[data-type="burn"]').forEach(function (row) {
+      var wName = row.querySelector('.wallet-cell-name');
+      if (wName) wName.textContent = persona.bankName;
+      var wSub = row.querySelector('.wallet-cell-sub');
+      if (wSub) wSub.textContent = persona.bankAccountMasked;
+    });
+  }());
+
+  /* ── State ─────────────────────────────────────────────── */
+  var activeType   = 'all';
+  var activeStatus = 'all';
+  var searchQuery  = '';
+
+  /* ── Amounts keyed by row index (0-based) ─────────────── */
+  var rowData = [
+    { type: 'mint', zarAmt: 500000,    zaruAmt: 500000 },
+    { type: 'mint', zarAmt: 2000000,   zaruAmt: 2000000 },
+    { type: 'burn', zarAmt: 500000,    zaruAmt: 499750 },
+    { type: 'mint', zarAmt: 5000000,   zaruAmt: 5000000 },
+    { type: 'burn', zarAmt: 1000000,   zaruAmt: 999500 },
+    { type: 'mint', zarAmt: 7000000,   zaruAmt: 7000000 },
+    { type: 'mint', zarAmt: 3000000,   zaruAmt: 3000000 },
+    { type: 'burn', zarAmt: 2000000,   zaruAmt: 1999000 },
+    { type: 'mint', zarAmt: 4000000,   zaruAmt: 4000000 },
+    { type: 'mint', zarAmt: 10000000,  zaruAmt: 10000000 },
+    { type: 'burn', zarAmt: 500000,    zaruAmt: 499750 },
+    { type: 'mint', zarAmt: 20000000,  zaruAmt: 20000000 }
+  ];
+
+  function fmt(n) {
+    return 'R ' + n.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function applyFilters() {
+    var rows     = document.querySelectorAll('#tx-body tr[data-type]');
+    var visible  = 0;
+    var totalMint = 0;
+    var totalBurn = 0;
+
+    rows.forEach(function (row, i) {
+      var type   = row.getAttribute('data-type');
+      var status = row.getAttribute('data-status');
+      var text   = row.textContent.toLowerCase();
+
+      var typeOk   = activeType === 'all'   || type === activeType;
+      var statusOk = activeStatus === 'all' || status === activeStatus;
+      var searchOk = searchQuery === ''     || text.indexOf(searchQuery.toLowerCase()) !== -1;
+
+      var show = typeOk && statusOk && searchOk;
+      row.classList.toggle('row-hidden', !show);
+
+      if (show) {
+        visible++;
+        if (rowData[i].type === 'mint') totalMint += rowData[i].zarAmt;
+        if (rowData[i].type === 'burn') totalBurn += rowData[i].zarAmt;
+      }
+    });
+
+    /* no-results row */
+    var noResults = document.getElementById('no-results-row');
+    noResults.classList.toggle('visible', visible === 0);
+
+    /* update footer */
+    var net = totalMint - totalBurn;
+    document.getElementById('count-display').textContent   = visible + ' transaction' + (visible !== 1 ? 's' : '');
+    document.getElementById('minted-display').textContent  = fmt(totalMint);
+    document.getElementById('burned-display').textContent  = fmt(totalBurn);
+    document.getElementById('net-display').textContent     = (net >= 0 ? '+' : '') + fmt(net);
+  }
+
+  /* ── Type segmented control ────────────────────────────── */
+  function setType(btn, type) {
+    document.querySelectorAll('.seg-btn').forEach(function (b) {
+      b.classList.remove('active');
+    });
+    btn.classList.add('active');
+    activeType = type;
+    applyFilters();
+  }
+
+  /* ── Status dropdown ───────────────────────────────────── */
+  function filterStatus(val) {
+    activeStatus = val;
+    applyFilters();
+  }
+
+  /* ── Search ────────────────────────────────────────────── */
+  function filterSearch(val) {
+    searchQuery = val.trim();
+    applyFilters();
+  }
+
+  /* ── CSV export (prototype toast) ─────────────────────── */
+  function exportCsv() {
+    var toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = 'CSV export would download here';
+    toast.classList.add('show');
+    setTimeout(function () { toast.classList.remove('show'); }, 2800);
+  }
+
+  /* ── BX chip copy ──────────────────────────────────────── */
+  function copyToast(value) {
+    navigator.clipboard.writeText(value).then(function () {
+      var toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = 'Copied to clipboard';
+      toast.classList.add('show');
+      setTimeout(function () { toast.classList.remove('show'); }, 2200);
+    });
+  }
+</script>
+</body>
+</html>

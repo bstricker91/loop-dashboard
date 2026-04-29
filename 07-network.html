@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network — Loop Customer Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="_tokens.css">
+  <link rel="stylesheet" href="_components.css">
+
+  <style>
+    a.nav-item { text-decoration: none; }
+
+    /* ── Post-MVP banner ────────────────────────────────────── */
+    .postmvp-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 13px 16px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-border);
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      color: #1E3A8A;
+      margin-bottom: 24px;
+    }
+    .postmvp-banner-icon { flex-shrink: 0; margin-top: 1px; color: var(--accent); }
+
+    /* ── Proof of Reserve card ──────────────────────────────── */
+    .por-body {
+      padding: 24px 28px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .por-status-block {
+      text-align: center;
+    }
+    .por-check {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--emerald-soft);
+      border: 2px solid #A7F3D0;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 10px;
+      color: var(--emerald);
+    }
+    .por-status-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--emerald);
+      white-space: nowrap;
+    }
+
+    .por-divider {
+      width: 1px;
+      background: var(--ink-100);
+      align-self: stretch;
+    }
+
+    .por-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px 32px;
+    }
+    .por-metric-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--ink-500);
+      margin-bottom: 5px;
+    }
+    .por-metric-value {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink-900);
+      letter-spacing: -0.01em;
+    }
+    .por-metric-value.ratio {
+      font-size: 28px;
+      color: var(--emerald);
+    }
+    .por-metric-sub {
+      font-size: 12px;
+      color: var(--ink-500);
+      margin-top: 3px;
+    }
+
+    .por-attestation {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 220px;
+    }
+    .por-attest-row {
+      display: flex;
+      flex-direction: column;
+      padding: 10px 14px;
+      background: var(--ink-50);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+    }
+    .por-attest-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--ink-400);
+      margin-bottom: 3px;
+    }
+    .por-attest-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-900);
+    }
+    .por-attest-value.next {
+      color: var(--accent);
+    }
+    .por-report-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink-400);
+      text-decoration: none;
+      padding: 8px 14px;
+      background: var(--ink-50);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+      transition: var(--t-fast);
+    }
+    .por-report-link:hover {
+      color: var(--accent);
+      border-color: var(--accent-border);
+      background: var(--accent-soft);
+    }
+
+    /* ── Corridors ──────────────────────────────────────────── */
+    .corridor-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .corridor-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--ink-100);
+      transition: background var(--t-fast);
+    }
+    .corridor-row:last-child { border-bottom: none; }
+    .corridor-row:hover { background: var(--ink-50); }
+
+    .corridor-flags {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 20px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .corridor-arrow {
+      color: var(--ink-300);
+      font-size: 14px;
+    }
+
+    .corridor-info { flex: 1; min-width: 0; }
+    .corridor-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink-900);
+    }
+    .corridor-sub {
+      font-size: 12px;
+      color: var(--ink-500);
+      margin-top: 2px;
+    }
+
+    .corridor-volume {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .corridor-vol-value {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink-900);
+    }
+    .corridor-vol-label {
+      font-size: 11px;
+      color: var(--ink-400);
+      margin-top: 2px;
+    }
+
+    /* ── Volume bar on corridor ─────────────────────────────── */
+    .corridor-bar-wrap {
+      width: 100px;
+      flex-shrink: 0;
+    }
+    .corridor-bar-track {
+      height: 4px;
+      background: var(--ink-100);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .corridor-bar-fill {
+      height: 100%;
+      background: var(--emerald);
+      border-radius: 999px;
+    }
+    .corridor-bar-fill.amber { background: var(--amber); }
+
+    /* ── Partner grid ───────────────────────────────────────── */
+    .partner-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--ink-100);
+    }
+    .partner-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 22px;
+      background: white;
+      transition: background var(--t-fast);
+    }
+    .partner-card:hover { background: var(--ink-50); }
+    .partner-card.is-self { background: var(--accent-soft); }
+    .partner-card.is-self:hover { background: #E5EDFF; }
+
+    .partner-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--ink-100);
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink-500);
+      flex-shrink: 0;
+      font-family: var(--font-sans);
+    }
+    .partner-logo.luno       { background: #FF6B35; color: white; }
+    .partner-logo.moneybadger{ background: #1A1A2E; color: #FFD700; }
+    .partner-logo.easyequities{ background: #00A651; color: white; }
+    .partner-logo.sanlam     { background: #004B8D; color: white; }
+    .partner-logo.tenbet     { background: #E31837; color: white; }
+    .partner-logo.sbfx       { background: var(--navy-700); color: #93C5FD; }
+
+    .partner-info { flex: 1; min-width: 0; }
+    .partner-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink-900);
+    }
+    .partner-type { margin-top: 3px; }
+
+    .partner-actions { flex-shrink: 0; }
+
+    /* ── Upcoming assets ────────────────────────────────────── */
+    .upcoming-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding: 22px;
+    }
+    .upcoming-card {
+      border: 1px dashed var(--ink-200);
+      border-radius: var(--radius);
+      padding: 20px;
+      background: var(--ink-50);
+      opacity: 0.7;
+    }
+    .upcoming-flag {
+      font-size: 28px;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .upcoming-ticker {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink-400);
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .upcoming-name {
+      font-size: 12.5px;
+      color: var(--ink-400);
+      margin-bottom: 12px;
+    }
+    .upcoming-timeline {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-300);
+    }
+
+    /* ── Page header premium feel ───────────────────────────── */
+    .network-header-sub {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 5px;
+    }
+    .chain-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      background: var(--navy-700);
+      color: #93C5FD;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+    .chain-pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ADE80;
+    }
+
+    /* ── Toast ──────────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--ink-900); color: white;
+      padding: 10px 16px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 180ms ease, transform 180ms ease;
+      pointer-events: none; z-index: 1000;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: var(--shadow-lg);
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+  <script src="_persona.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════════════════════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-mark">L</div>
+        <div>
+          <div class="brand-name">Loop</div>
+          <div class="brand-tag">Customer Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-org">
+      <div class="org-label">Organisation</div>
+      <div class="org-name">Standard Bank Treasury</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">CORE</span>
+
+      <a href="01-dashboard.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <a href="02-mint.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/>
+        </svg>
+        Mint ZARU
+      </a>
+
+      <a href="03-burn.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/>
+        </svg>
+        Burn ZARU
+      </a>
+
+      <a href="04-transactions.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/>
+          <circle cx="4" cy="6"  r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+        Transactions
+      </a>
+
+      <span class="nav-section-label">INTELLIGENCE</span>
+
+      <a href="06-yield.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+        </svg>
+        Yield
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+
+      <a href="07-network.html" class="nav-item active">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        Network
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+
+      <span class="nav-section-label">ACCOUNT</span>
+
+      <a href="08-settings.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="org-card">
+        <div class="org-avatar">TN</div>
+        <div>
+          <div class="org-name">Thabo Nkosi</div>
+          <div class="org-user">Admin · Standard Bank Treasury</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════════════════ -->
+  <div class="content">
+
+    <!-- ── Topbar ──────────────────────────────────────────── -->
+    <header class="topbar">
+      <span class="topbar-title">Network</span>
+      <div class="topbar-actions">
+        <div class="status-dot">
+          <span class="dot"></span>
+          Live · Solana
+        </div>
+        <button class="icon-btn" title="Notifications" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ── Page ────────────────────────────────────────────── -->
+    <main class="page">
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">ZARU Network</h1>
+          <div class="network-header-sub">
+            <p class="page-subtitle" style="margin:0;">African institutional financial infrastructure · ZARU on Solana</p>
+            <div class="chain-pill">
+              <span class="chain-pill-dot"></span>
+              Solana mainnet
+            </div>
+          </div>
+        </div>
+        <span class="badge badge-neutral" style="font-size:12px;padding:5px 12px;margin-top:4px;">Release 3</span>
+      </div>
+
+      <!-- ── Post-MVP banner ────────────────────────────────── -->
+      <div class="postmvp-banner">
+        <svg class="postmvp-banner-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <div>
+          <strong>Network Dashboard · Post-MVP</strong> — Coming in Release 3.
+          Data below reflects the ZARU network vision and projected metrics as of Q1 2026. Individual partner holdings are not disclosed.
+        </div>
+      </div>
+
+      <!-- ── Network health stats ───────────────────────────── -->
+      <div class="grid grid-3 mb-4">
+
+        <div class="card stat-card">
+          <div class="stat-label">ZARU IN CIRCULATION</div>
+          <div class="stat-value mono">R 486,200,000</div>
+          <div class="stat-sub">Total supply across all institutions</div>
+          <div class="stat-delta up">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+            </svg>
+            2.4% this month
+          </div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="stat-label">ACTIVE INSTITUTIONS</div>
+          <div class="stat-value">7</div>
+          <div class="stat-sub">Minted or burned in last 30 days</div>
+          <div class="stat-delta up">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+            </svg>
+            +2 this quarter
+          </div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="stat-label">30-DAY VOLUME</div>
+          <div class="stat-value mono">R 1.2B</div>
+          <div class="stat-sub">Minted + burned · Solana mainnet</div>
+          <div class="stat-delta up">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+            </svg>
+            18% vs prior period
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Proof of Reserve ───────────────────────────────── -->
+      <div class="card mb-4" style="border-color: #A7F3D0; box-shadow: 0 0 0 1px #A7F3D0, var(--shadow);">
+        <div class="card-header" style="background: var(--emerald-soft); border-bottom-color: #A7F3D0;">
+          <div>
+            <div class="card-title" style="color:#065F46;">Proof of Reserve</div>
+            <div class="card-subtitle" style="color:#047857;">ZARU is 100% backed by ZAR held at Standard Bank · Verified by Moore South Africa</div>
+          </div>
+          <span class="badge badge-success" style="font-size:12.5px;padding:5px 14px;">
+            <span class="dot"></span>
+            Fully reserved
+          </span>
+        </div>
+
+        <div class="por-body">
+
+          <!-- Reserve status icon -->
+          <div class="por-status-block">
+            <div class="por-check">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div class="por-status-label">Fully reserved</div>
+            <div style="font-size:11px;color:var(--emerald);margin-top:3px;">Moore South Africa</div>
+          </div>
+
+          <div class="por-divider"></div>
+
+          <!-- Metrics grid -->
+          <div class="por-metrics">
+
+            <div>
+              <div class="por-metric-label">Reserve ratio</div>
+              <div class="por-metric-value ratio">100.00%</div>
+              <div class="por-metric-sub">ZAR : ZARU · 1 : 1 peg</div>
+            </div>
+
+            <div>
+              <div class="por-metric-label">ZAR held in reserve</div>
+              <div class="por-metric-value">R 486,200,000</div>
+              <div class="por-metric-sub">Standard Bank custodial account</div>
+            </div>
+
+            <div>
+              <div class="por-metric-label">ZARU in circulation</div>
+              <div class="por-metric-value">486,200,000</div>
+              <div class="por-metric-sub">Solana mainnet · verified on-chain</div>
+            </div>
+
+            <div>
+              <div class="por-metric-label">Surplus / deficit</div>
+              <div class="por-metric-value" style="color:var(--emerald);">R 0.00</div>
+              <div class="por-metric-sub">No shortfall</div>
+            </div>
+
+          </div>
+
+          <div class="por-divider"></div>
+
+          <!-- Attestation block -->
+          <div class="por-attestation">
+            <div class="por-attest-row">
+              <div class="por-attest-label">Last attestation</div>
+              <div class="por-attest-value">31 March 2026</div>
+              <div style="font-size:11.5px;color:var(--ink-500);margin-top:2px;">Moore South Africa</div>
+            </div>
+            <div class="por-attest-row">
+              <div class="por-attest-label">Next attestation</div>
+              <div class="por-attest-value next">30 June 2026</div>
+              <div style="font-size:11.5px;color:var(--ink-500);margin-top:2px;">Quarterly cadence</div>
+            </div>
+            <a href="#" class="por-report-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              View attestation report →
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── Active corridors + Partners (side by side) ───── -->
+      <div class="grid grid-2-1 mb-4">
+
+        <!-- ── Corridors ────────────────────────────────────── -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Active corridors</div>
+              <div class="card-subtitle">Cross-border ZARU flows — 30-day volume</div>
+            </div>
+          </div>
+
+          <div class="corridor-list">
+
+            <!-- ZA → NA -->
+            <div class="corridor-row">
+              <div class="corridor-flags">
+                🇿🇦
+                <span class="corridor-arrow">→</span>
+                🇳🇦
+              </div>
+              <div class="corridor-info">
+                <div class="corridor-name">South Africa → Namibia</div>
+                <div class="corridor-sub">ZAR / NAD corridor · Real-time settlement</div>
+              </div>
+              <div class="corridor-bar-wrap">
+                <div class="corridor-bar-track">
+                  <div class="corridor-bar-fill" style="width:100%"></div>
+                </div>
+              </div>
+              <div class="corridor-volume">
+                <div class="corridor-vol-value">R 45M</div>
+                <div class="corridor-vol-label">30-day vol</div>
+              </div>
+              <span class="badge badge-success"><span class="dot"></span>Active</span>
+            </div>
+
+            <!-- ZA → ZW -->
+            <div class="corridor-row">
+              <div class="corridor-flags">
+                🇿🇦
+                <span class="corridor-arrow">→</span>
+                🇿🇼
+              </div>
+              <div class="corridor-info">
+                <div class="corridor-name">South Africa → Zimbabwe</div>
+                <div class="corridor-sub">ZAR / ZIG corridor · Remittance &amp; trade</div>
+              </div>
+              <div class="corridor-bar-wrap">
+                <div class="corridor-bar-track">
+                  <div class="corridor-bar-fill" style="width:27%"></div>
+                </div>
+              </div>
+              <div class="corridor-volume">
+                <div class="corridor-vol-value">R 12M</div>
+                <div class="corridor-vol-label">30-day vol</div>
+              </div>
+              <span class="badge badge-success"><span class="dot"></span>Active</span>
+            </div>
+
+            <!-- ZA → MZ -->
+            <div class="corridor-row">
+              <div class="corridor-flags">
+                🇿🇦
+                <span class="corridor-arrow">→</span>
+                🇲🇿
+              </div>
+              <div class="corridor-info">
+                <div class="corridor-name">South Africa → Mozambique</div>
+                <div class="corridor-sub">ZAR / MZN corridor · Pilot phase</div>
+              </div>
+              <div class="corridor-bar-wrap">
+                <div class="corridor-bar-track">
+                  <div class="corridor-bar-fill amber" style="width:7%"></div>
+                </div>
+              </div>
+              <div class="corridor-volume">
+                <div class="corridor-vol-value">R 3.2M</div>
+                <div class="corridor-vol-label">30-day vol</div>
+              </div>
+              <span class="badge badge-pending"><span class="dot"></span>Emerging</span>
+            </div>
+
+            <!-- ZA → KE -->
+            <div class="corridor-row">
+              <div class="corridor-flags">
+                🇿🇦
+                <span class="corridor-arrow">→</span>
+                🇰🇪
+              </div>
+              <div class="corridor-info">
+                <div class="corridor-name">South Africa → Kenya</div>
+                <div class="corridor-sub">ZAR / KES corridor · Partnership stage</div>
+              </div>
+              <div class="corridor-bar-wrap">
+                <div class="corridor-bar-track">
+                  <div class="corridor-bar-fill" style="width:0%"></div>
+                </div>
+              </div>
+              <div class="corridor-volume">
+                <div class="corridor-vol-value" style="color:var(--ink-300);">—</div>
+                <div class="corridor-vol-label">30-day vol</div>
+              </div>
+              <span class="badge badge-neutral"><span class="dot"></span>Coming soon</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── Quick network metrics sidebar ────────────────── -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+          <div class="card">
+            <div class="card-header" style="padding:14px 18px;">
+              <div class="card-title" style="font-size:13.5px;">Network health</div>
+            </div>
+            <div class="card-body" style="padding:16px 18px;">
+              <div style="display:flex;flex-direction:column;gap:12px;">
+
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:12.5px;color:var(--ink-500);">Solana uptime (30d)</span>
+                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--emerald);">99.98%</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:12.5px;color:var(--ink-500);">Avg. mint time</span>
+                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--ink-900);">3.2 min</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:12.5px;color:var(--ink-500);">Avg. burn settlement</span>
+                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--ink-900);">1.4 hrs</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:12.5px;color:var(--ink-500);">Failed transactions</span>
+                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--emerald);">0 (30d)</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:12.5px;color:var(--ink-500);">Reference mismatches</span>
+                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--amber);">3 (30d)</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="padding:16px 18px;">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink-400);margin-bottom:10px;">Your position</div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:12.5px;color:var(--ink-500);">Your ZARU held</span>
+                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--ink-900);">48,247,380</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:12.5px;color:var(--ink-500);">Network share</span>
+                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--accent);">9.92%</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:12.5px;color:var(--ink-500);">Partner tier</span>
+                  <span class="badge badge-info" style="font-size:11px;">JV Partner</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ── Partner directory ─────────────────────────────── -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <div>
+            <div class="card-title">ZARU Partners</div>
+            <div class="card-subtitle">Institutions in the Loop network — connect to explore settlement and liquidity</div>
+          </div>
+          <span class="badge badge-neutral">7 active</span>
+        </div>
+
+        <div class="partner-grid">
+
+          <!-- Luno -->
+          <div class="partner-card">
+            <div class="partner-logo luno">L</div>
+            <div class="partner-info">
+              <div class="partner-name">Luno</div>
+              <div class="partner-type">
+                <span class="badge badge-info" style="font-size:11px;">Exchange</span>
+              </div>
+            </div>
+            <div class="partner-actions">
+              <button class="btn btn-secondary btn-sm" onclick="connectToast('Luno')">Connect</button>
+            </div>
+          </div>
+
+          <!-- MoneyBadger -->
+          <div class="partner-card">
+            <div class="partner-logo moneybadger">M</div>
+            <div class="partner-info">
+              <div class="partner-name">MoneyBadger</div>
+              <div class="partner-type">
+                <span class="badge badge-neutral" style="font-size:11px;">Payment gateway</span>
+              </div>
+            </div>
+            <div class="partner-actions">
+              <button class="btn btn-secondary btn-sm" onclick="connectToast('MoneyBadger')">Connect</button>
+            </div>
+          </div>
+
+          <!-- EasyEquities -->
+          <div class="partner-card">
+            <div class="partner-logo easyequities">E</div>
+            <div class="partner-info">
+              <div class="partner-name">EasyEquities</div>
+              <div class="partner-type">
+                <span class="badge badge-neutral" style="font-size:11px;">Investment platform</span>
+              </div>
+            </div>
+            <div class="partner-actions">
+              <button class="btn btn-secondary btn-sm" onclick="connectToast('EasyEquities')">Connect</button>
+            </div>
+          </div>
+
+          <!-- Sanlam -->
+          <div class="partner-card">
+            <div class="partner-logo sanlam">S</div>
+            <div class="partner-info">
+              <div class="partner-name">Sanlam</div>
+              <div class="partner-type">
+                <span class="badge badge-neutral" style="font-size:11px;">Financial services</span>
+              </div>
+            </div>
+            <div class="partner-actions">
+              <button class="btn btn-secondary btn-sm" onclick="connectToast('Sanlam')">Connect</button>
+            </div>
+          </div>
+
+          <!-- 10bet -->
+          <div class="partner-card">
+            <div class="partner-logo tenbet">10</div>
+            <div class="partner-info">
+              <div class="partner-name">10bet</div>
+              <div class="partner-type">
+                <span class="badge badge-neutral" style="font-size:11px;">Gaming / payments</span>
+              </div>
+            </div>
+            <div class="partner-actions">
+              <button class="btn btn-secondary btn-sm" onclick="connectToast('10bet')">Connect</button>
+            </div>
+          </div>
+
+          <!-- Standard Bank FX Desk — logged-in user -->
+          <div class="partner-card is-self">
+            <div class="partner-logo sbfx">SB</div>
+            <div class="partner-info">
+              <div class="partner-name">Standard Bank FX Desk</div>
+              <div class="partner-type">
+                <span class="badge badge-info" style="font-size:11px;">Bank</span>
+              </div>
+            </div>
+            <div class="partner-actions">
+              <span class="badge badge-success" style="font-size:11px;padding:4px 10px;white-space:nowrap;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Your organisation
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── Multi-asset preview — 2027 roadmap ────────────── -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title" style="color:var(--ink-400);">Coming to the network — 2027</div>
+            <div class="card-subtitle">Planned African stablecoin expansion · Subject to regulatory approval</div>
+          </div>
+          <span class="badge badge-neutral" style="font-size:11px;opacity:0.7;">Roadmap</span>
+        </div>
+
+        <div class="upcoming-grid">
+
+          <div class="upcoming-card">
+            <div class="upcoming-flag">🇳🇦</div>
+            <div class="upcoming-ticker">NAMU</div>
+            <div class="upcoming-name">Namibian Dollar Stablecoin</div>
+            <div class="upcoming-timeline">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Planned Q1 2027
+            </div>
+          </div>
+
+          <div class="upcoming-card">
+            <div class="upcoming-flag">🇰🇪</div>
+            <div class="upcoming-ticker">KES</div>
+            <div class="upcoming-name">Kenyan Shilling Stablecoin</div>
+            <div class="upcoming-timeline">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Planned Q1 2027
+            </div>
+          </div>
+
+          <div class="upcoming-card">
+            <div class="upcoming-flag">🇲🇿</div>
+            <div class="upcoming-ticker">MZNU</div>
+            <div class="upcoming-name">Mozambican Metical Stablecoin</div>
+            <div class="upcoming-timeline">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Planned Q2 2027
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ── Toast ───────────────────────────────────────────────── -->
+<div class="toast" id="toast">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+  <span id="toast-msg">Connection request sent</span>
+</div>
+
+<script>
+  /* ── Persona init ───────────────────────────────────────── */
+  var persona = getPersona();
+  preservePersonaLinks();
+  applyPersonaBadge(persona);
+
+  /* ── Persona DOM updates ───────────────────────────────── */
+  (function () {
+    // Sidebar
+    var _so = document.querySelector('.sidebar-org .org-name');
+    if (_so) _so.textContent = persona.orgName;
+    var _av = document.querySelector('.org-avatar');
+    if (_av) _av.textContent = persona.userInitials;
+    var _on = document.querySelector('.org-card .org-name');
+    if (_on) _on.textContent = persona.userName;
+    var _ou = document.querySelector('.org-user');
+    if (_ou) _ou.textContent = persona.userRole + ' \xB7 ' + persona.orgName;
+
+    // BX chip
+    document.querySelectorAll('.bx-chip').forEach(function (el) {
+      el.innerHTML = el.innerHTML.replace(/BX-\d+/g, persona.bxRef);
+      var oc = el.getAttribute('onclick');
+      if (oc) el.setAttribute('onclick', oc.replace(/BX-\d+/g, persona.bxRef));
+    });
+
+    // Partner directory — mark org card or swap Connect → Your organisation
+    document.querySelectorAll('.partner-card').forEach(function (card) {
+      var nameEl = card.querySelector('.partner-name');
+      if (!nameEl) return;
+      var cardName = nameEl.textContent.trim();
+      // Map org names to partner card names
+      var matchNames = {
+        'Standard Bank Treasury': 'Standard Bank FX Desk',
+        'Cedar Money': 'Cedar Money',
+        'MoneyBadger': 'MoneyBadger'
+      };
+      var target = matchNames[persona.orgName] || persona.orgName;
+      if (cardName === target || cardName.toLowerCase().indexOf(persona.orgName.toLowerCase()) !== -1) {
+        card.classList.add('is-self');
+        var actions = card.querySelector('.partner-actions');
+        if (actions) {
+          actions.innerHTML = '<span class="badge badge-success" style="font-size:11px;padding:4px 10px;white-space:nowrap;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Your organisation</span>';
+        }
+      }
+    });
+  }());
+
+  function connectToast(name) {
+    var toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = 'Connect to ' + name + ' — coming in Release 3';
+    toast.classList.add('show');
+    setTimeout(function () { toast.classList.remove('show'); }, 2500);
+  }
+</script>
+</body>
+</html>

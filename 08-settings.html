@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — Loop Customer Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="_tokens.css">
+  <link rel="stylesheet" href="_components.css">
+
+  <style>
+    a.nav-item { text-decoration: none; }
+
+    /* ── Settings two-column layout ─────────────────────────── */
+    .settings-layout {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ── Vertical tab nav ───────────────────────────────────── */
+    .settings-nav {
+      position: sticky;
+      top: calc(var(--topbar-h) + 24px);
+    }
+    .settings-nav-card {
+      background: white;
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .settings-tab {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-600, var(--ink-500));
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      border-bottom: 1px solid var(--ink-100);
+      transition: var(--t-fast);
+      font-family: var(--font-sans);
+    }
+    .settings-tab:last-child { border-bottom: none; }
+    .settings-tab:hover { background: var(--ink-50); color: var(--ink-900); }
+    .settings-tab.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .settings-tab svg { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.7; }
+    .settings-tab.active svg { opacity: 1; }
+    .settings-tab.locked { opacity: 0.45; pointer-events: none; }
+
+    /* ── Tab panels ─────────────────────────────────────────── */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Tab title area ─────────────────────────────────────── */
+    .settings-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--ink-900);
+      margin-bottom: 4px;
+    }
+    .settings-sub {
+      font-size: 13.5px;
+      color: var(--ink-500);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    /* ── Section header within a tab ────────────────────────── */
+    .section-head {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-400);
+      margin: 24px 0 8px;
+    }
+    .section-head:first-child { margin-top: 0; }
+
+    /* ── BX Reference hero ──────────────────────────────────── */
+    .bx-hero-copy {
+      background: var(--ink-50);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .bx-hero-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-500);
+      margin-bottom: 8px;
+    }
+    .bx-copy-field .copy-field-value {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink-900);
+      letter-spacing: 0.06em;
+    }
+    .bx-copy-field .copy-btn {
+      font-size: 13px;
+      padding: 10px 18px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .bx-copy-field .copy-btn:hover { background: var(--accent); color: white; }
+    .bx-copy-field .copy-btn.copied { color: var(--emerald); }
+
+    /* ── "Where to find it" list ────────────────────────────── */
+    .where-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .where-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--ink-100);
+    }
+    .where-item:last-child { border-bottom: none; }
+    .where-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .where-text { flex: 1; }
+    .where-title { font-size: 13.5px; font-weight: 600; color: var(--ink-900); }
+    .where-desc  { font-size: 12px; color: var(--ink-500); margin-top: 2px; }
+
+    /* ── Wallet address display ─────────────────────────────── */
+    .wallet-addr-td {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--ink-500);
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .edit-label-btn {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-family: var(--font-sans);
+    }
+    .edit-label-btn:hover { text-decoration: underline; }
+
+    /* Inline label edit */
+    .label-display { display: flex; align-items: center; gap: 6px; }
+    .label-edit-form {
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    .label-edit-form.visible { display: flex; }
+    .label-input {
+      height: 28px;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      padding: 0 8px;
+      font-size: 12.5px;
+      font-family: var(--font-sans);
+      color: var(--ink-900);
+      width: 140px;
+    }
+    .label-save-btn {
+      height: 28px;
+      padding: 0 10px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+    .label-cancel-btn {
+      height: 28px;
+      padding: 0 8px;
+      background: none;
+      border: none;
+      font-size: 12px;
+      color: var(--ink-500);
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+
+    /* ── Request wallet form ────────────────────────────────── */
+    .wallet-req-form {
+      display: none;
+      margin-top: 16px;
+      padding: 18px 20px;
+      background: var(--ink-50);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius);
+    }
+    .wallet-req-form.visible { display: block; }
+
+    /* ── Read-only account row ──────────────────────────────── */
+    .account-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--ink-100);
+    }
+    .account-row:last-child { border-bottom: none; }
+    .account-row-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink-500);
+      min-width: 160px;
+    }
+    .account-row-value {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--ink-900);
+      font-family: var(--font-sans);
+    }
+    .account-row-value.mono { font-family: var(--font-mono); font-size: 13px; }
+    .reveal-link {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ink-400);
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-left: 8px;
+      padding: 0;
+      font-family: var(--font-sans);
+    }
+    .reveal-link:hover { color: var(--accent); }
+
+    /* ── Security rows ──────────────────────────────────────── */
+    .security-section {
+      margin-bottom: 24px;
+    }
+    .security-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 20px;
+      background: white;
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+    }
+    .security-row-left { flex: 1; }
+    .security-row-title { font-size: 14px; font-weight: 600; color: var(--ink-900); margin-bottom: 3px; }
+    .security-row-sub   { font-size: 12.5px; color: var(--ink-500); }
+
+    /* ── Sessions table ─────────────────────────────────────── */
+    .session-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--ink-100);
+    }
+    .session-row:last-child { border-bottom: none; }
+    .session-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-sm);
+      background: var(--ink-100);
+      display: grid;
+      place-items: center;
+      color: var(--ink-500);
+      flex-shrink: 0;
+    }
+    .session-info { flex: 1; }
+    .session-name { font-size: 13.5px; font-weight: 600; color: var(--ink-900); }
+    .session-meta { font-size: 12px; color: var(--ink-400); margin-top: 2px; }
+
+    /* ── Notification toggles ───────────────────────────────── */
+    .notif-list { display: flex; flex-direction: column; gap: 0; }
+    .notif-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--ink-100);
+    }
+    .notif-row:last-child { border-bottom: none; }
+    .notif-info { flex: 1; }
+    .notif-title { font-size: 13.5px; font-weight: 500; color: var(--ink-900); }
+    .notif-channel { font-size: 12px; color: var(--ink-400); margin-top: 2px; }
+    .notif-controls { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+    /* Toggle switch */
+    .toggle {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: var(--ink-200);
+      cursor: pointer;
+      transition: background var(--t-fast);
+    }
+    .toggle input:checked + .toggle-track { background: var(--accent); }
+    .toggle input:disabled + .toggle-track { opacity: 0.5; cursor: not-allowed; }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: white;
+      top: 3px;
+      left: 3px;
+      transition: transform var(--t-fast);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .toggle input:checked + .toggle-track::after { transform: translateX(18px); }
+
+    .toggle-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-400);
+      min-width: 24px;
+      text-align: center;
+    }
+    .toggle-label.on { color: var(--accent); }
+
+    /* ── Danger link ────────────────────────────────────────── */
+    .danger-link {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--rose);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-family: var(--font-sans);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .danger-link:hover { text-decoration: underline; }
+
+    /* ── Org field ──────────────────────────────────────────── */
+    .org-field {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--ink-100);
+    }
+    .org-field:last-child { border-bottom: none; }
+    .org-field-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink-500);
+      min-width: 180px;
+      padding-top: 2px;
+    }
+    .org-field-value {
+      flex: 1;
+      font-size: 13.5px;
+      color: var(--ink-900);
+    }
+    .org-field-value.mono { font-family: var(--font-mono); font-size: 12.5px; }
+
+    /* ── Toast ──────────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--ink-900); color: white;
+      padding: 10px 16px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 180ms ease, transform 180ms ease;
+      pointer-events: none; z-index: 1000;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: var(--shadow-lg);
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+  <script src="_persona.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════════════════════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-mark">L</div>
+        <div>
+          <div class="brand-name">Loop</div>
+          <div class="brand-tag">Customer Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-org">
+      <div class="org-label">Organisation</div>
+      <div class="org-name">Standard Bank Treasury</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">CORE</span>
+      <a href="01-dashboard.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+      <a href="02-mint.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/>
+        </svg>
+        Mint ZARU
+      </a>
+      <a href="03-burn.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/>
+        </svg>
+        Burn ZARU
+      </a>
+      <a href="04-transactions.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/>
+          <circle cx="4" cy="6" r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+        Transactions
+      </a>
+      <span class="nav-section-label">INTELLIGENCE</span>
+      <a href="06-yield.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+        </svg>
+        Yield
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+      <a href="07-network.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        Network
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+      <span class="nav-section-label">ACCOUNT</span>
+      <a href="08-settings.html" class="nav-item active">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="org-card">
+        <div class="org-avatar">TN</div>
+        <div>
+          <div class="org-name">Thabo Nkosi</div>
+          <div class="org-user">Admin · Standard Bank Treasury</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════════════════ -->
+  <div class="content">
+
+    <!-- ── Topbar ──────────────────────────────────────────── -->
+    <header class="topbar">
+      <span class="topbar-title">Settings</span>
+      <div class="topbar-actions">
+        <button class="bx-chip" onclick="copyBxToast()" title="Click to copy">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+          BX-0042
+        </button>
+        <button class="icon-btn" title="Notifications" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ── Page ────────────────────────────────────────────── -->
+    <main class="page">
+
+      <div class="page-header" style="margin-bottom:24px;">
+        <div>
+          <h1 class="page-title">Settings</h1>
+          <p class="page-subtitle">Account, wallets, security, and notification preferences</p>
+        </div>
+      </div>
+
+      <div class="settings-layout">
+
+        <!-- ── Vertical tab nav ──────────────────────────────── -->
+        <div class="settings-nav">
+          <div class="settings-nav-card">
+
+            <button class="settings-tab active" onclick="switchTab('bx', this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              </svg>
+              BX Reference
+            </button>
+
+            <button class="settings-tab" onclick="switchTab('wallets', this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+              Wallets
+            </button>
+
+            <button class="settings-tab" onclick="switchTab('bank', this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+              Bank Account
+            </button>
+
+            <button class="settings-tab" onclick="switchTab('org', this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+              Organisation
+            </button>
+
+            <button class="settings-tab" onclick="switchTab('security', this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              Security &amp; MFA
+            </button>
+
+            <button class="settings-tab" onclick="switchTab('notifications', this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              Notifications
+            </button>
+
+            <button class="settings-tab locked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+              </svg>
+              API Access
+              <span class="nav-badge" style="margin-left:auto;font-size:9px;">R2</span>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             TAB PANELS
+        ══════════════════════════════════════════════════ -->
+        <div class="settings-panels">
+
+          <!-- ── BX Reference ───────────────────────────────── -->
+          <div class="tab-panel active" id="panel-bx">
+            <div class="settings-title">BX Reference</div>
+            <div class="settings-sub">Your unique deposit reference. Include this in every EFT to Loop.</div>
+
+            <div class="bx-hero-copy">
+              <div class="bx-hero-label">Your BX Reference</div>
+              <div class="copy-field bx-copy-field">
+                <span class="copy-field-value">BX-0042</span>
+                <button class="copy-btn" onclick="copyField('BX-0042', this)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                  </svg>
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div class="alert alert-info mb-4">
+              <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <div>
+                Your BX Reference is <strong>permanent and cannot be changed</strong>.
+                If you EFT to Loop without including <strong>BX-0042</strong> as the payment description, your deposit cannot be matched and your mint will be delayed by up to 1 business day.
+              </div>
+            </div>
+
+            <div class="section-head">Where to find it</div>
+            <div class="card">
+              <div class="card-body" style="padding:8px 18px;">
+                <div class="where-list">
+
+                  <div class="where-item">
+                    <div class="where-icon">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/>
+                      </svg>
+                    </div>
+                    <div class="where-text">
+                      <div class="where-title">Mint ZARU screen</div>
+                      <div class="where-desc">Displayed permanently in the payment instructions — always visible before you send an EFT.</div>
+                    </div>
+                    <a href="02-mint.html" class="btn btn-ghost btn-sm" style="font-size:12px;">Open →</a>
+                  </div>
+
+                  <div class="where-item">
+                    <div class="where-icon">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                      </svg>
+                    </div>
+                    <div class="where-text">
+                      <div class="where-title">Settings → BX Reference</div>
+                      <div class="where-desc">This page. Bookmark it for quick access.</div>
+                    </div>
+                    <span class="badge badge-info" style="font-size:11px;">Here</span>
+                  </div>
+
+                  <div class="where-item">
+                    <div class="where-icon">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                      </svg>
+                    </div>
+                    <div class="where-text">
+                      <div class="where-title">Topbar chip — every page</div>
+                      <div class="where-desc">The BX-0042 chip in the top-right corner is clickable on every page. Clicking copies it to your clipboard instantly.</div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Wallets ─────────────────────────────────────── -->
+          <div class="tab-panel" id="panel-wallets">
+            <div class="settings-title">Whitelisted Wallets</div>
+            <div class="settings-sub">ZARU is only minted to and from whitelisted wallets. All whitelist requests are reviewed by the Loop team.</div>
+
+            <div class="card mb-4">
+              <div style="overflow-x:auto;">
+                <table class="data">
+                  <thead>
+                    <tr>
+                      <th>Label</th>
+                      <th>Address</th>
+                      <th>Status</th>
+                      <th>Added</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <tr id="wallet-row-1">
+                      <td>
+                        <div class="label-display" id="label-display-1">
+                          <span id="label-text-1" style="font-size:13.5px;font-weight:600;color:var(--ink-900);">FX Hot Desk</span>
+                          <button class="edit-label-btn" onclick="startEdit(1)">Edit</button>
+                        </div>
+                        <div class="label-edit-form" id="label-form-1">
+                          <input class="label-input" id="label-input-1" value="FX Hot Desk">
+                          <button class="label-save-btn" onclick="saveLabel(1)">Save</button>
+                          <button class="label-cancel-btn" onclick="cancelEdit(1)">Cancel</button>
+                        </div>
+                      </td>
+                      <td class="wallet-addr-td" title="7xKp4rNnLm8QpBw3mNwYsT...">7xKp4rNnLm8QpBw3mNwYsT…</td>
+                      <td><span class="badge badge-success"><span class="dot"></span>Active</span></td>
+                      <td class="text-muted text-sm" style="white-space:nowrap;">15 Feb 2026</td>
+                      <td><!-- edit handled inline --></td>
+                    </tr>
+
+                    <tr id="wallet-row-2">
+                      <td>
+                        <div class="label-display" id="label-display-2">
+                          <span id="label-text-2" style="font-size:13.5px;font-weight:600;color:var(--ink-900);">Cold Wallet</span>
+                          <button class="edit-label-btn" onclick="startEdit(2)">Edit</button>
+                        </div>
+                        <div class="label-edit-form" id="label-form-2">
+                          <input class="label-input" id="label-input-2" value="Cold Wallet">
+                          <button class="label-save-btn" onclick="saveLabel(2)">Save</button>
+                          <button class="label-cancel-btn" onclick="cancelEdit(2)">Cancel</button>
+                        </div>
+                      </td>
+                      <td class="wallet-addr-td" title="9mLqR2pXnK7wBv4tYsZrQx...">9mLqR2pXnK7wBv4tYsZrQx…</td>
+                      <td><span class="badge badge-success"><span class="dot"></span>Active</span></td>
+                      <td class="text-muted text-sm" style="white-space:nowrap;">3 Feb 2026</td>
+                      <td></td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <span style="font-size:13.5px;font-weight:600;color:var(--ink-900);">Settlement Desk</span>
+                      </td>
+                      <td class="wallet-addr-td" title="4pKnBxR8mLqYw2tNzVsXp...">4pKnBxR8mLqYw2tNzVsXp…</td>
+                      <td><span class="badge badge-pending"><span class="dot"></span>Pending whitelist</span></td>
+                      <td class="text-muted text-sm" style="white-space:nowrap;">26 Apr 2026</td>
+                      <td><span class="text-muted text-xs">Under review</span></td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+              <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <span style="font-size:12px;color:var(--ink-400);">
+                  Wallets cannot be removed without contacting Loop support.
+                </span>
+                <button class="btn btn-secondary btn-sm" onclick="toggleWalletForm()">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  Request new wallet
+                </button>
+              </div>
+            </div>
+
+            <!-- Request wallet form -->
+            <div class="wallet-req-form" id="wallet-req-form">
+              <div style="font-size:14px;font-weight:700;color:var(--ink-900);margin-bottom:14px;">Request wallet whitelisting</div>
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div class="form-group">
+                  <label class="form-label">Solana wallet address</label>
+                  <input class="form-input mono" type="text" placeholder="Enter Solana wallet address (44 characters)">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Label</label>
+                  <input class="form-input" type="text" placeholder="e.g. Trading desk, Cold storage">
+                  <span class="form-hint">Used to identify this wallet in the portal.</span>
+                </div>
+                <div class="alert alert-info" style="padding:10px 13px;">
+                  <svg class="alert-icon" style="width:15px;height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  <div style="font-size:12.5px;">A live test transaction (approx. 0.001 ZARU) will be sent to verify the address before it is whitelisted.</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <button class="btn btn-primary btn-sm" onclick="submitWalletReq()">Submit whitelist request</button>
+                  <button class="btn btn-ghost btn-sm" onclick="toggleWalletForm()">Cancel</button>
+                </div>
+                <div style="font-size:12px;color:var(--ink-400);">Whitelist approval typically takes 1 business day. You'll receive an email when approved.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Bank Account ────────────────────────────────── -->
+          <div class="tab-panel" id="panel-bank">
+            <div class="settings-title">Beneficiary Bank Account</div>
+            <div class="settings-sub">ZAR redemptions are sent to this account. To change it, contact your Loop relationship manager.</div>
+
+            <div class="card mb-4">
+              <div class="card-header">
+                <span class="card-title">Account details</span>
+                <span class="badge badge-success"><span class="dot"></span>Verified</span>
+              </div>
+              <div class="card-body">
+                <div class="account-row">
+                  <span class="account-row-label">Bank</span>
+                  <span class="account-row-value">Standard Bank</span>
+                </div>
+                <div class="account-row">
+                  <span class="account-row-label">Account name</span>
+                  <span class="account-row-value">Standard Bank Treasury (Pty) Ltd</span>
+                </div>
+                <div class="account-row">
+                  <span class="account-row-label">Account number</span>
+                  <span class="account-row-value mono">
+                    ••• ••• 7412
+                    <button class="reveal-link" onclick="showToast('Contact Loop support to verify account details.')">Reveal</button>
+                  </span>
+                </div>
+                <div class="account-row">
+                  <span class="account-row-label">Branch code</span>
+                  <span class="account-row-value mono">051001</span>
+                </div>
+                <div class="account-row">
+                  <span class="account-row-label">Account type</span>
+                  <span class="account-row-value">Business Current</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-info mb-4">
+              <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <div>
+                To change your beneficiary bank account, email your Loop relationship manager. Account changes require verification and take <strong>2–3 business days</strong> to take effect.
+              </div>
+            </div>
+
+            <button class="btn btn-secondary" onclick="showToast('Contact support — coming in a future release.')">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              Contact support →
+            </button>
+          </div>
+
+          <!-- ── Organisation ───────────────────────────────── -->
+          <div class="tab-panel" id="panel-org">
+            <div class="settings-title">Organisation Profile</div>
+            <div class="settings-sub">KYB-verified details from SumHub. Contact support to update any information.</div>
+
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">Verified entity</span>
+                <span class="badge badge-success"><span class="dot"></span>KYB verified</span>
+              </div>
+              <div class="card-body">
+
+                <div class="org-field">
+                  <span class="org-field-label">Legal entity name</span>
+                  <span class="org-field-value">Standard Bank of South Africa Ltd</span>
+                </div>
+                <div class="org-field">
+                  <span class="org-field-label">Registration number</span>
+                  <span class="org-field-value mono">1969/017128/06</span>
+                </div>
+                <div class="org-field">
+                  <span class="org-field-label">KYB status</span>
+                  <div>
+                    <span class="badge badge-success"><span class="dot"></span>Verified</span>
+                    <span style="font-size:12px;color:var(--ink-400);margin-left:8px;">20 Apr 2026 via SumHub</span>
+                  </div>
+                </div>
+                <div class="org-field">
+                  <span class="org-field-label">SumHub reference</span>
+                  <span class="org-field-value mono">SH-ZA-2026-08841</span>
+                </div>
+                <div class="org-field">
+                  <span class="org-field-label">Partner type</span>
+                  <div>
+                    <span class="badge badge-info" style="font-size:11.5px;">JV Partner</span>
+                    <span class="badge badge-pending" style="font-size:11.5px;margin-left:6px;">Seed</span>
+                  </div>
+                </div>
+                <div class="org-field">
+                  <span class="org-field-label">Relationship manager</span>
+                  <div>
+                    <div class="org-field-value">Kash Masud</div>
+                    <a href="mailto:kashif@luno.com" style="font-size:12px;color:var(--accent);text-decoration:none;font-weight:500;">kashif@luno.com</a>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Security & MFA ──────────────────────────────── -->
+          <div class="tab-panel" id="panel-security">
+            <div class="settings-title">Security</div>
+            <div class="settings-sub">Manage your password and two-factor authentication.</div>
+
+            <div class="section-head">Authentication</div>
+
+            <div class="security-row">
+              <div class="security-row-left">
+                <div class="security-row-title">Password</div>
+                <div class="security-row-sub">Last changed 15 Feb 2026</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="showToast('Password change flow — coming in a future release.')">Change password</button>
+            </div>
+
+            <div class="security-row">
+              <div class="security-row-left">
+                <div class="security-row-title" style="display:flex;align-items:center;gap:8px;">
+                  Two-factor authentication
+                  <span class="badge badge-success" style="font-size:11px;"><span class="dot"></span>Enabled</span>
+                </div>
+                <div class="security-row-sub">Authenticator app (TOTP)</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="showToast('MFA management — coming in a future release.')">Manage MFA</button>
+            </div>
+
+            <div class="section-head" style="margin-top:28px;">Active sessions</div>
+
+            <div class="card">
+              <div style="overflow: hidden;">
+
+                <div class="session-row" style="background:var(--accent-soft);">
+                  <div class="session-icon" style="background:var(--accent-soft);color:var(--accent);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                  </div>
+                  <div class="session-info">
+                    <div class="session-name">Chrome · macOS</div>
+                    <div class="session-meta">Johannesburg, ZA · Active now</div>
+                  </div>
+                  <span class="badge badge-success" style="font-size:11px;"><span class="dot"></span>Current session</span>
+                </div>
+
+                <div class="session-row">
+                  <div class="session-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+                    </svg>
+                  </div>
+                  <div class="session-info">
+                    <div class="session-name">Safari · iPhone</div>
+                    <div class="session-meta">Johannesburg, ZA · Last active 2 hrs ago</div>
+                  </div>
+                  <button class="btn btn-ghost btn-sm" style="color:var(--rose);font-size:12px;" onclick="showToast('Session revoked.')">Revoke</button>
+                </div>
+
+              </div>
+              <div class="card-footer" style="display:flex;justify-content:flex-end;">
+                <button class="danger-link" onclick="showToast('All other sessions revoked.')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                  </svg>
+                  Revoke all other sessions
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Notifications ──────────────────────────────── -->
+          <div class="tab-panel" id="panel-notifications">
+            <div class="settings-title">Notification Preferences</div>
+            <div class="settings-sub">Choose which events trigger email alerts to your registered address.</div>
+
+            <div class="card">
+              <div class="card-body" style="padding:8px 22px;">
+                <div class="notif-list">
+
+                  <div class="notif-row">
+                    <div class="notif-info">
+                      <div class="notif-title">Mint confirmed — deposit received</div>
+                      <div class="notif-channel">Email</div>
+                    </div>
+                    <div class="notif-controls">
+                      <span class="toggle-label on">ON</span>
+                      <label class="toggle">
+                        <input type="checkbox" checked onchange="updateToggle(this)">
+                        <span class="toggle-track"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="notif-row">
+                    <div class="notif-info">
+                      <div class="notif-title">ZARU sent to wallet — mint complete</div>
+                      <div class="notif-channel">Email</div>
+                    </div>
+                    <div class="notif-controls">
+                      <span class="toggle-label on">ON</span>
+                      <label class="toggle">
+                        <input type="checkbox" checked onchange="updateToggle(this)">
+                        <span class="toggle-track"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="notif-row">
+                    <div class="notif-info">
+                      <div class="notif-title">ZARU received in burn wallet</div>
+                      <div class="notif-channel">Email</div>
+                    </div>
+                    <div class="notif-controls">
+                      <span class="toggle-label on">ON</span>
+                      <label class="toggle">
+                        <input type="checkbox" checked onchange="updateToggle(this)">
+                        <span class="toggle-track"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="notif-row">
+                    <div class="notif-info">
+                      <div class="notif-title">Burn settled — ZAR payment confirmed</div>
+                      <div class="notif-channel">Email</div>
+                    </div>
+                    <div class="notif-controls">
+                      <span class="toggle-label on">ON</span>
+                      <label class="toggle">
+                        <input type="checkbox" checked onchange="updateToggle(this)">
+                        <span class="toggle-track"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="notif-row">
+                    <div class="notif-info">
+                      <div class="notif-title">Yield payment received</div>
+                      <div class="notif-channel">Email</div>
+                    </div>
+                    <div class="notif-controls">
+                      <span class="toggle-label on">ON</span>
+                      <label class="toggle">
+                        <input type="checkbox" checked onchange="updateToggle(this)">
+                        <span class="toggle-track"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="notif-row">
+                    <div class="notif-info">
+                      <div class="notif-title">Wallet whitelist approved</div>
+                      <div class="notif-channel">Email</div>
+                    </div>
+                    <div class="notif-controls">
+                      <span class="toggle-label on">ON</span>
+                      <label class="toggle">
+                        <input type="checkbox" checked onchange="updateToggle(this)">
+                        <span class="toggle-track"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="notif-row">
+                    <div class="notif-info">
+                      <div class="notif-title">
+                        Security alerts — login from new device
+                        <span class="badge badge-neutral" style="font-size:10px;margin-left:6px;vertical-align:middle;">Required</span>
+                      </div>
+                      <div class="notif-channel">Email · Cannot be disabled</div>
+                    </div>
+                    <div class="notif-controls">
+                      <span class="toggle-label on">ON</span>
+                      <label class="toggle">
+                        <input type="checkbox" checked disabled>
+                        <span class="toggle-track"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="notif-row">
+                    <div class="notif-info">
+                      <div class="notif-title">Weekly summary</div>
+                      <div class="notif-channel">Email · Sent every Monday 08:00 SAST</div>
+                    </div>
+                    <div class="notif-controls">
+                      <span class="toggle-label" id="weekly-label">OFF</span>
+                      <label class="toggle">
+                        <input type="checkbox" onchange="updateToggle(this)">
+                        <span class="toggle-track"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <div class="card-footer" style="font-size:12px;color:var(--ink-400);">
+                Changes are saved automatically. Email sent to <strong style="color:var(--ink-700);">thabo.nkosi@standardbank.co.za</strong>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /settings-panels -->
+      </div><!-- /settings-layout -->
+    </main>
+  </div>
+</div>
+
+<!-- ── Toast ───────────────────────────────────────────────── -->
+<div class="toast" id="toast">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+  <span id="toast-msg">Saved</span>
+</div>
+
+<script>
+  /* ── Persona init ───────────────────────────────────────── */
+  var persona = getPersona();
+  preservePersonaLinks();
+  applyPersonaBadge(persona);
+
+  /* ── Persona DOM updates ───────────────────────────────── */
+  (function () {
+    // Sidebar
+    var _so = document.querySelector('.sidebar-org .org-name');
+    if (_so) _so.textContent = persona.orgName;
+    var _av = document.querySelector('.org-avatar');
+    if (_av) _av.textContent = persona.userInitials;
+    var _on = document.querySelector('.org-card .org-name');
+    if (_on) _on.textContent = persona.userName;
+    var _ou = document.querySelector('.org-user');
+    if (_ou) _ou.textContent = persona.userRole + ' \xB7 ' + persona.orgName;
+
+    // BX chip (topbar) — display + onclick
+    document.querySelectorAll('.bx-chip').forEach(function (el) {
+      el.innerHTML = el.innerHTML.replace(/BX-\d+/g, persona.bxRef);
+    });
+
+    // BX tab — copy field value
+    var bxCopyVal = document.querySelector('#panel-bx .copy-field-value');
+    if (bxCopyVal) bxCopyVal.textContent = persona.bxRef;
+    var bxCopyBtn = document.querySelector('#panel-bx .copy-btn');
+    if (bxCopyBtn) {
+      var oc = bxCopyBtn.getAttribute('onclick');
+      if (oc) bxCopyBtn.setAttribute('onclick', oc.replace(/BX-\d+/g, persona.bxRef));
+    }
+
+    // BX tab — alert text
+    var bxAlert = document.querySelector('#panel-bx .alert-info div');
+    if (bxAlert) bxAlert.innerHTML = bxAlert.innerHTML.replace(/BX-\d+/g, persona.bxRef);
+
+    // BX tab — "where to find it" topbar description
+    document.querySelectorAll('#panel-bx .where-desc').forEach(function (el) {
+      if (el.innerHTML.indexOf('BX-') !== -1) el.innerHTML = el.innerHTML.replace(/BX-\d+/g, persona.bxRef);
+    });
+
+    // Wallets tab — render wallet rows from persona
+    var walletsTbody = document.querySelector('#panel-wallets .card tbody');
+    if (walletsTbody) {
+      // Remove existing persona wallet rows (keep the static "Settlement Desk - Pending" demo row)
+      var existingRows = walletsTbody.querySelectorAll('tr[id^="wallet-row-"]');
+      existingRows.forEach(function (r) { r.remove(); });
+
+      // Insert persona wallet rows before the static pending row
+      var staticRow = walletsTbody.querySelector('tr:not([id])');
+      persona.wallets.forEach(function (w, idx) {
+        var id = idx + 1;
+        var tr = document.createElement('tr');
+        tr.id = 'wallet-row-' + id;
+        tr.innerHTML =
+          '<td>' +
+            '<div class="label-display" id="label-display-' + id + '">' +
+              '<span id="label-text-' + id + '" style="font-size:13.5px;font-weight:600;color:var(--ink-900);">' + w.label + '</span>' +
+              '<button class="edit-label-btn" onclick="startEdit(' + id + ')">Edit</button>' +
+            '</div>' +
+            '<div class="label-edit-form" id="label-form-' + id + '">' +
+              '<input class="label-input" id="label-input-' + id + '" value="' + w.label + '">' +
+              '<button class="label-save-btn" onclick="saveLabel(' + id + ')">Save</button>' +
+              '<button class="label-cancel-btn" onclick="cancelEdit(' + id + ')">Cancel</button>' +
+            '</div>' +
+          '</td>' +
+          '<td class="wallet-addr-td" title="' + w.address + '">' + w.address.slice(0, 22) + '\u2026</td>' +
+          '<td><span class="badge badge-success"><span class="dot"></span>Active</span></td>' +
+          '<td class="text-muted text-sm" style="white-space:nowrap;">15 Feb 2026</td>' +
+          '<td></td>';
+        walletsTbody.insertBefore(tr, staticRow);
+      });
+    }
+
+    // Bank tab
+    var acctRows = document.querySelectorAll('#panel-bank .account-row');
+    acctRows.forEach(function (row) {
+      var label = row.querySelector('.account-row-label');
+      var value = row.querySelector('.account-row-value');
+      if (!label || !value) return;
+      var lbl = label.textContent.trim();
+      if (lbl === 'Bank') value.textContent = persona.bankName;
+      if (lbl === 'Account name') value.textContent = persona.orgName + ' (Pty) Ltd';
+      if (lbl === 'Account number') {
+        // preserve reveal button
+        var revealBtn = value.querySelector('.reveal-link');
+        value.textContent = persona.bankAccountMasked + ' ';
+        if (revealBtn) value.appendChild(revealBtn);
+      }
+    });
+
+    // Org tab — legal entity name
+    var orgFields = document.querySelectorAll('#panel-org .org-field');
+    orgFields.forEach(function (field) {
+      var lbl = field.querySelector('.org-field-label');
+      var val = field.querySelector('.org-field-value');
+      if (!lbl || !val) return;
+      if (lbl.textContent.trim() === 'Legal entity name') val.textContent = persona.orgName;
+    });
+  }());
+
+  /* ── Tab switching ──────────────────────────────────────── */
+  var tabMap = {
+    bx: 'panel-bx',
+    wallets: 'panel-wallets',
+    bank: 'panel-bank',
+    org: 'panel-org',
+    security: 'panel-security',
+    notifications: 'panel-notifications'
+  };
+
+  function switchTab(key, btn) {
+    /* Deactivate all tabs and panels */
+    document.querySelectorAll('.settings-tab').forEach(function (t) { t.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById(tabMap[key]).classList.add('active');
+  }
+
+  /* ── Copy field ─────────────────────────────────────────── */
+  function copyField(value, btn) {
+    navigator.clipboard.writeText(value).then(function () {
+      var prev = btn.innerHTML;
+      btn.classList.add('copied');
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+      showToast(persona.bxRef + ' copied to clipboard');
+      setTimeout(function () { btn.classList.remove('copied'); btn.innerHTML = prev; }, 2000);
+    });
+  }
+
+  /* ── BX topbar chip ─────────────────────────────────────── */
+  function copyBxToast() {
+    navigator.clipboard.writeText(persona.bxRef).then(function () {
+      showToast(persona.bxRef + ' copied to clipboard');
+    });
+  }
+
+  /* ── Toast ──────────────────────────────────────────────── */
+  function showToast(msg) {
+    var toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg || 'Done';
+    toast.classList.add('show');
+    setTimeout(function () { toast.classList.remove('show'); }, 2500);
+  }
+
+  /* ── Wallet label inline edit ───────────────────────────── */
+  function startEdit(id) {
+    document.getElementById('label-display-' + id).style.display = 'none';
+    document.getElementById('label-form-' + id).classList.add('visible');
+    document.getElementById('label-input-' + id).focus();
+    document.getElementById('label-input-' + id).select();
+  }
+
+  function saveLabel(id) {
+    var val = document.getElementById('label-input-' + id).value.trim();
+    if (!val) return;
+    document.getElementById('label-text-' + id).textContent = val;
+    cancelEdit(id);
+    showToast('Wallet label updated');
+  }
+
+  function cancelEdit(id) {
+    document.getElementById('label-display-' + id).style.display = '';
+    document.getElementById('label-form-' + id).classList.remove('visible');
+  }
+
+  /* ── Request wallet form toggle ─────────────────────────── */
+  function toggleWalletForm() {
+    var f = document.getElementById('wallet-req-form');
+    f.classList.toggle('visible');
+    if (f.classList.contains('visible')) {
+      f.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function submitWalletReq() {
+    toggleWalletForm();
+    showToast('Whitelist request submitted — you\'ll receive an email when approved');
+  }
+
+  /* ── Notification toggle label ──────────────────────────── */
+  function updateToggle(checkbox) {
+    var label = checkbox.closest('.notif-controls').querySelector('.toggle-label');
+    if (label) {
+      label.textContent = checkbox.checked ? 'ON' : 'OFF';
+      label.classList.toggle('on', checkbox.checked);
+    }
+    showToast(checkbox.checked ? 'Notification enabled' : 'Notification disabled');
+  }
+
+  /* ── Enter key saves wallet label ──────────────────────── */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target.classList.contains('label-input')) {
+      var id = e.target.id.replace('label-input-', '');
+      saveLabel(id);
+    }
+    if (e.key === 'Escape' && e.target.classList.contains('label-input')) {
+      var id = e.target.id.replace('label-input-', '');
+      cancelEdit(id);
+    }
+  });
+</script>
+</body>
+</html>

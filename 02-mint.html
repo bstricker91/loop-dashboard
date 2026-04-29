@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mint ZARU — Loop Customer Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="_tokens.css">
+  <link rel="stylesheet" href="_components.css">
+
+  <style>
+    /* ── Nav anchors ────────────────────────────────────────── */
+    a.nav-item { text-decoration: none; }
+
+    /* ── Two-column mint layout ─────────────────────────────── */
+    .mint-layout {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ── Left column ────────────────────────────────────────── */
+    .inst-heading {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink-900);
+      margin-bottom: 4px;
+    }
+    .inst-sub {
+      font-size: 13.5px;
+      color: var(--ink-500);
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+
+    /* Bank details card body */
+    .bank-fields { display: flex; flex-direction: column; gap: 0; }
+
+    .bank-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--ink-100);
+    }
+    .bank-field:first-child { padding-top: 0; }
+    .bank-field:last-child  { border-bottom: none; padding-bottom: 0; }
+
+    .bank-field-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--ink-500);
+    }
+
+    .bank-field-static {
+      font-size: 14px;
+      color: var(--ink-900);
+      font-weight: 500;
+    }
+
+    /* ── Reference field — CRITICAL emphasis ────────────────── */
+    .ref-field-wrap {
+      background: var(--accent-soft);
+      border: 2px solid var(--accent-border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-top: 6px;
+    }
+
+    .ref-field-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .ref-field-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--accent);
+    }
+
+    .critical-badge {
+      background: var(--accent);
+      color: white;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .ref-copy-field {
+      background: white;
+      border-color: var(--accent-border);
+    }
+    .ref-copy-field .copy-field-value {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink-900);
+      letter-spacing: 0.04em;
+    }
+    .ref-copy-field .copy-btn {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .ref-copy-field .copy-btn:hover {
+      background: var(--accent);
+      color: white;
+    }
+    .ref-copy-field .copy-btn.copied {
+      color: var(--emerald);
+    }
+
+    .ref-field-note {
+      font-size: 11.5px;
+      color: var(--accent);
+      font-weight: 500;
+      margin-top: 8px;
+    }
+
+    /* ── Receiving wallet section ───────────────────────────── */
+    .wallet-target {
+      margin-top: 20px;
+    }
+
+    .wallet-target-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--ink-500);
+      margin-bottom: 8px;
+    }
+
+    .wallet-target-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: white;
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+
+    .wallet-target-info { flex: 1; min-width: 0; }
+    .wallet-target-name { font-size: 14px; font-weight: 600; color: var(--ink-900); }
+    .wallet-target-addr {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--ink-400);
+      margin-top: 3px;
+    }
+
+    .wallet-target-note {
+      font-size: 12px;
+      color: var(--ink-400);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    /* ── Right column — sticky ──────────────────────────────── */
+    .mint-right {
+      position: sticky;
+      top: calc(var(--topbar-h) + 24px);
+    }
+
+    /* ── Dev state toggle ───────────────────────────────────── */
+    .dev-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--ink-50);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      margin-bottom: 16px;
+    }
+    .dev-toggle-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--ink-400);
+    }
+    .dev-btns { display: flex; gap: 4px; }
+    .dev-btn {
+      padding: 4px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 4px;
+      border: 1px solid var(--ink-200);
+      background: white;
+      color: var(--ink-500);
+      cursor: pointer;
+      transition: var(--t-fast);
+      font-family: var(--font-sans);
+    }
+    .dev-btn:hover { background: var(--ink-100); }
+    .dev-btn.active {
+      background: var(--navy-700);
+      border-color: var(--navy-700);
+      color: white;
+    }
+
+    /* ── Pulsing timeline dot ───────────────────────────────── */
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0px rgba(37, 99, 235, 0.35); }
+      70%  { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); }
+      100% { box-shadow: 0 0 0 0px rgba(37, 99, 235, 0); }
+    }
+    .timeline-dot.pulsing {
+      animation: pulse-ring 1.8s ease-out infinite;
+    }
+
+    /* ── Status state panels ────────────────────────────────── */
+    .status-state { display: none; }
+    .status-state.visible { display: block; }
+
+    /* ── Mint amount display ────────────────────────────────── */
+    .mint-amount-display {
+      background: var(--ink-50);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-top: 16px;
+      text-align: center;
+    }
+    .mint-amount-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--ink-500);
+      margin-bottom: 6px;
+    }
+    .mint-amount-value {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--ink-900);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .mint-amount-value .unit {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .mint-amount-zar {
+      font-size: 12.5px;
+      color: var(--ink-400);
+      margin-top: 4px;
+      font-family: var(--font-mono);
+    }
+
+    /* ── Timeline item spacing ──────────────────────────────── */
+    .timeline-item { margin-bottom: 4px; }
+    .timeline-time-row {
+      font-size: 12px;
+      color: var(--ink-400);
+      margin-top: 2px;
+    }
+    .tx-hash {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--accent);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 3px;
+    }
+    .tx-hash:hover { text-decoration: underline; }
+
+    /* ── Success message ────────────────────────────────────── */
+    .success-msg {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--emerald-soft);
+      border: 1px solid #A7F3D0;
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-top: 16px;
+    }
+    .success-msg-icon { color: var(--emerald); flex-shrink: 0; margin-top: 1px; }
+    .success-msg-text { font-size: 13.5px; color: #065F46; font-weight: 500; }
+
+    /* ── Today's history table tweaks ──────────────────────── */
+    .today-row-current td { background: #FFFBEB; }
+
+    /* ── Operating hours banner ─────────────────────────────── */
+    .hours-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--ink-50);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--ink-500);
+    }
+    .hours-banner-icon { flex-shrink: 0; color: var(--amber); }
+  </style>
+  <script src="_persona.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════════════════════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════════════════════ -->
+  <aside class="sidebar">
+
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-mark">L</div>
+        <div>
+          <div class="brand-name">Loop</div>
+          <div class="brand-tag">Customer Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-org">
+      <div class="org-label">Organisation</div>
+      <div class="org-name">Standard Bank Treasury</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">CORE</span>
+
+      <a href="01-dashboard.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <a href="02-mint.html" class="nav-item active">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/>
+        </svg>
+        Mint ZARU
+      </a>
+
+      <a href="03-burn.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/>
+        </svg>
+        Burn ZARU
+      </a>
+
+      <a href="04-transactions.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/>
+          <circle cx="4" cy="6"  r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+        Transactions
+      </a>
+
+      <span class="nav-section-label">INTELLIGENCE</span>
+
+      <a href="06-yield.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+        </svg>
+        Yield
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+
+      <a href="07-network.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        Network
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+
+      <span class="nav-section-label">ACCOUNT</span>
+
+      <a href="08-settings.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="org-card">
+        <div class="org-avatar">TN</div>
+        <div>
+          <div class="org-name">Thabo Nkosi</div>
+          <div class="org-user">Admin · Standard Bank Treasury</div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════════════════ -->
+  <div class="content">
+
+    <!-- ── Topbar ──────────────────────────────────────────── -->
+    <header class="topbar">
+      <span class="topbar-title">Mint ZARU</span>
+      <div class="topbar-actions">
+        <button class="bx-chip" onclick="copyToast('BX-0042')" title="Click to copy">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+          BX-0042
+        </button>
+        <div class="status-dot">
+          <span class="dot"></span>
+          Live · Solana
+        </div>
+        <button class="icon-btn" title="Notifications" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ── Page ────────────────────────────────────────────── -->
+    <main class="page">
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Mint ZARU</h1>
+          <p class="page-subtitle">Send a ZAR EFT — Loop detects your deposit and mints automatically</p>
+        </div>
+      </div>
+
+      <div class="mint-layout">
+
+        <!-- ══════════════════════════════════════════════════
+             LEFT COLUMN — Payment instructions (always visible)
+        ══════════════════════════════════════════════════ -->
+        <div class="mint-left">
+
+          <p class="inst-heading">Payment instructions</p>
+          <p class="inst-sub">Send a ZAR EFT to the account below. Your BX Reference must be included exactly as shown — it is how Loop matches your deposit to your account.</p>
+
+          <!-- Warning alert -->
+          <div class="alert alert-warning mb-4">
+            <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <div>
+              <strong>Always include BX-0042 as your payment description.</strong> Missing or incorrect references delay your mint by up to 1 business day.
+            </div>
+          </div>
+
+          <!-- Bank details card -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <span class="card-title">Loop bank account</span>
+              <span class="badge badge-info">Standard Bank</span>
+            </div>
+            <div class="card-body">
+              <div class="bank-fields">
+
+                <div class="bank-field">
+                  <span class="bank-field-label">Account name</span>
+                  <div class="copy-field">
+                    <span class="copy-field-value bank-field-static">Loop Financial Services (Pty) Ltd</span>
+                    <button class="copy-btn" onclick="copyField('Loop Financial Services (Pty) Ltd', this)">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                      Copy
+                    </button>
+                  </div>
+                </div>
+
+                <div class="bank-field">
+                  <span class="bank-field-label">Account number</span>
+                  <div class="copy-field">
+                    <span class="copy-field-value" style="font-family:var(--font-mono);">052 847 1930</span>
+                    <button class="copy-btn" onclick="copyField('0528471930', this)">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                      Copy
+                    </button>
+                  </div>
+                </div>
+
+                <div class="bank-field">
+                  <span class="bank-field-label">Branch code</span>
+                  <div class="copy-field">
+                    <span class="copy-field-value" style="font-family:var(--font-mono);">051001</span>
+                    <button class="copy-btn" onclick="copyField('051001', this)">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                      Copy
+                    </button>
+                  </div>
+                </div>
+
+                <div class="bank-field">
+                  <span class="bank-field-label">Account type</span>
+                  <span class="bank-field-static">Business Current</span>
+                </div>
+
+                <!-- ── CRITICAL: Reference field ─────────────── -->
+                <div class="bank-field" style="border-bottom:none; padding-bottom:0;">
+                  <div class="ref-field-wrap">
+                    <div class="ref-field-header">
+                      <span class="ref-field-label">Payment reference</span>
+                      <span class="critical-badge">Your unique reference</span>
+                    </div>
+                    <div class="copy-field ref-copy-field">
+                      <span class="copy-field-value">BX-0042</span>
+                      <button class="copy-btn" onclick="copyField('BX-0042', this)">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                      </button>
+                    </div>
+                    <div class="ref-field-note">Must match exactly — including hyphens. Do not alter or abbreviate.</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Timing alert -->
+          <div class="alert alert-info mb-4">
+            <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <div>
+              Deposits are typically matched within <strong>2–5 minutes</strong> during Standard Bank business hours (Mon–Fri, 08:00–17:00 SAST). Deposits received after hours are processed the following business day — not the next available window.
+            </div>
+          </div>
+
+          <!-- Receiving wallet -->
+          <div class="wallet-target">
+            <div class="wallet-target-label">ZARU will be sent to</div>
+            <div class="wallet-target-card">
+              <div>
+                <!-- wallet icon -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
+              </div>
+              <div class="wallet-target-info">
+                <div class="wallet-target-name">FX Hot Desk</div>
+                <div class="wallet-target-addr">7xKp4rNnLm8...3mNw</div>
+              </div>
+              <span class="badge badge-success">
+                <span class="dot"></span>
+                Whitelisted
+              </span>
+            </div>
+            <div class="wallet-target-note">
+              MVP: one whitelisted wallet per account. To manage wallets, visit
+              <a href="08-settings.html" style="color:var(--accent);font-weight:500;">Settings</a>.
+            </div>
+          </div>
+
+        </div><!-- /mint-left -->
+
+        <!-- ══════════════════════════════════════════════════
+             RIGHT COLUMN — Status tracker
+        ══════════════════════════════════════════════════ -->
+        <div class="mint-right">
+
+          <!-- Status card -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <span class="card-title">Current mint status</span>
+            </div>
+            <div class="card-body">
+
+              <!-- Dev state toggle -->
+              <div class="dev-toggle">
+                <span class="dev-toggle-label">Prototype only</span>
+                <div class="dev-btns">
+                  <button class="dev-btn" id="dev-1" onclick="setState(1)">1 Awaiting</button>
+                  <button class="dev-btn active" id="dev-2" onclick="setState(2)">2 Deposit</button>
+                  <button class="dev-btn" id="dev-3" onclick="setState(3)">3 Complete</button>
+                </div>
+              </div>
+
+              <!-- ── State 1: Awaiting deposit ─────────────── -->
+              <div class="status-state" id="state-1">
+                <div class="timeline">
+
+                  <div class="timeline-item">
+                    <div class="timeline-indicator">
+                      <div class="timeline-dot active"></div>
+                      <div class="timeline-line"></div>
+                    </div>
+                    <div class="timeline-body">
+                      <div class="timeline-label">Awaiting deposit</div>
+                      <div class="timeline-time">Waiting for your EFT to arrive</div>
+                    </div>
+                  </div>
+
+                  <div class="timeline-item">
+                    <div class="timeline-indicator">
+                      <div class="timeline-dot pending"></div>
+                      <div class="timeline-line"></div>
+                    </div>
+                    <div class="timeline-body">
+                      <div class="timeline-label pending">Mint initiated</div>
+                    </div>
+                  </div>
+
+                  <div class="timeline-item">
+                    <div class="timeline-indicator">
+                      <div class="timeline-dot pending"></div>
+                    </div>
+                    <div class="timeline-body">
+                      <div class="timeline-label pending">ZARU sent to wallet</div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="alert alert-info mt-4">
+                  <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  <div>Waiting for your EFT to arrive. This screen will update automatically once your deposit is detected.</div>
+                </div>
+              </div>
+
+              <!-- ── State 2: Deposit received (default) ───── -->
+              <div class="status-state visible" id="state-2">
+                <div class="timeline">
+
+                  <div class="timeline-item">
+                    <div class="timeline-indicator">
+                      <div class="timeline-dot complete"></div>
+                      <div class="timeline-line complete"></div>
+                    </div>
+                    <div class="timeline-body">
+                      <div class="timeline-label">Deposit received</div>
+                      <div class="timeline-time">Today 09:14 SAST · R 500,000.00</div>
+                    </div>
+                  </div>
+
+                  <div class="timeline-item">
+                    <div class="timeline-indicator">
+                      <div class="timeline-dot active pulsing"></div>
+                      <div class="timeline-line"></div>
+                    </div>
+                    <div class="timeline-body">
+                      <div class="timeline-label">Mint initiated</div>
+                      <div class="timeline-time" style="color:var(--accent);font-weight:500;">Processing…</div>
+                    </div>
+                  </div>
+
+                  <div class="timeline-item">
+                    <div class="timeline-indicator">
+                      <div class="timeline-dot pending"></div>
+                    </div>
+                    <div class="timeline-body">
+                      <div class="timeline-label pending">ZARU sent to wallet</div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="alert alert-info mt-4">
+                  <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  <div>Your deposit has been matched. ZARU is being minted now — this typically completes in under a minute.</div>
+                </div>
+
+                <div class="mint-amount-display">
+                  <div class="mint-amount-label">Minting</div>
+                  <div class="mint-amount-value">500,000.00 <span class="unit">ZARU</span></div>
+                  <div class="mint-amount-zar">≈ ZAR 500,000.00</div>
+                </div>
+              </div>
+
+              <!-- ── State 3: Complete ──────────────────────── -->
+              <div class="status-state" id="state-3">
+                <div class="timeline">
+
+                  <div class="timeline-item">
+                    <div class="timeline-indicator">
+                      <div class="timeline-dot complete"></div>
+                      <div class="timeline-line complete"></div>
+                    </div>
+                    <div class="timeline-body">
+                      <div class="timeline-label">Deposit received</div>
+                      <div class="timeline-time">Today 09:14 SAST · R 500,000.00</div>
+                    </div>
+                  </div>
+
+                  <div class="timeline-item">
+                    <div class="timeline-indicator">
+                      <div class="timeline-dot complete"></div>
+                      <div class="timeline-line complete"></div>
+                    </div>
+                    <div class="timeline-body">
+                      <div class="timeline-label">Mint initiated</div>
+                      <div class="timeline-time">Today 09:14 SAST</div>
+                    </div>
+                  </div>
+
+                  <div class="timeline-item">
+                    <div class="timeline-indicator">
+                      <div class="timeline-dot complete"></div>
+                    </div>
+                    <div class="timeline-body">
+                      <div class="timeline-label">ZARU sent to wallet</div>
+                      <div class="timeline-time">Today 09:15 SAST</div>
+                      <a href="#" class="tx-hash" title="View on Solscan">
+                        5Tz8mK...n4Rq
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                          <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                        </svg>
+                        View on Solscan
+                      </a>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="success-msg">
+                  <svg class="success-msg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                  </svg>
+                  <div class="success-msg-text">500,000.00 ZARU has been sent to your FX Hot Desk wallet.</div>
+                </div>
+
+                <button class="btn btn-secondary mt-4" style="width:100%;" onclick="location.href='04-transactions.html'">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/>
+                    <circle cx="4" cy="6"  r="1" fill="currentColor" stroke="none"/>
+                    <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/>
+                    <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/>
+                  </svg>
+                  View in Transactions
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Today's mint history -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <span class="card-title">Mint history (today)</span>
+              <span class="text-muted text-xs">28 Apr 2026</span>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="data">
+                <thead>
+                  <tr>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="td-mono">R 2,000,000.00</td>
+                    <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
+                    <td class="text-muted text-sm">08:42 SAST</td>
+                  </tr>
+                  <tr class="today-row-current">
+                    <td class="td-mono">R 500,000.00</td>
+                    <td><span class="badge badge-pending"><span class="dot"></span>Deposit received</span></td>
+                    <td class="text-muted text-sm">09:14 SAST</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Operating hours banner -->
+          <div class="hours-banner">
+            <svg class="hours-banner-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            <span><strong>Banking hours:</strong> Mon–Fri 08:00–17:00 SAST · Outside hours, deposits queue for next business day</span>
+          </div>
+
+        </div><!-- /mint-right -->
+      </div><!-- /mint-layout -->
+
+    </main>
+  </div>
+</div>
+
+<!-- ── Toast ───────────────────────────────────────────────── -->
+<div class="toast" id="toast">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+  <span id="toast-msg">Copied to clipboard</span>
+</div>
+
+<!-- Inline toast style (shared with other pages) -->
+<style>
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--ink-900); color: white;
+    padding: 10px 16px; border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 500;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 180ms ease, transform 180ms ease;
+    pointer-events: none; z-index: 1000;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: var(--shadow-lg);
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+</style>
+
+<script>
+  /* ── Persona init ───────────────────────────────────────── */
+  var persona = getPersona();
+  preservePersonaLinks();
+  applyPersonaBadge(persona);
+
+  /* ── Persona DOM updates ───────────────────────────────── */
+  (function () {
+    // Sidebar
+    var _so = document.querySelector('.sidebar-org .org-name');
+    if (_so) _so.textContent = persona.orgName;
+    var _av = document.querySelector('.org-avatar');
+    if (_av) _av.textContent = persona.userInitials;
+    var _on = document.querySelector('.org-card .org-name');
+    if (_on) _on.textContent = persona.userName;
+    var _ou = document.querySelector('.org-user');
+    if (_ou) _ou.textContent = persona.userRole + ' \xB7 ' + persona.orgName;
+
+    // BX chip (topbar)
+    document.querySelectorAll('.bx-chip').forEach(function (el) {
+      el.innerHTML = el.innerHTML.replace(/BX-\d+/g, persona.bxRef);
+      var oc = el.getAttribute('onclick');
+      if (oc) el.setAttribute('onclick', oc.replace(/BX-\d+/g, persona.bxRef));
+    });
+
+    // Reference copy field
+    var refVal = document.querySelector('.ref-copy-field .copy-field-value');
+    if (refVal) refVal.textContent = persona.bxRef;
+    var refBtn = document.querySelector('.ref-copy-field .copy-btn');
+    if (refBtn) {
+      var oc2 = refBtn.getAttribute('onclick');
+      if (oc2) refBtn.setAttribute('onclick', oc2.replace(/BX-\d+/g, persona.bxRef));
+    }
+
+    // Warning alert — BX ref in text
+    document.querySelectorAll('.alert-warning div').forEach(function (div) {
+      if (div.innerHTML.indexOf('BX-') !== -1) {
+        div.innerHTML = div.innerHTML.replace(/BX-\d+/g, persona.bxRef);
+      }
+    });
+
+    // Wallet target
+    var wName = document.querySelector('.wallet-target-name');
+    if (wName) wName.textContent = persona.primaryWallet.label;
+    var wAddr = document.querySelector('.wallet-target-addr');
+    if (wAddr) wAddr.textContent = persona.primaryWallet.addressShort;
+
+    // Success message (state 3)
+    var successText = document.querySelector('.success-msg-text');
+    if (successText) {
+      successText.innerHTML = successText.innerHTML.replace(
+        /FX Hot Desk|Primary|Hot Wallet|Cold Wallet/g, persona.primaryWallet.label
+      );
+    }
+  }());
+
+  /* ── State simulator ────────────────────────────────────── */
+  function setState(n) {
+    [1, 2, 3].forEach(function (i) {
+      document.getElementById('state-' + i).classList.toggle('visible', i === n);
+      document.getElementById('dev-' + i).classList.toggle('active', i === n);
+    });
+  }
+
+  /* ── Copy field ─────────────────────────────────────────── */
+  function copyField(value, btn) {
+    navigator.clipboard.writeText(value).then(function () {
+      var prev = btn.innerHTML;
+      btn.classList.add('copied');
+      btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+      setTimeout(function () {
+        btn.classList.remove('copied');
+        btn.innerHTML = prev;
+      }, 2000);
+    });
+  }
+
+  /* ── Topbar chip copy with toast ────────────────────────── */
+  function copyToast(value) {
+    navigator.clipboard.writeText(value).then(function () {
+      var toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = 'Copied to clipboard';
+      toast.classList.add('show');
+      setTimeout(function () { toast.classList.remove('show'); }, 2200);
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Setup — Loop Customer Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="_tokens.css">
+  <link rel="stylesheet" href="_components.css">
+
+  <style>
+    a.nav-item { text-decoration: none; }
+
+    /* ── Disabled nav items (locked during onboarding) ─────── */
+    .nav-item.locked {
+      opacity: 0.35;
+      pointer-events: none;
+      cursor: default;
+    }
+
+    /* ── Two-column onboarding layout ───────────────────────── */
+    .onboard-layout {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 28px;
+      align-items: start;
+    }
+    .onboard-right {
+      position: sticky;
+      top: calc(var(--topbar-h) + 24px);
+    }
+
+    /* ── Progress indicator ─────────────────────────────────── */
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .progress-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink-500);
+      white-space: nowrap;
+    }
+    .progress-track {
+      flex: 1;
+      height: 5px;
+      background: var(--ink-100);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 999px;
+      width: 50%; /* 2.5/5 steps — mid-step 3 */
+      transition: width 0.4s ease;
+    }
+    .progress-steps-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--accent);
+      white-space: nowrap;
+      font-family: var(--font-mono);
+    }
+
+    /* ── Steps layout overrides ─────────────────────────────── */
+    .step { padding-bottom: 0; }
+    .step-content { padding-bottom: 0; }
+
+    /* ── Active step expanded card ──────────────────────────── */
+    .step-card {
+      background: white;
+      border: 1.5px solid var(--accent-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    .step-card-header {
+      padding: 16px 20px;
+      background: var(--accent-soft);
+      border-bottom: 1px solid var(--accent-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .step-card-header-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .step-card-body { padding: 20px; }
+
+    /* ── BX Reference copy field — hero ─────────────────────── */
+    .bx-hero {
+      background: var(--ink-50);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .bx-hero-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-500);
+      margin-bottom: 8px;
+    }
+    .bx-copy-field .copy-field-value {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--ink-900);
+    }
+    .bx-copy-field .copy-btn {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 10px 18px;
+    }
+    .bx-copy-field .copy-btn:hover {
+      background: var(--accent);
+      color: white;
+    }
+    .bx-copy-field .copy-btn.copied { color: var(--emerald); }
+
+    /* ── BX warning banner ──────────────────────────────────── */
+    .bx-warning {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      background: #FFF7ED;
+      border: 2px solid #F97316;
+      border-radius: var(--radius-sm);
+      margin-bottom: 14px;
+    }
+    .bx-warning-icon { color: #EA580C; flex-shrink: 0; margin-top: 1px; }
+    .bx-warning-text {
+      font-size: 13.5px;
+      color: #7C2D12;
+      line-height: 1.55;
+    }
+    .bx-warning-text strong { color: #431407; }
+
+    /* ── Info note ──────────────────────────────────────────── */
+    .bx-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: var(--ink-50);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      margin-bottom: 18px;
+      font-size: 12.5px;
+      color: var(--ink-500);
+      line-height: 1.55;
+    }
+    .bx-note svg { flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Checkbox confirm ───────────────────────────────────── */
+    .confirm-check-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--emerald-soft);
+      border: 1px solid #A7F3D0;
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+    .confirm-check-wrap input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      margin-top: 1px;
+      accent-color: var(--emerald);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .confirm-check-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #065F46;
+      line-height: 1.5;
+      cursor: pointer;
+    }
+    .confirm-check-label span.bx-inline {
+      font-family: var(--font-mono);
+      background: white;
+      border: 1px solid #A7F3D0;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 12.5px;
+      color: var(--ink-900);
+    }
+
+    /* ── Continue button row ────────────────────────────────── */
+    .step-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-top: 4px;
+    }
+    .step-actions .step-count-note {
+      font-size: 12px;
+      color: var(--ink-400);
+    }
+
+    /* ── Completed step content ─────────────────────────────── */
+    .step-complete-body {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0 24px;
+    }
+    .step-complete-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--emerald-soft);
+      color: var(--emerald);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-complete-text { flex: 1; }
+    .step-complete-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink-900);
+    }
+    .step-complete-desc {
+      font-size: 12.5px;
+      color: var(--ink-500);
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+    .step-complete-meta {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--ink-400);
+      margin-top: 4px;
+    }
+
+    /* ── Pending step content ───────────────────────────────── */
+    .step-pending-body {
+      padding: 10px 0 24px;
+    }
+    .step-pending-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink-400);
+      margin-bottom: 3px;
+    }
+    .step-pending-desc {
+      font-size: 12.5px;
+      color: var(--ink-300);
+      line-height: 1.5;
+    }
+
+    /* ── Right panel ────────────────────────────────────────── */
+    .help-numbered {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .help-num-item {
+      display: flex;
+      gap: 12px;
+    }
+    .help-num-circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      border: 1.5px solid var(--accent-border);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .help-num-text {
+      font-size: 13px;
+      color: var(--ink-700);
+      line-height: 1.55;
+    }
+    .help-num-text strong { color: var(--ink-900); }
+
+    /* ── FAQ section ────────────────────────────────────────── */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .faq-item {
+      border-top: 1px solid var(--ink-100);
+      padding: 12px 0;
+    }
+    .faq-item:last-child { padding-bottom: 0; }
+    .faq-q {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--ink-900);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .faq-q-mark {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--ink-100);
+      color: var(--ink-500);
+      font-size: 9px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .faq-a {
+      font-size: 12px;
+      color: var(--ink-500);
+      line-height: 1.55;
+      padding-left: 22px;
+    }
+
+    /* ── Support note ───────────────────────────────────────── */
+    .support-note {
+      margin-top: 16px;
+      padding: 12px 14px;
+      background: var(--ink-50);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .support-note-text {
+      font-size: 12px;
+      color: var(--ink-500);
+      flex: 1;
+    }
+    .support-note-text a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .support-note-text a:hover { text-decoration: underline; }
+
+    /* ── Toast ──────────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--ink-900); color: white;
+      padding: 10px 16px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 180ms ease, transform 180ms ease;
+      pointer-events: none; z-index: 1000;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: var(--shadow-lg);
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+  <script src="_persona.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════════════════════════════════════════════════════════
+       SIDEBAR — limited nav during onboarding
+  ══════════════════════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-mark">L</div>
+        <div>
+          <div class="brand-name">Loop</div>
+          <div class="brand-tag">Customer Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-org">
+      <div class="org-label">Organisation</div>
+      <div class="org-name">Standard Bank Treasury</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">CORE</span>
+
+      <!-- Dashboard — accessible -->
+      <a href="01-dashboard.html" class="nav-item active">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <!-- Mint — locked -->
+      <a href="#" class="nav-item locked" tabindex="-1" aria-disabled="true">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/>
+        </svg>
+        Mint ZARU
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;opacity:0.5;">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </a>
+
+      <!-- Burn — locked -->
+      <a href="#" class="nav-item locked" tabindex="-1" aria-disabled="true">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/>
+        </svg>
+        Burn ZARU
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;opacity:0.5;">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </a>
+
+      <!-- Transactions — locked -->
+      <a href="#" class="nav-item locked" tabindex="-1" aria-disabled="true">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/>
+          <circle cx="4" cy="6"  r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/>
+          <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+        Transactions
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;opacity:0.5;">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </a>
+
+      <span class="nav-section-label">INTELLIGENCE</span>
+
+      <!-- Yield — locked -->
+      <a href="#" class="nav-item locked" tabindex="-1" aria-disabled="true">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+        </svg>
+        Yield
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+
+      <!-- Network — locked -->
+      <a href="#" class="nav-item locked" tabindex="-1" aria-disabled="true">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        Network
+        <span class="nav-badge">Post-MVP</span>
+      </a>
+
+      <span class="nav-section-label">ACCOUNT</span>
+
+      <!-- Settings — accessible -->
+      <a href="08-settings.html" class="nav-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="org-card">
+        <div class="org-avatar">TN</div>
+        <div>
+          <div class="org-name">Thabo Nkosi</div>
+          <div class="org-user">Admin · Standard Bank Treasury</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════════════════ -->
+  <div class="content">
+
+    <!-- ── Topbar ──────────────────────────────────────────── -->
+    <header class="topbar">
+      <span class="topbar-title">Account Setup</span>
+      <div class="topbar-actions">
+        <a href="#" class="link-ghost" style="font-size:13px;font-weight:600;color:var(--ink-500);text-decoration:none;display:flex;align-items:center;gap:5px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Help
+        </a>
+        <button class="btn btn-ghost btn-sm" style="color:var(--ink-700);">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Contact support
+        </button>
+      </div>
+    </header>
+
+    <!-- ── Page ────────────────────────────────────────────── -->
+    <main class="page">
+
+      <div class="page-header" style="margin-bottom:8px;">
+        <div>
+          <h1 class="page-title">Account Setup</h1>
+          <p class="page-subtitle">Complete the steps below to activate your Loop account and start minting.</p>
+        </div>
+        <div>
+          <span class="badge badge-pending" style="font-size:13px;padding:6px 14px;">
+            <span class="dot"></span>
+            Setup in progress
+          </span>
+        </div>
+      </div>
+
+      <!-- ── Progress indicator ─────────────────────────────── -->
+      <div class="progress-row">
+        <span class="progress-label">Progress</span>
+        <div class="progress-track">
+          <div class="progress-fill"></div>
+        </div>
+        <span class="progress-steps-label">Step 3 of 5</span>
+      </div>
+
+      <!-- ── Main layout ────────────────────────────────────── -->
+      <div class="onboard-layout">
+
+        <!-- ══════════════════════════════════════════════════
+             LEFT COLUMN — Steps
+        ══════════════════════════════════════════════════ -->
+        <div class="onboard-left">
+          <div class="steps">
+
+            <!-- ─────────────────────────────────────────────
+                 STEP 1 — Complete
+            ───────────────────────────────────────────────── -->
+            <div class="step">
+              <div class="step-indicator">
+                <div class="step-circle complete">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+                <div class="step-line complete"></div>
+              </div>
+              <div class="step-content">
+                <div class="step-complete-body">
+                  <div class="step-complete-text">
+                    <div class="step-complete-title">Terms accepted</div>
+                    <div class="step-complete-desc">Loop Partner Agreement and ZARU Terms of Use signed.</div>
+                    <div class="step-complete-meta">Signed 20 Apr 2026 · Thabo Nkosi</div>
+                  </div>
+                  <span class="badge badge-success" style="flex-shrink:0;">
+                    <span class="dot"></span>Complete
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ─────────────────────────────────────────────
+                 STEP 2 — Complete
+            ───────────────────────────────────────────────── -->
+            <div class="step">
+              <div class="step-indicator">
+                <div class="step-circle complete">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+                <div class="step-line complete"></div>
+              </div>
+              <div class="step-content">
+                <div class="step-complete-body">
+                  <div class="step-complete-text">
+                    <div class="step-complete-title">KYB verified</div>
+                    <div class="step-complete-desc">Standard Bank Treasury verified via SumHub.</div>
+                    <div class="step-complete-meta">Standard Bank of South Africa Ltd · Reg. 1969/017128/06</div>
+                  </div>
+                  <span class="badge badge-success" style="flex-shrink:0;">
+                    <span class="dot"></span>Verified
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ─────────────────────────────────────────────
+                 STEP 3 — ACTIVE (BX Reference)
+            ───────────────────────────────────────────────── -->
+            <div class="step">
+              <div class="step-indicator">
+                <div class="step-circle active">3</div>
+                <div class="step-line"></div>
+              </div>
+              <div class="step-content">
+                <div style="padding-top:4px;">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+                    <div class="step-title">Your BX Reference</div>
+                    <span class="badge badge-info" style="font-size:11px;">Current step</span>
+                  </div>
+                  <div class="step-desc" style="margin-bottom:0;">
+                    Your unique identifier for all minting activity. Must be included as the payment description on every EFT you send to Loop.
+                  </div>
+                </div>
+
+                <!-- Active step expanded card -->
+                <div class="step-card">
+                  <div class="step-card-header">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                    </svg>
+                    <span class="step-card-header-title">Your BX Reference is ready</span>
+                  </div>
+                  <div class="step-card-body">
+
+                    <!-- BX value — hero display -->
+                    <div class="bx-hero">
+                      <div class="bx-hero-label">Your unique BX Reference</div>
+                      <div class="copy-field bx-copy-field">
+                        <span class="copy-field-value">BX-0042</span>
+                        <button class="copy-btn" onclick="copyBx(this)">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                          </svg>
+                          Copy
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Warning — cannot-miss -->
+                    <div class="bx-warning">
+                      <svg class="bx-warning-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                      </svg>
+                      <div class="bx-warning-text">
+                        <strong>Every EFT you send to Loop must include <span style="font-family:var(--font-mono);background:#FEF3C7;padding:1px 6px;border-radius:4px;font-size:13px;">BX-0042</span> as the payment description.</strong>
+                        Without it, Loop cannot match your deposit to your account and your mint will be delayed by up to 1 business day.
+                      </div>
+                    </div>
+
+                    <!-- Permanent note -->
+                    <div class="bx-note">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                      </svg>
+                      Your BX Reference is permanent and cannot be changed. You can always find it in
+                      <a href="08-settings.html" style="color:var(--accent);font-weight:600;text-decoration:none;">Settings → BX Reference</a>.
+                    </div>
+
+                    <!-- Acknowledgement checkbox -->
+                    <label class="confirm-check-wrap">
+                      <input type="checkbox" id="bx-confirm" checked>
+                      <span class="confirm-check-label">
+                        I understand that <span class="bx-inline">BX-0042</span> must be included in every EFT payment description when sending funds to Loop.
+                      </span>
+                    </label>
+
+                    <!-- Continue button -->
+                    <div class="step-actions">
+                      <button class="btn btn-primary" id="continue-btn" onclick="handleContinue()">
+                        Continue to wallet setup
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                      </button>
+                      <span class="step-count-note">2 steps remaining</span>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ─────────────────────────────────────────────
+                 STEP 4 — Pending
+            ───────────────────────────────────────────────── -->
+            <div class="step">
+              <div class="step-indicator">
+                <div class="step-circle pending">4</div>
+                <div class="step-line"></div>
+              </div>
+              <div class="step-content">
+                <div class="step-pending-body">
+                  <div class="step-pending-title">Submit wallet for whitelisting</div>
+                  <div class="step-pending-desc">Provide your Solana wallet address. Loop will run a small live test transaction to verify ownership.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ─────────────────────────────────────────────
+                 STEP 5 — Pending
+            ───────────────────────────────────────────────── -->
+            <div class="step">
+              <div class="step-indicator">
+                <div class="step-circle pending">5</div>
+              </div>
+              <div class="step-content">
+                <div class="step-pending-body" style="padding-bottom:0;">
+                  <div class="step-pending-title">Confirm ZAR beneficiary account</div>
+                  <div class="step-pending-desc">Confirm the bank account to receive ZAR redemptions when you burn ZARU.</div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /steps -->
+        </div><!-- /onboard-left -->
+
+        <!-- ══════════════════════════════════════════════════
+             RIGHT COLUMN — Help panel
+        ══════════════════════════════════════════════════ -->
+        <div class="onboard-right">
+
+          <!-- Getting started card -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Getting started</div>
+                <div class="card-subtitle">What happens after you complete setup</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="help-numbered">
+
+                <div class="help-num-item">
+                  <div class="help-num-circle">1</div>
+                  <div class="help-num-text">
+                    <strong>Note your BX Reference</strong> — save it permanently in your treasury procedures. You'll need it on every EFT.
+                  </div>
+                </div>
+
+                <div class="help-num-item">
+                  <div class="help-num-circle">2</div>
+                  <div class="help-num-text">
+                    <strong>Wallet whitelisting</strong> takes approximately 1 business day. Loop runs a live test transaction to confirm ownership.
+                  </div>
+                </div>
+
+                <div class="help-num-item">
+                  <div class="help-num-circle">3</div>
+                  <div class="help-num-text">
+                    <strong>Once approved, you can mint ZARU immediately</strong> — just EFT to the Loop account with your BX Reference.
+                  </div>
+                </div>
+
+                <div class="help-num-item">
+                  <div class="help-num-circle">4</div>
+                  <div class="help-num-text">
+                    Your <strong>first mint typically settles within 5 minutes</strong> during Standard Bank business hours (Mon–Fri, 08:00–17:00 SAST).
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- FAQ -->
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-400);margin-bottom:2px;">FAQ</div>
+              <div class="faq-list">
+
+                <div class="faq-item">
+                  <div class="faq-q">
+                    <span class="faq-q-mark">?</span>
+                    What is a BX Reference?
+                  </div>
+                  <div class="faq-a">
+                    It's your unique deposit identifier. Loop uses it to automatically match incoming EFTs to your account and trigger minting. Think of it as your account number for minting.
+                  </div>
+                </div>
+
+                <div class="faq-item">
+                  <div class="faq-q">
+                    <span class="faq-q-mark">?</span>
+                    Can I have multiple wallets?
+                  </div>
+                  <div class="faq-a">
+                    Yes. Additional wallet whitelist requests go through your Loop ops contact. At MVP, one wallet is active per account.
+                  </div>
+                </div>
+
+                <div class="faq-item">
+                  <div class="faq-q">
+                    <span class="faq-q-mark">?</span>
+                    What if I forget my BX Reference?
+                  </div>
+                  <div class="faq-a">
+                    It's always visible in <a href="08-settings.html" style="color:var(--accent);font-weight:600;text-decoration:none;">Settings → BX Reference</a> and in the topbar on every page.
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Support card -->
+          <div class="card">
+            <div class="card-body" style="padding:16px 18px;">
+              <div style="display:flex;align-items:flex-start;gap:12px;">
+                <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--accent-soft);display:grid;place-items:center;flex-shrink:0;color:var(--accent);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div style="font-size:13.5px;font-weight:600;color:var(--ink-900);margin-bottom:4px;">Need help?</div>
+                  <div style="font-size:12.5px;color:var(--ink-500);line-height:1.5;">
+                    Your Loop relationship manager is available Mon–Fri, 08:00–17:00 SAST. For urgent issues outside hours, contact
+                    <a href="mailto:ops@loop.finance" style="color:var(--accent);font-weight:600;text-decoration:none;">ops@loop.finance</a>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /onboard-right -->
+      </div><!-- /onboard-layout -->
+    </main>
+  </div>
+</div>
+
+<!-- ── Toast ───────────────────────────────────────────────── -->
+<div class="toast" id="toast">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+  <span id="toast-msg">Copied!</span>
+</div>
+
+<script>
+  /* ── Persona init ───────────────────────────────────────── */
+  var persona = getPersona();
+  preservePersonaLinks();
+  applyPersonaBadge(persona);
+
+  /* ── Persona DOM updates ───────────────────────────────── */
+  (function () {
+    // Sidebar
+    var _so = document.querySelector('.sidebar-org .org-name');
+    if (_so) _so.textContent = persona.orgName;
+    var _av = document.querySelector('.org-avatar');
+    if (_av) _av.textContent = persona.userInitials;
+    var _on = document.querySelector('.org-card .org-name');
+    if (_on) _on.textContent = persona.userName;
+    var _ou = document.querySelector('.org-user');
+    if (_ou) _ou.textContent = persona.userRole + ' \xB7 ' + persona.orgName;
+
+    // BX copy field (step 3)
+    var bxVal = document.querySelector('.bx-copy-field .copy-field-value');
+    if (bxVal) bxVal.textContent = persona.bxRef;
+
+    // BX warning text (innerHTML — contains styled span)
+    var bxWarn = document.querySelector('.bx-warning-text');
+    if (bxWarn) {
+      bxWarn.innerHTML = bxWarn.innerHTML.replace(/BX-\d+/g, persona.bxRef);
+    }
+
+    // Confirmation checkbox label
+    var bxInline = document.querySelector('.bx-inline');
+    if (bxInline) bxInline.textContent = persona.bxRef;
+
+    // Step 2 KYB org name
+    document.querySelectorAll('.step-desc').forEach(function (el) {
+      if (el.textContent.indexOf('Standard Bank Treasury') !== -1) {
+        el.textContent = el.textContent.replace('Standard Bank Treasury', persona.orgName);
+      }
+    });
+
+    // FAQ / bx-note links containing old BX ref
+    document.querySelectorAll('.bx-note, .faq-item').forEach(function (el) {
+      if (el.innerHTML.indexOf('BX-') !== -1) {
+        el.innerHTML = el.innerHTML.replace(/BX-\d+/g, persona.bxRef);
+      }
+    });
+  }());
+
+  /* ── BX copy ────────────────────────────────────────────── */
+  function copyBx(btn) {
+    navigator.clipboard.writeText(persona.bxRef).then(function () {
+      var prev = btn.innerHTML;
+      btn.classList.add('copied');
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+      var toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = persona.bxRef + ' copied to clipboard';
+      toast.classList.add('show');
+      setTimeout(function () {
+        btn.classList.remove('copied');
+        btn.innerHTML = prev;
+        toast.classList.remove('show');
+      }, 2200);
+    });
+  }
+
+  /* ── Continue button: require checkbox ─────────────────── */
+  function handleContinue() {
+    var checked = document.getElementById('bx-confirm').checked;
+    if (!checked) {
+      document.getElementById('bx-confirm').closest('.confirm-check-wrap').style.animation = 'shake 0.35s ease';
+      setTimeout(function () {
+        document.getElementById('bx-confirm').closest('.confirm-check-wrap').style.animation = '';
+      }, 400);
+      var toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = 'Please confirm you understand the BX Reference requirement';
+      toast.classList.add('show');
+      setTimeout(function () { toast.classList.remove('show'); }, 3000);
+      return;
+    }
+    /* Prototype: show confirmation toast */
+    var toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = 'Step 3 complete — proceeding to wallet setup';
+    toast.classList.add('show');
+    setTimeout(function () { toast.classList.remove('show'); }, 2500);
+  }
+</script>
+
+<style>
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-5px); }
+    40%       { transform: translateX(5px); }
+    60%       { transform: translateX(-4px); }
+    80%       { transform: translateX(4px); }
+  }
+</style>
+</body>
+</html>

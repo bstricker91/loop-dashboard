@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loop Customer Portal — DCG Demo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="_tokens.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--navy-900);
+      color: var(--white);
+      margin: 0;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Page wrapper ──────────────────────────────────────────── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px 56px;
+    }
+
+    /* ── Header ────────────────────────────────────────────────── */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    /* Brand mark — a simple geometric loop shape */
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+    }
+
+    .logo-wordmark {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      color: var(--white);
+    }
+
+    .header-tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #D97706;
+      background: rgba(217, 119, 6, 0.12);
+      border: 1px solid rgba(217, 119, 6, 0.22);
+      border-radius: 100px;
+      padding: 3px 12px;
+      margin-bottom: 16px;
+      letter-spacing: 0.02em;
+    }
+
+    .header-title {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.6px;
+      color: var(--white);
+      margin: 0 0 10px;
+      line-height: 1.2;
+    }
+
+    .header-subtitle {
+      font-size: 16px;
+      color: var(--ink-400);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* ── Cards grid ────────────────────────────────────────────── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 340px);
+      gap: 20px;
+      width: 100%;
+      max-width: 1060px;
+      justify-content: center;
+    }
+
+    @media (max-width: 1080px) {
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 720px;
+      }
+      .cards .card:last-child {
+        grid-column: 1 / -1;
+        max-width: 340px;
+        justify-self: center;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .cards {
+        grid-template-columns: 1fr;
+        max-width: 420px;
+      }
+      .cards .card:last-child {
+        grid-column: auto;
+        max-width: none;
+        justify-self: auto;
+      }
+    }
+
+    /* ── Card ──────────────────────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      cursor: pointer;
+      transition: transform 150ms ease, box-shadow 150ms ease;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14), 0 4px 12px rgba(15, 23, 42, 0.08);
+    }
+
+    .card:active {
+      transform: translateY(0);
+    }
+
+    /* ── Badge ─────────────────────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+      margin-bottom: 18px;
+      width: fit-content;
+    }
+
+    .badge-blue {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+    }
+
+    .badge-grey {
+      background: var(--ink-100);
+      color: var(--ink-500);
+      border: 1px solid var(--ink-200);
+    }
+
+    .badge-emerald {
+      background: var(--emerald-soft);
+      color: var(--emerald);
+      border: 1px solid #A7F3D0;
+    }
+
+    /* ── Card content ──────────────────────────────────────────── */
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink-900);
+      margin: 0 0 2px;
+      letter-spacing: -0.2px;
+    }
+
+    .card-subtitle {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--ink-400);
+      margin: 0 0 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .card-description {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--ink-500);
+      margin: 0 0 18px;
+    }
+
+    /* ── Feature list ──────────────────────────────────────────── */
+    .features {
+      list-style: none;
+      margin: 0 0 20px;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-top: 1px solid var(--ink-100);
+      border-bottom: 1px solid var(--ink-100);
+      padding: 14px 0;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--ink-700);
+    }
+
+    .feature-icon {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .feature-icon.yes {
+      background: var(--emerald-soft);
+      color: var(--emerald);
+    }
+
+    .feature-icon.no {
+      background: var(--ink-100);
+      color: var(--ink-400);
+    }
+
+    .feature.unavailable {
+      color: var(--ink-400);
+    }
+
+    /* ── Persona ───────────────────────────────────────────────── */
+    .persona {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 16px 0 20px;
+    }
+
+    .persona-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .persona-avatar-blue    { background: var(--accent-soft);   color: var(--accent); }
+    .persona-avatar-grey    { background: var(--ink-100);        color: var(--ink-500); }
+    .persona-avatar-emerald { background: var(--emerald-soft);   color: var(--emerald); }
+
+    .persona-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .persona-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink-700);
+    }
+
+    .persona-org {
+      font-size: 11.5px;
+      color: var(--ink-400);
+    }
+
+    /* ── CTA button ────────────────────────────────────────────── */
+    .cta {
+      display: block;
+      width: 100%;
+      padding: 11px 18px;
+      border-radius: var(--radius);
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 140ms ease, box-shadow 140ms ease;
+      margin-top: auto;
+    }
+
+    .cta-primary {
+      background: var(--accent);
+      color: var(--white);
+    }
+    .cta-primary:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    .cta-secondary {
+      background: var(--ink-900);
+      color: var(--white);
+    }
+    .cta-secondary:hover {
+      background: var(--navy-700);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+    }
+
+    .cta-emerald {
+      background: var(--emerald);
+      color: var(--white);
+    }
+    .cta-emerald:hover {
+      background: #047857;
+      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+    }
+
+    /* ── Footer ────────────────────────────────────────────────── */
+    .footer {
+      margin-top: 48px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .footer p {
+      margin: 0;
+      font-size: 12px;
+      color: var(--navy-500);
+      line-height: 1.6;
+    }
+
+    .footer p + p {
+      color: rgba(148, 163, 184, 0.45);
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <!-- Loop brand mark — interlocking rings motif -->
+      <svg class="logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="14" cy="20" r="9.5" stroke="white" stroke-width="3" fill="none" opacity="0.9"/>
+        <circle cx="26" cy="20" r="9.5" stroke="#2563EB" stroke-width="3" fill="none" opacity="0.9"/>
+      </svg>
+      <span class="logo-wordmark">Loop</span>
+    </div>
+    <div class="header-tag">DCG Prototype · May 7 2026</div>
+    <h1 class="header-title">Loop Customer Portal</h1>
+    <p class="header-subtitle">Select a customer profile to explore the portal from their perspective.</p>
+  </header>
+
+  <!-- Cards -->
+  <div class="cards">
+
+    <!-- Card 1: Type A — Official Distributor -->
+    <a class="card" href="01-dashboard.html?type=A">
+      <span class="badge badge-blue">Type A</span>
+
+      <h2 class="card-title">Official Distributor</h2>
+      <p class="card-subtitle">Seed / JV Partner</p>
+
+      <p class="card-description">
+        The founding institutional partners — Luno, Sanlam, EasyEquities, Lesaka. Hold 40M locked seed ZARU
+        plus an available balance. Earn yield at 6% p.a. on total holdings. Full portal access.
+      </p>
+
+      <ul class="features">
+        <li class="feature"><span class="feature-icon yes">✓</span> Mint &amp; Burn ZARU</li>
+        <li class="feature"><span class="feature-icon yes">✓</span> 40M locked seed position</li>
+        <li class="feature"><span class="feature-icon yes">✓</span> Yield dashboard (6% p.a.)</li>
+        <li class="feature"><span class="feature-icon yes">✓</span> Transaction history</li>
+        <li class="feature"><span class="feature-icon yes">✓</span> Network &amp; settings</li>
+      </ul>
+
+      <div class="persona">
+        <div class="persona-avatar persona-avatar-blue">TN</div>
+        <div class="persona-info">
+          <span class="persona-name">Thabo Nkosi</span>
+          <span class="persona-org">Standard Bank Treasury</span>
+        </div>
+      </div>
+
+      <span class="cta cta-primary">View as Official Distributor →</span>
+    </a>
+
+    <!-- Card 2: Type B — Institutional Client (Standard) -->
+    <a class="card" href="01-dashboard.html?type=B1">
+      <span class="badge badge-grey">Type B</span>
+
+      <h2 class="card-title">Institutional Client</h2>
+      <p class="card-subtitle">Standard — no yield</p>
+
+      <p class="card-description">
+        Regular institutional partners — Cedar Money, Unum, 10bet. Full mint and burn access,
+        transaction history, and account management. No yield entitlement.
+      </p>
+
+      <ul class="features">
+        <li class="feature"><span class="feature-icon yes">✓</span> Mint &amp; Burn ZARU</li>
+        <li class="feature"><span class="feature-icon yes">✓</span> Transaction history</li>
+        <li class="feature"><span class="feature-icon yes">✓</span> Settings &amp; wallet management</li>
+        <li class="feature unavailable"><span class="feature-icon no">✗</span> Yield dashboard (not available)</li>
+        <li class="feature unavailable"><span class="feature-icon no">✗</span> Locked seed position (n/a)</li>
+      </ul>
+
+      <div class="persona">
+        <div class="persona-avatar persona-avatar-grey">AM</div>
+        <div class="persona-info">
+          <span class="persona-name">Aisha Mokoena</span>
+          <span class="persona-org">Cedar Money</span>
+        </div>
+      </div>
+
+      <span class="cta cta-secondary">View as Standard Client →</span>
+    </a>
+
+    <!-- Card 3: Type B+ — Institutional Client (with Yield) -->
+    <a class="card" href="01-dashboard.html?type=B2">
+      <span class="badge badge-emerald">Type B+</span>
+
+      <h2 class="card-title">Institutional Client</h2>
+      <p class="card-subtitle">Category 2 Distributor — with yield</p>
+
+      <p class="card-description">
+        Institutional clients who have a formal yield arrangement with Loop — Category 2 distributors.
+        Same mint/burn capabilities as standard clients, plus access to the yield dashboard.
+      </p>
+
+      <ul class="features">
+        <li class="feature"><span class="feature-icon yes">✓</span> Mint &amp; Burn ZARU</li>
+        <li class="feature"><span class="feature-icon yes">✓</span> Transaction history</li>
+        <li class="feature"><span class="feature-icon yes">✓</span> Settings &amp; wallet management</li>
+        <li class="feature"><span class="feature-icon yes">✓</span> Yield dashboard (6% p.a.)</li>
+        <li class="feature unavailable"><span class="feature-icon no">✗</span> Locked seed position (n/a)</li>
+      </ul>
+
+      <div class="persona">
+        <div class="persona-avatar persona-avatar-emerald">KV</div>
+        <div class="persona-info">
+          <span class="persona-name">Kofi Vanderpuye</span>
+          <span class="persona-org">MoneyBadger</span>
+        </div>
+      </div>
+
+      <span class="cta cta-emerald">View as Category 2 Distributor →</span>
+    </a>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>This is a concept prototype for internal review. Data is illustrative only.</p>
+    <p>Powered by Luno · Secured by Fireblocks · Attested by Moore South Africa</p>
+  </footer>
+
+</div>
+
+</body>
+</html>

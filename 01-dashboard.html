@@ -472,7 +472,7 @@
           <polyline points="8 12 12 16 16 12"/>
           <line x1="12" y1="8" x2="12" y2="16"/>
         </svg>
-        Burn
+        Redeem
       </a>
 
       <a href="04-transactions.html" class="nav-item">
@@ -536,6 +536,17 @@
           <div class="org-user">Admin · Standard Bank Treasury</div>
         </div>
       </div>
+      <a href="index.html" class="switch-profile-link">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <polyline points="15 3 21 3 21 9"/>
+          <polyline points="9 21 3 21 3 15"/>
+          <line x1="21" y1="3" x2="14" y2="10"/>
+          <line x1="3" y1="21" x2="10" y2="14"/>
+        </svg>
+        Switch customer profile
+      </a>
     </div>
 
   </aside>
@@ -589,7 +600,7 @@
               <li class="notif-item unread" data-id="n2">
                 <div class="notif-dot"></div>
                 <div class="notif-body">
-                  <div class="notif-msg">Burn settled — R 500,000 redeemed to ZAR</div>
+                  <div class="notif-msg">Redemption settled — R 500,000 redeemed to ZAR</div>
                   <div class="notif-time">22 Apr · 15:07 SAST</div>
                 </div>
                 <button class="notif-dismiss" onclick="dismissNotif('n2')" aria-label="Dismiss">×</button>
@@ -637,7 +648,7 @@
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/>
             </svg>
-            Burn
+            Redeem
           </button>
         </div>
       </div>
@@ -763,7 +774,7 @@
                 <td class="text-muted text-sm" style="white-space:nowrap;">25 Apr 2026</td>
               </tr>
               <tr>
-                <td><span class="badge badge-neutral">BURN</span></td>
+                <td><span class="badge badge-neutral">REDEMPTION</span></td>
                 <td class="td-mono">R 500,000.00</td>
                 <td>
                   <div class="wallet-label">Primary</div>
@@ -781,7 +792,7 @@
                 <td class="text-muted text-sm" style="white-space:nowrap;">18 Apr 2026</td>
               </tr>
               <tr>
-                <td><span class="badge badge-neutral">BURN</span></td>
+                <td><span class="badge badge-neutral">REDEMPTION</span></td>
                 <td class="td-mono">R 1,000,000.00</td>
                 <td>
                   <div class="wallet-label">Primary</div>
@@ -838,7 +849,7 @@
             <svg style="width:15px;height:15px;flex-shrink:0;margin-top:1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16.01"/>
             </svg>
-            <div style="font-size:12.5px;">This balance is your ZARU held in your Luno custody wallet, reflected live on Loop via the Luno API. To mint or redeem ZARU from this wallet, use the Mint and Burn flows above.</div>
+            <div style="font-size:12.5px;">This balance is your ZARU held in your Luno custody wallet, reflected live on Loop via the Luno API. To mint or redeem ZARU from this wallet, use the Mint and Redeem flows above.</div>
           </div>
         </div>
       </div>
@@ -897,7 +908,6 @@
   /* ── Persona init ───────────────────────────────────────── */
   var persona = getPersona();
   preservePersonaLinks();
-  applyPersonaBadge(persona);
 
   /* ── Distributor nav visibility ─────────────────────────── */
   var distNav = document.querySelector('a[href*="06-yield.html"]');
@@ -973,11 +983,10 @@
       }
     }
 
-    // Yield nav item
+    // Distributor nav item — hide for non-distributors (primary guard; also handled in distNav block above)
     if (!persona.isDistributor) {
-      document.querySelectorAll('.nav-item').forEach(function (item) {
-        if (item.textContent.indexOf('Yield') !== -1) item.style.display = 'none';
-      });
+      var distNavFallback = document.querySelector('a[href*="06-yield.html"]');
+      if (distNavFallback) distNavFallback.style.display = 'none';
     }
 
     // Pending row BX ref
@@ -1083,9 +1092,9 @@
   /* ── Side panel ─────────────────────────────────────────── */
   var SP_DATA = [
     { type: 'MINT', amount: 'R 2,000,000.00', wallet: 'FX Hot Desk', addr: '7xKp...3mNw', status: 'Completed', date: '25 Apr 2026', ref: 'BX-0037', fee: 'R 0.00' },
-    { type: 'BURN', amount: 'R 500,000.00',   wallet: 'Primary',     addr: null,          status: 'Settled',   date: '22 Apr 2026', ref: 'BX-0035', fee: 'R 0.00' },
+    { type: 'REDEMPTION', amount: 'R 500,000.00',   wallet: 'Primary',     addr: null,          status: 'Settled',   date: '22 Apr 2026', ref: 'BX-0035', fee: 'R 0.00' },
     { type: 'MINT', amount: 'R 5,000,000.00', wallet: 'FX Hot Desk', addr: null,          status: 'Completed', date: '18 Apr 2026', ref: 'BX-0031', fee: 'R 0.00' },
-    { type: 'BURN', amount: 'R 1,000,000.00', wallet: 'Primary',     addr: null,          status: 'Settled',   date: '12 Apr 2026', ref: 'BX-0028', fee: 'R 0.00' },
+    { type: 'REDEMPTION', amount: 'R 1,000,000.00', wallet: 'Primary',     addr: null,          status: 'Settled',   date: '12 Apr 2026', ref: 'BX-0028', fee: 'R 0.00' },
     { type: 'MINT', amount: 'R 7,000,000.00', wallet: 'FX Hot Desk', addr: null,          status: 'Completed', date: '5 Apr 2026',  ref: 'BX-0024', fee: 'R 0.00' }
   ];
 
@@ -1099,7 +1108,7 @@
       badge.textContent = data.type;
       badge.className = 'badge ' + (data.type === 'MINT' ? 'badge-info' : 'badge-neutral');
     }
-    if (title) title.textContent = data.type === 'MINT' ? 'Mint transaction' : 'Burn transaction';
+    if (title) title.textContent = data.type === 'MINT' ? 'Mint transaction' : 'Redemption transaction';
     if (body) {
       body.innerHTML =
         '<div class="sp-row"><span class="sp-label">Amount</span><span class="sp-value mono">' + data.amount + '</span></div>' +

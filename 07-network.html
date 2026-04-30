@@ -30,122 +30,6 @@
     }
     .postmvp-banner-icon { flex-shrink: 0; margin-top: 1px; color: var(--accent); }
 
-    /* ── Proof of Reserve card ──────────────────────────────── */
-    .por-body {
-      padding: 24px 28px;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 32px;
-      align-items: start;
-    }
-
-    .por-status-block {
-      text-align: center;
-    }
-    .por-check {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: var(--emerald-soft);
-      border: 2px solid #A7F3D0;
-      display: grid;
-      place-items: center;
-      margin: 0 auto 10px;
-      color: var(--emerald);
-    }
-    .por-status-label {
-      font-size: 12.5px;
-      font-weight: 700;
-      color: var(--emerald);
-      white-space: nowrap;
-    }
-
-    .por-divider {
-      width: 1px;
-      background: var(--ink-100);
-      align-self: stretch;
-    }
-
-    .por-metrics {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px 32px;
-    }
-    .por-metric-label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--ink-500);
-      margin-bottom: 5px;
-    }
-    .por-metric-value {
-      font-family: var(--font-mono);
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--ink-900);
-      letter-spacing: -0.01em;
-    }
-    .por-metric-value.ratio {
-      font-size: 28px;
-      color: var(--emerald);
-    }
-    .por-metric-sub {
-      font-size: 12px;
-      color: var(--ink-500);
-      margin-top: 3px;
-    }
-
-    .por-attestation {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-width: 220px;
-    }
-    .por-attest-row {
-      display: flex;
-      flex-direction: column;
-      padding: 10px 14px;
-      background: var(--ink-50);
-      border: 1px solid var(--ink-200);
-      border-radius: var(--radius-sm);
-    }
-    .por-attest-label {
-      font-size: 10.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--ink-400);
-      margin-bottom: 3px;
-    }
-    .por-attest-value {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink-900);
-    }
-    .por-attest-value.next {
-      color: var(--accent);
-    }
-    .por-report-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 12.5px;
-      font-weight: 600;
-      color: var(--ink-400);
-      text-decoration: none;
-      padding: 8px 14px;
-      background: var(--ink-50);
-      border: 1px solid var(--ink-200);
-      border-radius: var(--radius-sm);
-      transition: var(--t-fast);
-    }
-    .por-report-link:hover {
-      color: var(--accent);
-      border-color: var(--accent-border);
-      background: var(--accent-soft);
-    }
-
     /* ── Corridors ──────────────────────────────────────────── */
     .corridor-list {
       display: flex;
@@ -396,7 +280,7 @@
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/>
         </svg>
-        Burn
+        Redeem
       </a>
 
       <a href="04-transactions.html" class="nav-item">
@@ -453,6 +337,17 @@
           <div class="org-user">Admin · Standard Bank Treasury</div>
         </div>
       </div>
+      <a href="index.html" class="switch-profile-link">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <polyline points="15 3 21 3 21 9"/>
+          <polyline points="9 21 3 21 3 15"/>
+          <line x1="21" y1="3" x2="14" y2="10"/>
+          <line x1="3" y1="21" x2="10" y2="14"/>
+        </svg>
+        Switch customer profile
+      </a>
     </div>
   </aside>
 
@@ -524,7 +419,7 @@
         <div class="card stat-card">
           <div class="stat-label">ACTIVE INSTITUTIONS</div>
           <div class="stat-value">7</div>
-          <div class="stat-sub">Minted or burned in last 30 days</div>
+          <div class="stat-sub">Minted or redeemed in last 30 days</div>
           <div class="stat-delta up">
             <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
@@ -536,7 +431,7 @@
         <div class="card stat-card">
           <div class="stat-label">30-DAY VOLUME</div>
           <div class="stat-value mono">R 1.2B</div>
-          <div class="stat-sub">Minted + burned · Solana mainnet</div>
+          <div class="stat-sub">Minted + redeemed · Solana mainnet</div>
           <div class="stat-delta up">
             <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
@@ -675,7 +570,7 @@
                   <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--ink-900);">3.2 min</span>
                 </div>
                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span style="font-size:12.5px;color:var(--ink-500);">Avg. burn settlement</span>
+                  <span style="font-size:12.5px;color:var(--ink-500);">Avg. redemption settlement</span>
                   <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--ink-900);">1.4 hrs</span>
                 </div>
                 <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -912,7 +807,6 @@
   /* ── Persona init ───────────────────────────────────────── */
   var persona = getPersona();
   preservePersonaLinks();
-  applyPersonaBadge(persona);
 
   /* ── Distributor nav visibility ─────────────────────────── */
   var distNav = document.querySelector('a[href*="06-yield.html"]');

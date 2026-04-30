@@ -375,7 +375,7 @@
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/>
         </svg>
-        Burn
+        Redeem
       </a>
 
       <a href="04-transactions.html" class="nav-item active">
@@ -432,6 +432,17 @@
           <div class="org-user">Admin · Standard Bank Treasury</div>
         </div>
       </div>
+      <a href="index.html" class="switch-profile-link">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <polyline points="15 3 21 3 21 9"/>
+          <polyline points="9 21 3 21 3 15"/>
+          <line x1="21" y1="3" x2="14" y2="10"/>
+          <line x1="3" y1="21" x2="10" y2="14"/>
+        </svg>
+        Switch customer profile
+      </a>
     </div>
   </aside>
 
@@ -481,7 +492,7 @@
         <div class="seg-control" role="group" aria-label="Filter by type">
           <button class="seg-btn active" data-type="all"  onclick="setType(this, 'all')">All</button>
           <button class="seg-btn"        data-type="mint" onclick="setType(this, 'mint')">Mint</button>
-          <button class="seg-btn"        data-type="burn" onclick="setType(this, 'burn')">Burn</button>
+          <button class="seg-btn"        data-type="burn" onclick="setType(this, 'burn')">Redemption</button>
         </div>
 
         <!-- Status dropdown -->
@@ -625,7 +636,7 @@
 
               <!-- Row 3 — Burn settled (USDC) -->
               <tr data-type="burn" data-status="settled" data-currency="USDC">
-                <td><span class="badge badge-neutral"><span class="dot"></span>BURN</span></td>
+                <td><span class="badge badge-neutral"><span class="dot"></span>REDEMPTION</span></td>
                 <td class="ref-cell ref-dash">—</td>
                 <td class="amt-cell burn">R 500,000.00</td>
                 <td class="td-mono"><span class="badge badge-info">USDC</span></td>
@@ -679,7 +690,7 @@
 
               <!-- Row 5 — Burn settled (USDT) -->
               <tr data-type="burn" data-status="settled" data-currency="USDT">
-                <td><span class="badge badge-neutral"><span class="dot"></span>BURN</span></td>
+                <td><span class="badge badge-neutral"><span class="dot"></span>REDEMPTION</span></td>
                 <td class="ref-cell ref-dash">—</td>
                 <td class="amt-cell burn">R 1,000,000.00</td>
                 <td class="td-mono"><span class="badge badge-info">USDT</span></td>
@@ -760,7 +771,7 @@
 
               <!-- Row 8 — Burn settled (ZARU) -->
               <tr data-type="burn" data-status="settled" data-currency="ZARU">
-                <td><span class="badge badge-neutral"><span class="dot"></span>BURN</span></td>
+                <td><span class="badge badge-neutral"><span class="dot"></span>REDEMPTION</span></td>
                 <td class="ref-cell ref-dash">—</td>
                 <td class="amt-cell burn">R 2,000,000.00</td>
                 <td class="td-mono"><span class="badge badge-info">ZARU</span></td>
@@ -841,7 +852,7 @@
 
               <!-- Row 11 — Burn settled (ZAR) -->
               <tr data-type="burn" data-status="settled" data-currency="ZAR">
-                <td><span class="badge badge-neutral"><span class="dot"></span>BURN</span></td>
+                <td><span class="badge badge-neutral"><span class="dot"></span>REDEMPTION</span></td>
                 <td class="ref-cell ref-dash">—</td>
                 <td class="amt-cell burn">R 500,000.00</td>
                 <td class="td-mono"><span class="badge badge-info">ZAR</span></td>
@@ -923,7 +934,7 @@
           </div>
           <span class="footer-sep">·</span>
           <div class="footer-stat">
-            <span class="footer-stat-label">Total burned</span>
+            <span class="footer-stat-label">Total redeemed</span>
             <span class="footer-stat-value burn-val" id="burned-display">R 4,000,000.00</span>
           </div>
           <span class="footer-sep">·</span>
@@ -988,7 +999,6 @@
   /* ── Persona init ───────────────────────────────────────── */
   var persona = getPersona();
   preservePersonaLinks();
-  applyPersonaBadge(persona);
 
   /* ── Distributor nav visibility ─────────────────────────── */
   var distNav = document.querySelector('a[href*="06-yield.html"]');
@@ -1047,7 +1057,7 @@
       walletFull: '7xKpBmNw3F9x...3mNw', kycTier: 'Institutional \u2014 Tier 3',
       dateTimeFull: '25 Apr 2026 \xB7 08:42 SAST', status: 'completed', ref: 'BX-0042' },
     // 2 — burn USDC
-    { type: 'burn',  zarAmt: 500000,    currency: 'USDC', txHash: '9mLqRc2Bkp4Lx',
+    { type: 'redemption', zarAmt: 500000,    currency: 'USDC', txHash: '9mLqRc2Bkp4Lx',
       walletFull: '\u2022\u2022\u2022\u2022\u20227412', kycTier: 'Institutional \u2014 Tier 3',
       dateTimeFull: '22 Apr 2026 \xB7 14:33 SAST', status: 'settled',   ref: '\u2014' },
     // 3
@@ -1055,7 +1065,7 @@
       walletFull: '7xKpBmNw3F9x...3mNw', kycTier: 'Institutional \u2014 Tier 3',
       dateTimeFull: '18 Apr 2026 \xB7 10:07 SAST', status: 'completed', ref: 'BX-0042' },
     // 4 — burn USDT
-    { type: 'burn',  zarAmt: 1000000,   currency: 'USDT', txHash: '7qRmNp4Lxr3Wz',
+    { type: 'redemption', zarAmt: 1000000,   currency: 'USDT', txHash: '7qRmNp4Lxr3Wz',
       walletFull: '\u2022\u2022\u2022\u2022\u20227412', kycTier: 'Institutional \u2014 Tier 3',
       dateTimeFull: '12 Apr 2026 \xB7 16:22 SAST', status: 'settled',   ref: '\u2014' },
     // 5
@@ -1067,7 +1077,7 @@
       walletFull: '7xKpBmNw3F9x...3mNw', kycTier: 'Corporate \u2014 Tier 2',
       dateTimeFull: '28 Mar 2026 \xB7 11:14 SAST', status: 'completed', ref: 'BX-0042' },
     // 7 — burn ZARU
-    { type: 'burn',  zarAmt: 2000000,   currency: 'ZARU', txHash: '4rLqPn8Mxw5Qr',
+    { type: 'redemption', zarAmt: 2000000,   currency: 'ZARU', txHash: '4rLqPn8Mxw5Qr',
       walletFull: '\u2022\u2022\u2022\u2022\u20227412', kycTier: 'Institutional \u2014 Tier 3',
       dateTimeFull: '21 Mar 2026 \xB7 09:30 SAST', status: 'settled',   ref: '\u2014' },
     // 8 — USDT mint
@@ -1079,7 +1089,7 @@
       walletFull: '7xKpBmNw3F9x...3mNw', kycTier: 'Institutional \u2014 Tier 3',
       dateTimeFull: '7 Mar 2026 \xB7 08:58 SAST',  status: 'completed', ref: 'BX-0042' },
     // 10 — burn ZAR
-    { type: 'burn',  zarAmt: 500000,    currency: 'ZAR',  txHash: '3nQrMh6Tzr3Wz',
+    { type: 'redemption', zarAmt: 500000,    currency: 'ZAR',  txHash: '3nQrMh6Tzr3Wz',
       walletFull: '\u2022\u2022\u2022\u2022\u20227412', kycTier: 'Institutional \u2014 Tier 3',
       dateTimeFull: '28 Feb 2026 \xB7 16:44 SAST', status: 'settled',   ref: '\u2014' },
     // 11 — large cold wallet mint
@@ -1152,7 +1162,7 @@
     filteredRows.forEach(function (row) {
       var i = allRows.indexOf(row);
       if (rowData[i].type === 'mint') totalMint += rowData[i].zarAmt;
-      if (rowData[i].type === 'burn') totalBurn += rowData[i].zarAmt;
+      if (rowData[i].type === 'redemption') totalBurn += rowData[i].zarAmt;
     });
     var net = totalMint - totalBurn;
     document.getElementById('count-display').textContent  = filteredRows.length + ' transaction' + (filteredRows.length !== 1 ? 's' : '');
@@ -1356,7 +1366,7 @@
   function buildRelatedTransactions(ref) {
     var stubs = [
       { ref: 'BX-0039', type: 'MINT', amt: 'R 1,500,000.00', status: 'Completed', sc: 'badge-success' },
-      { ref: 'BX-0036', type: 'BURN', amt: 'R 250,000.00',   status: 'Settled',   sc: 'badge-success' }
+      { ref: 'BX-0036', type: 'REDEMPTION', amt: 'R 250,000.00',   status: 'Settled',   sc: 'badge-success' }
     ];
     var html =
       '<table class="related-table">' +
@@ -1398,7 +1408,7 @@
     badge.textContent = data.type.toUpperCase();
     badge.className   = 'badge ' + (data.type === 'mint' ? 'badge-info' : 'badge-neutral');
     document.getElementById('sp-title').textContent =
-      data.type === 'mint' ? 'Mint transaction' : 'Burn transaction';
+      data.type === 'mint' ? 'Mint transaction' : 'Redemption transaction';
 
     // Reset flagged label on each open
     document.getElementById('sp-flagged').style.display = 'none';

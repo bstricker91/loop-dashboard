@@ -7,7 +7,6 @@
    Then at the bottom of each page's <script>:
      const persona = getPersona();
      preservePersonaLinks();
-     applyPersonaBadge(persona);
      // use persona.userName, persona.bxRef, etc.
    ============================================================= */
 
@@ -173,34 +172,8 @@ function preservePersonaLinks() {
   if (!type) return;
   document.querySelectorAll('a[href]').forEach(function(a) {
     var href = a.getAttribute('href');
-    if (href && href.endsWith('.html') && !href.includes('?')) {
+    if (href && href.endsWith('.html') && !href.includes('?') && !a.classList.contains('switch-profile-link')) {
       a.setAttribute('href', href + '?type=' + type);
     }
   });
-}
-
-
-/* ── applyPersonaBadge ────────────────────────────────────────
-   Injects a fixed bottom-left pill showing the active persona
-   so the presenter always knows which customer type is live.
-   ──────────────────────────────────────────────────────────── */
-function applyPersonaBadge(persona) {
-  var badge = document.createElement('div');
-  badge.style.cssText = [
-    'position: fixed',
-    'bottom: 16px',
-    'left: 16px',
-    'z-index: 9999',
-    'background: #0B1220',
-    'border: 1px solid rgba(255,255,255,0.1)',
-    'color: #94A3B8',
-    'font-size: 11px',
-    'font-family: monospace',
-    'padding: 5px 10px',
-    'border-radius: 999px',
-    'pointer-events: none',
-    'white-space: nowrap',
-  ].join('; ');
-  badge.textContent = persona.type + ' \xB7 ' + persona.orgName;
-  document.body.appendChild(badge);
 }

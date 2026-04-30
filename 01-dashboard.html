@@ -973,11 +973,10 @@
       }
     }
 
-    // Yield nav item
+    // Distributor nav item — hide for non-distributors (primary guard; also handled in distNav block above)
     if (!persona.isDistributor) {
-      document.querySelectorAll('.nav-item').forEach(function (item) {
-        if (item.textContent.indexOf('Yield') !== -1) item.style.display = 'none';
-      });
+      var distNavFallback = document.querySelector('a[href*="06-yield.html"]');
+      if (distNavFallback) distNavFallback.style.display = 'none';
     }
 
     // Pending row BX ref

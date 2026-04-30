@@ -197,10 +197,10 @@
       margin-top: 2px;
     }
 
-    /* ── 2-column stat grid (post-MVP scope cut) ───────────── */
+    /* ── 3-column stat grid (balance + yield + luno wallet) ── */
     .grid-4 {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: var(--gap);
     }
 
@@ -708,6 +708,40 @@
           </div>
         </div>
 
+
+        <!-- Card 3: Luno Wallet — linked -->
+        <div class="card stat-card" id="luno-stat-linked" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+            <span class="stat-label">LUNO WALLET</span>
+            <span class="badge badge-success" style="font-size:10px;">
+              <span class="dot"></span> Live
+            </span>
+          </div>
+          <div class="stat-value mono" id="luno-stat-balance" style="font-size:22px;">—</div>
+          <div class="stat-sub" id="luno-stat-label">—</div>
+          <div style="margin-top:10px;">
+            <div class="copy-field" style="font-size:12px;">
+              <span class="copy-field-value" id="luno-stat-address">—</span>
+              <button class="copy-btn" id="luno-stat-copy">Copy</button>
+            </div>
+          </div>
+          <div class="stat-sub" id="luno-stat-synced" style="margin-top:6px;font-size:11.5px;">—</div>
+        </div>
+
+        <!-- Card 3: Luno Wallet — unlinked -->
+        <div class="card stat-card" id="luno-stat-unlinked" style="display:none;flex-direction:column;justify-content:space-between;">
+          <div>
+            <span class="stat-label">LUNO WALLET</span>
+            <div class="stat-sub" style="margin-top:8px;">
+              Link your Luno custody wallet to see live ZARU balances here.
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" style="margin-top:16px;width:100%;"
+            onclick="openLunoConnectModal()">
+            Connect Luno Wallet
+          </button>
+        </div>
+
       </div>
 
       <!-- ── 3. Pending transactions ─────────────────────────── -->
@@ -814,66 +848,6 @@
         </div>
       </div>
 
-      <!-- ── 5. Luno Wallet — linked ──────────────────────────── -->
-      <div class="card" id="luno-wallet-linked" style="margin-top:20px;display:none;">
-        <div class="card-header">
-          <div>
-            <div class="card-title" style="display:flex;align-items:center;gap:8px;">
-              <span style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#4F7CFF,#2563EB);display:inline-grid;place-items:center;color:white;font-size:10px;font-weight:700;flex-shrink:0;">L</span>
-              Luno Wallet — Live Balance Feed
-            </div>
-            <div class="card-subtitle" id="luno-subtitle">Balance synced via Luno API · Last updated: 2 minutes ago</div>
-          </div>
-          <span class="badge badge-success">
-            <span class="dot"></span>
-            Connected
-          </span>
-        </div>
-        <div class="luno-wallet-body">
-          <div>
-            <div class="stat-label">ZARU BALANCE (LUNO)</div>
-            <div class="stat-value mono" id="luno-balance" style="font-size:22px;">R 12,400,000.00</div>
-            <div class="stat-sub" id="luno-wallet-label">Held in Standard Bank — Luno Custody Wallet</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="text-xs text-muted" style="margin-bottom:4px;">WALLET ADDRESS</div>
-            <div class="copy-field" style="max-width:280px;">
-              <span class="copy-field-value" id="luno-addr-short">3xLm...LqBz</span>
-              <button class="copy-btn" id="luno-copy-btn" onclick="copyLunoAddr()">Copy</button>
-            </div>
-            <div class="text-xs text-muted" style="margin-top:6px;" id="luno-network-id">Network: Solana · Luno ID: LUNO-SBT-0042</div>
-          </div>
-        </div>
-        <div style="padding:0 22px 22px;">
-          <div class="alert alert-info">
-            <svg style="width:15px;height:15px;flex-shrink:0;margin-top:1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16.01"/>
-            </svg>
-            <div style="font-size:12.5px;">This balance is your ZARU held in your Luno custody wallet, reflected live on Loop via the Luno API. To mint or redeem ZARU from this wallet, use the Mint and Redeem flows above.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── 5. Luno Wallet — unlinked ─────────────────────────── -->
-      <div class="card" id="luno-wallet-unlinked" style="margin-top:20px;display:none;">
-        <div class="card-header">
-          <div>
-            <div class="card-title" style="display:flex;align-items:center;gap:8px;">
-              <span style="width:20px;height:20px;border-radius:50%;background:var(--ink-200);display:inline-grid;place-items:center;color:var(--ink-500);font-size:10px;font-weight:700;flex-shrink:0;">L</span>
-              Luno Wallet
-            </div>
-            <div class="card-subtitle">Link your Luno custody wallet to view live ZARU balances here</div>
-          </div>
-          <button class="btn btn-secondary btn-sm">Connect Luno Wallet</button>
-        </div>
-        <div class="card-body">
-          <div class="empty-state" style="padding:24px;">
-            <div class="empty-state-title">No Luno wallet connected</div>
-            <div class="empty-state-desc">Link a whitelisted Luno wallet to see your ZARU balance reflected live on this dashboard. Luno becomes your preferred custody partner while Loop handles minting and redemption.</div>
-          </div>
-        </div>
-      </div>
-
     </main>
 
     <!-- ── Side panel ────────────────────────────────────── -->
@@ -893,6 +867,46 @@
       <div class="sp-body" id="sp-body"></div>
     </div>
 
+  </div>
+</div>
+
+<!-- ── Luno connect modal ──────────────────────────────────── -->
+<div id="luno-connect-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;">
+  <div class="card" style="max-width:440px;width:90%;padding:0;">
+    <div class="card-header">
+      <div>
+        <div class="card-title" style="display:flex;align-items:center;gap:8px;">
+          <span style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#4F7CFF,#2563EB);display:inline-grid;place-items:center;color:white;font-size:10px;font-weight:700;">L</span>
+          Connect Luno Wallet
+        </div>
+        <div class="card-subtitle">Link your Luno custody wallet for a live balance feed.</div>
+      </div>
+      <button class="icon-btn" onclick="closeLunoConnectModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:16px;">
+      <div class="alert alert-info" style="font-size:13px;">
+        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12" y2="16.01"/>
+        </svg>
+        <div>Luno handles custody; Loop handles minting and redemption. Your ZARU balance will appear live on this dashboard once connected.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Luno Wallet Address (Solana)</label>
+        <input class="form-input" style="font-family:var(--font-mono);" type="text"
+          placeholder="Paste your Solana wallet address from Luno" />
+        <span class="form-hint">Must match a whitelisted address already registered with Loop. To add a new wallet, use the Wallets tab in Settings first.</span>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;">
+        <button class="btn btn-secondary" onclick="closeLunoConnectModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="handleLunoConnectSubmit()">Submit Connection Request</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -962,9 +976,9 @@
     if (statCards[1]) {
       if (!persona.isDistributor) {
         statCards[1].style.display = 'none';
-        // Adjust grid to 1 column when yield card is hidden
+        // Adjust grid to 2 columns when yield card is hidden (balance + luno wallet)
         var g4 = document.querySelector('.grid-4');
-        if (g4) g4.style.gridTemplateColumns = 'repeat(1, 1fr)';
+        if (g4) g4.style.gridTemplateColumns = 'repeat(2, 1fr)';
       } else {
         var yv = statCards[1].querySelector('.stat-value.mono');
         if (yv) yv.textContent = formatZAR(persona.distributorYieldAccruedMonth);
@@ -1008,27 +1022,30 @@
       });
     }
 
-    // Luno wallet card
+    // Luno wallet stat card
     var lw = persona.lunoWallet;
     if (lw.linked) {
-      var linked = document.getElementById('luno-wallet-linked');
+      var linked = document.getElementById('luno-stat-linked');
       if (linked) {
         linked.style.display = '';
         var el;
-        el = document.getElementById('luno-subtitle');
-        if (el) el.textContent = 'Balance synced via Luno API \xB7 Last updated: ' + lw.lastSynced;
-        el = document.getElementById('luno-balance');
+        el = document.getElementById('luno-stat-balance');
         if (el) el.textContent = formatZAR(lw.balance);
-        el = document.getElementById('luno-wallet-label');
-        if (el) el.textContent = 'Held in ' + lw.label;
-        el = document.getElementById('luno-addr-short');
+        el = document.getElementById('luno-stat-label');
+        if (el) el.textContent = lw.label;
+        el = document.getElementById('luno-stat-address');
         if (el) el.textContent = lw.addressShort;
-        el = document.getElementById('luno-network-id');
-        if (el) el.textContent = 'Network: ' + lw.network + ' \xB7 Luno ID: ' + lw.lunoAccountId;
+        el = document.getElementById('luno-stat-copy');
+        if (el) el.onclick = function () { navigator.clipboard.writeText(lw.address).then(function () {
+          var toast = document.getElementById('toast');
+          if (toast) { toast.classList.add('show'); setTimeout(function () { toast.classList.remove('show'); }, 2200); }
+        }); };
+        el = document.getElementById('luno-stat-synced');
+        if (el) el.textContent = 'Updated ' + lw.lastSynced;
       }
     } else {
-      var unlinked = document.getElementById('luno-wallet-unlinked');
-      if (unlinked) unlinked.style.display = '';
+      var unlinked = document.getElementById('luno-stat-unlinked');
+      if (unlinked) unlinked.style.display = 'flex';
     }
   }());
 
@@ -1048,14 +1065,20 @@
     });
   }
 
-  /* ── Luno address copy ──────────────────────────────────── */
-  function copyLunoAddr() {
-    var addr = persona.lunoWallet && persona.lunoWallet.address;
-    if (!addr) return;
-    navigator.clipboard.writeText(addr).then(function () {
-      var toast = document.getElementById('toast');
-      if (toast) { toast.classList.add('show'); setTimeout(function () { toast.classList.remove('show'); }, 2200); }
-    });
+  /* ── Luno connect modal ─────────────────────────────────── */
+  function openLunoConnectModal() {
+    document.getElementById('luno-connect-modal').style.display = 'flex';
+  }
+  function closeLunoConnectModal() {
+    document.getElementById('luno-connect-modal').style.display = 'none';
+  }
+  function handleLunoConnectSubmit() {
+    closeLunoConnectModal();
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#059669;color:white;padding:12px 20px;border-radius:8px;font-size:13.5px;font-weight:500;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15);';
+    toast.textContent = '\u2713 Connection request submitted \u2014 your RM will confirm within 24 hours';
+    document.body.appendChild(toast);
+    setTimeout(function () { toast.remove(); }, 4000);
   }
 
   /* ── Notifications ──────────────────────────────────────── */

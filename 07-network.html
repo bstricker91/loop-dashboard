@@ -302,13 +302,6 @@
 
       <span class="nav-section-label">INTELLIGENCE</span>
 
-      <a href="06-yield.html" class="nav-item">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 21h18M3 7l9-4 9 4M4 7v14M20 7v14M9 21V12h6v9"/>
-        </svg>
-        Distributor
-        <span class="nav-badge">Post-MVP</span>
-      </a>
 
       <a href="07-network.html" class="nav-item active">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -409,7 +402,7 @@
       </div>
 
       <!-- ── Network health stats ───────────────────────────── -->
-      <div class="grid grid-3 mb-4">
+      <div class="mb-4">
 
         <div class="card stat-card">
           <div class="stat-label">IN CIRCULATION</div>
@@ -420,30 +413,6 @@
               <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
             </svg>
             2.4% this month
-          </div>
-        </div>
-
-        <div class="card stat-card">
-          <div class="stat-label">ACTIVE INSTITUTIONS</div>
-          <div class="stat-value">7</div>
-          <div class="stat-sub">Minted or redeemed in last 30 days</div>
-          <div class="stat-delta up">
-            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
-            </svg>
-            +2 this quarter
-          </div>
-        </div>
-
-        <div class="card stat-card">
-          <div class="stat-label">30-DAY VOLUME</div>
-          <div class="stat-value mono">R 1.2B</div>
-          <div class="stat-sub">Minted + redeemed · Solana mainnet</div>
-          <div class="stat-delta up">
-            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
-            </svg>
-            18% vs prior period
           </div>
         </div>
 
@@ -659,38 +628,6 @@
             </div>
           </div>
 
-          <!-- Network Health -->
-          <div class="card">
-            <div class="card-header" style="padding:14px 18px;">
-              <div class="card-title" style="font-size:13.5px;">Network health</div>
-            </div>
-            <div class="card-body" style="padding:16px 18px;">
-              <div style="display:flex;flex-direction:column;gap:12px;">
-
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span style="font-size:12.5px;color:var(--ink-500);">Solana uptime (30d)</span>
-                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--emerald);">99.98%</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span style="font-size:12.5px;color:var(--ink-500);">Avg. mint time</span>
-                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--ink-900);">3.2 min</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span style="font-size:12.5px;color:var(--ink-500);">Avg. redemption settlement</span>
-                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--ink-900);">1.4 hrs</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span style="font-size:12.5px;color:var(--ink-500);">Failed transactions</span>
-                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--emerald);">0 (30d)</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span style="font-size:12.5px;color:var(--ink-500);">Reference mismatches</span>
-                  <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--amber);">3 (30d)</span>
-                </div>
-
-              </div>
-            </div>
-          </div>
 
         </div>
 
@@ -928,10 +865,6 @@
   /* ── Persona init ───────────────────────────────────────── */
   var persona = getPersona();
   preservePersonaLinks();
-
-  /* ── Distributor nav visibility ─────────────────────────── */
-  var distNav = document.querySelector('a[href*="06-yield.html"]');
-  if (distNav) distNav.style.display = persona.isDistributor ? '' : 'none';
 
   /* ── Persona DOM updates ───────────────────────────────── */
   (function () {

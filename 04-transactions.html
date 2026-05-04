@@ -390,13 +390,6 @@
 
       <span class="nav-section-label">INTELLIGENCE</span>
 
-      <a href="06-yield.html" class="nav-item">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 21h18M3 7l9-4 9 4M4 7v14M20 7v14M9 21V12h6v9"/>
-        </svg>
-        Distributor
-        <span class="nav-badge">Post-MVP</span>
-      </a>
 
       <a href="07-network.html" class="nav-item">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -999,10 +992,6 @@
   /* ── Persona init ───────────────────────────────────────── */
   var persona = applyConnectionState(getPersona());
   preservePersonaLinks();
-
-  /* ── Distributor nav visibility ─────────────────────────── */
-  var distNav = document.querySelector('a[href*="06-yield.html"]');
-  if (distNav) distNav.style.display = persona.isDistributor ? '' : 'none';
 
   /* ── Persona DOM updates ───────────────────────────────── */
   (function () {

@@ -656,8 +656,8 @@
       <!-- ── 2. Balance overview ─────────────────────────────── -->
       <div class="grid-4 mb-6">
 
-        <!-- Card 1: Total ZARU Balance -->
-        <div class="card stat-card">
+        <!-- Card 1: Total ZARU Balance — linked -->
+        <div class="card stat-card" id="total-balance-linked">
           <div class="stat-label">TOTAL BALANCE</div>
           <div class="stat-value mono">R 48,247,380.00</div>
           <div class="stat-sub">≈ ZAR 48,247,380</div>
@@ -1046,6 +1046,12 @@
     } else {
       var unlinked = document.getElementById('luno-stat-unlinked');
       if (unlinked) unlinked.style.display = 'flex';
+    }
+
+    // Total balance card — gate on lunoWallet.linked
+    var balLinked = document.getElementById('total-balance-linked');
+    if (balLinked) {
+      balLinked.style.display = (lw && lw.linked) ? '' : 'none';
     }
   }());
 

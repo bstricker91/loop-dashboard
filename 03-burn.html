@@ -588,8 +588,8 @@
         ══════════════════════════════════════════════════ -->
         <div class="burn-left">
 
-          <!-- Available to burn -->
-          <div class="card mb-4">
+          <!-- Available to burn — linked -->
+          <div class="card mb-4" id="avail-balance-linked">
             <div class="card-header">
               <span class="card-title">Available to redeem</span>
               <span class="badge badge-success">
@@ -607,7 +607,7 @@
                   </svg>
                   Your 40,000,000 locked seed stablecoin cannot be redeemed per JV Partner Agreement.
                 </div>
-                <div class="avail-meta-row avail-fee-note">
+                <div class="avail-meta-row avail-fee-note" id="burn-fee-row">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                   </svg>
@@ -1192,7 +1192,7 @@
 
     // Available balance
     var avail = document.querySelector('.avail-amount');
-    if (avail) {
+    if (avail && persona.availableBalance != null) {
       var amtFormatted = persona.availableBalance.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       avail.innerHTML = amtFormatted;
       var avZar = document.querySelector('.avail-zar');
@@ -1295,6 +1295,18 @@
       setTimeout(function () { toast.classList.remove('show'); }, 2200);
     });
   }
+
+  /* ── Luno wallet gate ───────────────────────────────────── */
+  var lw = persona.lunoWallet;
+  var isLinked = lw && lw.linked;
+
+  // Hide available balance card when unlinked — no placeholder replacement
+  var avLinked = document.getElementById('avail-balance-linked');
+  if (avLinked) avLinked.style.display = isLinked ? '' : 'none';
+
+  // Hide fee row when unlinked (no balance to calculate against)
+  var feeRow = document.getElementById('burn-fee-row');
+  if (feeRow) feeRow.style.display = isLinked ? '' : 'none';
 </script>
   <!-- Feedback widget -->
   <script src="_feedback-config.js"></script>

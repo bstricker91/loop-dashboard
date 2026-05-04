@@ -67,9 +67,9 @@ const PERSONAS = {
     userRole: 'Admin',
     orgName: 'Cedar Money',
     bxRef: 'BX-0117',
-    totalBalance: 12500000.00,
-    availableBalance: 12500000.00,
-    lockedBalance: 0,
+    totalBalance: null,
+    availableBalance: null,
+    lockedBalance: null,
     hasLockedBalance: false,
     wallets: [
       { label: 'Primary', address: '4pKnRmLqBx7wTv2nYsZxP9rM8kNqLpRt', addressShort: '4pKn...LpRt', status: 'active' },

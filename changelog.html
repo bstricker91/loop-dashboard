@@ -300,6 +300,30 @@
       <div class="cl-wrap">
 
         <!-- ═══ APRIL 30 2026 ═══════════════════════════════════ -->
+        <div class="cl-group">4 May 2026</div>
+
+        <div class="cl-timeline">
+
+          <!-- Custody platform integration — Luno connection flow -->
+          <div class="cl-entry">
+            <div class="cl-dot"></div>
+            <div class="cl-meta">
+              <span class="cl-date">4 May 2026</span>
+              <span class="cl-tag feat">Feature</span>
+            </div>
+            <div class="cl-title">Custody platform integration — Luno connection flow</div>
+            <div class="cl-body">Implements the correct Loop product model: Loop is a minting and redemption platform only. Balance visibility requires a connected custody platform (currently Luno; Valr, Hata, and Coinbase coming). All personas now start in the unlinked state. An info banner on the dashboard directs users to connect Luno in Settings. Settings → Luno Wallet tab now features a full connection flow: API key entry, simulated validation, success screen, and dashboard redirect. On return to the dashboard, live balance appears. Disconnection resets the state. Mint and Redeem flows remain fully accessible regardless of connection state.</div>
+            <ul class="cl-items">
+              <li><code>_persona.js</code>: All personas set to <code>lunoWallet.linked: false</code>; <code>applyConnectionState()</code> helper added</li>
+              <li><code>01-dashboard.html</code>: Balance stat row hidden when unlinked; custody platform banner added</li>
+              <li><code>03-burn.html</code>: Available balance card hidden when unlinked; form remains active</li>
+              <li><code>08-settings.html</code>: Full Luno connection flow with loading state and success screen</li>
+              <li><code>02-mint.html</code>, <code>04-transactions.html</code>: <code>applyConnectionState()</code> wired for consistency</li>
+            </ul>
+          </div>
+
+        </div>
+
         <div class="cl-group">30 Apr 2026</div>
 
         <div class="cl-timeline">

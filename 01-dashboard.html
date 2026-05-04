@@ -654,6 +654,22 @@
       </div>
 
       <!-- ── 2. Balance overview ─────────────────────────────── -->
+      <div class="alert alert-info" id="custody-connect-banner" style="margin-bottom: 20px;">
+        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12" y2="16.01"/>
+        </svg>
+        <div>
+          <strong>Loop is your minting and redemption platform.</strong>
+          To view your ZARU holdings, connect a custody platform — currently Luno,
+          with Valr, Hata, and Coinbase coming soon.
+          <a href="08-settings.html" id="custody-banner-link" style="margin-left: 8px; font-weight: 600;">
+            Connect Luno →
+          </a>
+        </div>
+      </div>
+
       <div class="grid-4 mb-6">
 
         <!-- Card 1: Total ZARU Balance — linked -->
@@ -920,7 +936,7 @@
 
 <script>
   /* ── Persona init ───────────────────────────────────────── */
-  var persona = getPersona();
+  var persona = applyConnectionState(getPersona());
   preservePersonaLinks();
 
   /* ── Distributor nav visibility ─────────────────────────── */
@@ -1054,6 +1070,20 @@
       balLinked.style.display = (lw && lw.linked) ? '' : 'none';
     }
   }());
+
+  /* ── Custody connect banner + stat row visibility ─────── */
+  var statRow = document.querySelector('.grid-4');
+  if (statRow) statRow.style.display = persona.lunoWallet.linked ? '' : 'none';
+
+  var banner = document.getElementById('custody-connect-banner');
+  if (banner) banner.style.display = persona.lunoWallet.linked ? 'none' : '';
+
+  var bannerLink = document.getElementById('custody-banner-link');
+  if (bannerLink) {
+    var bParams = new URLSearchParams(window.location.search);
+    var bType = bParams.get('type');
+    if (bType) bannerLink.setAttribute('href', '08-settings.html?type=' + bType);
+  }
 
   /* ── Header button navigation ──────────────────────────── */
   var typeParam = new URLSearchParams(window.location.search).get('type') || 'A';

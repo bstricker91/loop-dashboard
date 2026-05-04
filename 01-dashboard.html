@@ -654,22 +654,6 @@
       </div>
 
       <!-- ── 2. Balance overview ─────────────────────────────── -->
-      <div class="alert alert-info" id="custody-connect-banner" style="margin-bottom: 20px;">
-        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="8" x2="12" y2="12"/>
-          <line x1="12" y1="16" x2="12" y2="16.01"/>
-        </svg>
-        <div>
-          <strong>Loop is your minting and redemption platform.</strong>
-          To view your ZARU holdings, connect a custody platform — currently Luno,
-          with Valr, Hata, and Coinbase coming soon.
-          <a href="08-settings.html" id="custody-banner-link" style="margin-left: 8px; font-weight: 600;">
-            Connect Luno →
-          </a>
-        </div>
-      </div>
-
       <div class="grid-4 mb-6">
 
         <!-- Card 1: Total ZARU Balance — linked -->
@@ -703,8 +687,17 @@
           </div>
         </div>
 
+        <!-- Card 1b: Total ZARU Balance — unlinked -->
+        <div class="card stat-card" id="total-balance-unlinked" style="display:none; flex-direction:column; justify-content:space-between;">
+          <div class="stat-label">TOTAL BALANCE</div>
+          <div style="font-size: 22px; font-weight: 700; color: var(--ink-300); margin: 10px 0 4px; font-family: var(--font-mono); letter-spacing: 0.02em;">— —</div>
+          <div class="stat-sub" style="margin-bottom: 12px;">
+            Connect a custody platform to view your live ZARU balance.
+          </div>
+        </div>
+
         <!-- Card 2: Yield Accrued -->
-        <div class="card stat-card">
+        <div class="card stat-card" id="yield-stat-card">
           <div class="stat-label">YIELD ACCRUED (APR)</div>
           <div class="stat-value mono">R 24,123.60</div>
           <div class="stat-sub">6.00% p.a. · Paid monthly in stablecoin</div>
@@ -753,9 +746,10 @@
             </div>
           </div>
           <button class="btn btn-secondary btn-sm" style="margin-top:16px;width:100%;"
-            onclick="openLunoConnectModal()">
+            onclick="window.location.href=document.getElementById('luno-settings-link').href">
             Connect Luno Wallet
           </button>
+          <a id="luno-settings-link" href="08-settings.html" style="display:none;"></a>
         </div>
 
       </div>
@@ -989,18 +983,19 @@
     }
 
     // Yield stat card
-    if (statCards[1]) {
+    var yieldCard = document.getElementById('yield-stat-card');
+    if (yieldCard) {
       if (!persona.isDistributor) {
-        statCards[1].style.display = 'none';
+        yieldCard.style.display = 'none';
         // Adjust grid to 2 columns when yield card is hidden (balance + luno wallet)
         var g4 = document.querySelector('.grid-4');
         if (g4) g4.style.gridTemplateColumns = 'repeat(2, 1fr)';
       } else {
-        var yv = statCards[1].querySelector('.stat-value.mono');
+        var yv = yieldCard.querySelector('.stat-value.mono');
         if (yv) yv.textContent = formatZAR(persona.distributorYieldAccruedMonth);
-        var ysub = statCards[1].querySelector('.stat-sub');
+        var ysub = yieldCard.querySelector('.stat-sub');
         if (ysub) ysub.textContent = persona.distributorYieldRate + ' p.a. \xB7 Paid monthly in stablecoin';
-        var ydelta = statCards[1].querySelector('.stat-delta');
+        var ydelta = yieldCard.querySelector('.stat-delta');
         if (ydelta) {
           var tNodes = ydelta.childNodes;
           for (var i = tNodes.length - 1; i >= 0; i--) {
@@ -1065,25 +1060,19 @@
     }
 
     // Total balance card — gate on lunoWallet.linked
-    var balLinked = document.getElementById('total-balance-linked');
-    if (balLinked) {
-      balLinked.style.display = (lw && lw.linked) ? '' : 'none';
+    var balLinked   = document.getElementById('total-balance-linked');
+    var balUnlinked = document.getElementById('total-balance-unlinked');
+    if (balLinked)   balLinked.style.display   = (lw && lw.linked) ? '' : 'none';
+    if (balUnlinked) balUnlinked.style.display = (lw && lw.linked) ? 'none' : '';
+
+    // Preserve persona param on luno-settings-link
+    var lunoSettingsLink = document.getElementById('luno-settings-link');
+    if (lunoSettingsLink) {
+      var params = new URLSearchParams(window.location.search);
+      var type = params.get('type');
+      if (type) lunoSettingsLink.setAttribute('href', '08-settings.html?type=' + type);
     }
   }());
-
-  /* ── Custody connect banner + stat row visibility ─────── */
-  var statRow = document.querySelector('.grid-4');
-  if (statRow) statRow.style.display = persona.lunoWallet.linked ? '' : 'none';
-
-  var banner = document.getElementById('custody-connect-banner');
-  if (banner) banner.style.display = persona.lunoWallet.linked ? 'none' : '';
-
-  var bannerLink = document.getElementById('custody-banner-link');
-  if (bannerLink) {
-    var bParams = new URLSearchParams(window.location.search);
-    var bType = bParams.get('type');
-    if (bType) bannerLink.setAttribute('href', '08-settings.html?type=' + bType);
-  }
 
   /* ── Header button navigation ──────────────────────────── */
   var typeParam = new URLSearchParams(window.location.search).get('type') || 'A';

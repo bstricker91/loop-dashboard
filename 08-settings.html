@@ -471,13 +471,6 @@
         Transactions
       </a>
       <span class="nav-section-label">INTELLIGENCE</span>
-      <a href="06-yield.html" class="nav-item">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 21h18M3 7l9-4 9 4M4 7v14M20 7v14M9 21V12h6v9"/>
-        </svg>
-        Distributor
-        <span class="nav-badge">Post-MVP</span>
-      </a>
       <a href="07-network.html" class="nav-item">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
@@ -577,7 +570,7 @@
                 <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
               </svg>
-              BX Reference
+              Subhub Onboarding
             </button>
 
             <button class="settings-tab" onclick="switchTab('wallets', this)">
@@ -798,13 +791,13 @@
 
           </div>
 
-          <!-- ── BX Reference ───────────────────────────────── -->
+          <!-- ── Subhub Onboarding ──────────────────────────── -->
           <div class="tab-panel" id="panel-bx">
-            <div class="settings-title">BX Reference</div>
+            <div class="settings-title">Subhub Onboarding</div>
             <div class="settings-sub">Your unique deposit reference. Include this in every EFT to Loop.</div>
 
             <div class="bx-hero-copy">
-              <div class="bx-hero-label">Your BX Reference</div>
+              <div class="bx-hero-label">Subhub Onboarding Reference</div>
               <div class="copy-field bx-copy-field">
                 <span class="copy-field-value">BX-0042</span>
                 <button class="copy-btn" onclick="copyField('BX-0042', this)">
@@ -896,35 +889,15 @@
                   <tbody>
 
                     <tr id="wallet-row-1">
-                      <td>
-                        <div class="label-display" id="label-display-1">
-                          <span id="label-text-1" style="font-size:13.5px;font-weight:600;color:var(--ink-900);">FX Hot Desk</span>
-                          <button class="edit-label-btn" onclick="startEdit(1)">Edit</button>
-                        </div>
-                        <div class="label-edit-form" id="label-form-1">
-                          <input class="label-input" id="label-input-1" value="FX Hot Desk">
-                          <button class="label-save-btn" onclick="saveLabel(1)">Save</button>
-                          <button class="label-cancel-btn" onclick="cancelEdit(1)">Cancel</button>
-                        </div>
-                      </td>
+                      <td><span id="label-text-1" style="font-size:13.5px;font-weight:600;color:var(--ink-900);">FX Hot Desk</span></td>
                       <td class="wallet-addr-td" title="7xKp4rNnLm8QpBw3mNwYsT...">7xKp4rNnLm8QpBw3mNwYsT…</td>
                       <td><span class="badge badge-success"><span class="dot"></span>Active</span></td>
                       <td class="text-muted text-sm" style="white-space:nowrap;">15 Feb 2026</td>
-                      <td><!-- edit handled inline --></td>
+                      <td></td>
                     </tr>
 
                     <tr id="wallet-row-2">
-                      <td>
-                        <div class="label-display" id="label-display-2">
-                          <span id="label-text-2" style="font-size:13.5px;font-weight:600;color:var(--ink-900);">Cold Wallet</span>
-                          <button class="edit-label-btn" onclick="startEdit(2)">Edit</button>
-                        </div>
-                        <div class="label-edit-form" id="label-form-2">
-                          <input class="label-input" id="label-input-2" value="Cold Wallet">
-                          <button class="label-save-btn" onclick="saveLabel(2)">Save</button>
-                          <button class="label-cancel-btn" onclick="cancelEdit(2)">Cancel</button>
-                        </div>
-                      </td>
+                      <td><span id="label-text-2" style="font-size:13.5px;font-weight:600;color:var(--ink-900);">Cold Wallet</span></td>
                       <td class="wallet-addr-td" title="9mLqR2pXnK7wBv4tYsZrQx...">9mLqR2pXnK7wBv4tYsZrQx…</td>
                       <td><span class="badge badge-success"><span class="dot"></span>Active</span></td>
                       <td class="text-muted text-sm" style="white-space:nowrap;">3 Feb 2026</td>
@@ -932,9 +905,7 @@
                     </tr>
 
                     <tr>
-                      <td>
-                        <span style="font-size:13.5px;font-weight:600;color:var(--ink-900);">Settlement Desk</span>
-                      </td>
+                      <td><span style="font-size:13.5px;font-weight:600;color:var(--ink-900);">Settlement Desk</span></td>
                       <td class="wallet-addr-td" title="4pKnBxR8mLqYw2tNzVsXp...">4pKnBxR8mLqYw2tNzVsXp…</td>
                       <td><span class="badge badge-pending"><span class="dot"></span>Pending whitelist</span></td>
                       <td class="text-muted text-sm" style="white-space:nowrap;">26 Apr 2026</td>
@@ -946,41 +917,11 @@
               </div>
               <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
                 <span style="font-size:12px;color:var(--ink-400);">
-                  Wallets cannot be removed without contacting Loop support.
+                  Wallets cannot be added or removed without Loop team review.
                 </span>
-                <button class="btn btn-secondary btn-sm" onclick="toggleWalletForm()">
-                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                  </svg>
-                  Request new wallet
+                <button class="btn btn-secondary btn-sm" onclick="openChangeRequestModal()">
+                  Request a Change
                 </button>
-              </div>
-            </div>
-
-            <!-- Request wallet form -->
-            <div class="wallet-req-form" id="wallet-req-form">
-              <div style="font-size:14px;font-weight:700;color:var(--ink-900);margin-bottom:14px;">Request wallet whitelisting</div>
-              <div style="display:flex;flex-direction:column;gap:14px;">
-                <div class="form-group">
-                  <label class="form-label">Solana wallet address</label>
-                  <input class="form-input mono" type="text" placeholder="Enter Solana wallet address (44 characters)">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Label</label>
-                  <input class="form-input" type="text" placeholder="e.g. Trading desk, Cold storage">
-                  <span class="form-hint">Used to identify this wallet in the portal.</span>
-                </div>
-                <div class="alert alert-info" style="padding:10px 13px;">
-                  <svg class="alert-icon" style="width:15px;height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                  </svg>
-                  <div style="font-size:12.5px;">A live test transaction (approx. 0.001 stablecoin) will be sent to verify the address before it is whitelisted.</div>
-                </div>
-                <div style="display:flex;align-items:center;gap:10px;">
-                  <button class="btn btn-primary btn-sm" onclick="submitWalletReq()">Submit whitelist request</button>
-                  <button class="btn btn-ghost btn-sm" onclick="toggleWalletForm()">Cancel</button>
-                </div>
-                <div style="font-size:12px;color:var(--ink-400);">Whitelist approval typically takes 1 business day. You'll receive an email when approved.</div>
               </div>
             </div>
           </div>
@@ -1031,11 +972,8 @@
               </div>
             </div>
 
-            <button class="btn btn-secondary" onclick="showToast('Contact support — coming in a future release.')">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              </svg>
-              Contact support →
+            <button class="btn btn-secondary" onclick="openChangeRequestModal()">
+              Request a Change
             </button>
           </div>
 
@@ -1355,6 +1293,17 @@
 </div>
 
 <!-- ── Toast ───────────────────────────────────────────────── -->
+<!-- ── Change request modal ──────────────────────────────── -->
+<div id="change-req-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;">
+  <div class="card" style="width:100%;max-width:420px;margin:24px;padding:28px 28px 24px;">
+    <div style="font-size:16px;font-weight:700;color:var(--ink-900);margin-bottom:10px;">Request submitted</div>
+    <div style="font-size:13.5px;color:var(--ink-600);line-height:1.6;margin-bottom:20px;">
+      Your change request has been sent to the Loop team. You'll be contacted within 1–2 business days to confirm the update.
+    </div>
+    <button class="btn btn-secondary" style="width:100%;" onclick="closeChangeRequestModal()">Close</button>
+  </div>
+</div>
+
 <div class="toast" id="toast">
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <polyline points="20 6 9 17 4 12"/>
@@ -1366,10 +1315,6 @@
   /* ── Persona init ───────────────────────────────────────── */
   var persona = applyConnectionState(getPersona());
   preservePersonaLinks();
-
-  /* ── Distributor nav visibility ─────────────────────────── */
-  var distNav = document.querySelector('a[href*="06-yield.html"]');
-  if (distNav) distNav.style.display = persona.isDistributor ? '' : 'none';
 
   /* ── Persona DOM updates ───────────────────────────────── */
   (function () {
@@ -1420,17 +1365,7 @@
         var tr = document.createElement('tr');
         tr.id = 'wallet-row-' + id;
         tr.innerHTML =
-          '<td>' +
-            '<div class="label-display" id="label-display-' + id + '">' +
-              '<span id="label-text-' + id + '" style="font-size:13.5px;font-weight:600;color:var(--ink-900);">' + w.label + '</span>' +
-              '<button class="edit-label-btn" onclick="startEdit(' + id + ')">Edit</button>' +
-            '</div>' +
-            '<div class="label-edit-form" id="label-form-' + id + '">' +
-              '<input class="label-input" id="label-input-' + id + '" value="' + w.label + '">' +
-              '<button class="label-save-btn" onclick="saveLabel(' + id + ')">Save</button>' +
-              '<button class="label-cancel-btn" onclick="cancelEdit(' + id + ')">Cancel</button>' +
-            '</div>' +
-          '</td>' +
+          '<td><span id="label-text-' + id + '" style="font-size:13.5px;font-weight:600;color:var(--ink-900);">' + w.label + '</span></td>' +
           '<td class="wallet-addr-td" title="' + w.address + '">' + w.address.slice(0, 22) + '\u2026</td>' +
           '<td><span class="badge badge-success"><span class="dot"></span>Active</span></td>' +
           '<td class="text-muted text-sm" style="white-space:nowrap;">15 Feb 2026</td>' +
@@ -1527,39 +1462,13 @@
     setTimeout(function () { toast.classList.remove('show'); }, 2500);
   }
 
-  /* ── Wallet label inline edit ───────────────────────────── */
-  function startEdit(id) {
-    document.getElementById('label-display-' + id).style.display = 'none';
-    document.getElementById('label-form-' + id).classList.add('visible');
-    document.getElementById('label-input-' + id).focus();
-    document.getElementById('label-input-' + id).select();
+  /* ── Change request modal ───────────────────────────────── */
+  function openChangeRequestModal() {
+    document.getElementById('change-req-modal').style.display = 'flex';
   }
 
-  function saveLabel(id) {
-    var val = document.getElementById('label-input-' + id).value.trim();
-    if (!val) return;
-    document.getElementById('label-text-' + id).textContent = val;
-    cancelEdit(id);
-    showToast('Wallet label updated');
-  }
-
-  function cancelEdit(id) {
-    document.getElementById('label-display-' + id).style.display = '';
-    document.getElementById('label-form-' + id).classList.remove('visible');
-  }
-
-  /* ── Request wallet form toggle ─────────────────────────── */
-  function toggleWalletForm() {
-    var f = document.getElementById('wallet-req-form');
-    f.classList.toggle('visible');
-    if (f.classList.contains('visible')) {
-      f.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }
-
-  function submitWalletReq() {
-    toggleWalletForm();
-    showToast('Whitelist request submitted — you\'ll receive an email when approved');
+  function closeChangeRequestModal() {
+    document.getElementById('change-req-modal').style.display = 'none';
   }
 
   /* ── Copy Luno wallet address ───────────────────────────── */
@@ -1606,17 +1515,6 @@
     window.location.reload();
   }
 
-  /* ── Enter key saves wallet label ──────────────────────── */
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' && e.target.classList.contains('label-input')) {
-      var id = e.target.id.replace('label-input-', '');
-      saveLabel(id);
-    }
-    if (e.key === 'Escape' && e.target.classList.contains('label-input')) {
-      var id = e.target.id.replace('label-input-', '');
-      cancelEdit(id);
-    }
-  });
 </script>
   <!-- Feedback widget -->
   <script src="_feedback-config.js"></script>

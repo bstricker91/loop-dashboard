@@ -94,34 +94,17 @@
     /* ── Cards grid ────────────────────────────────────────────── */
     .cards {
       display: grid;
-      grid-template-columns: repeat(3, 340px);
+      grid-template-columns: repeat(2, 340px);
       gap: 20px;
       width: 100%;
-      max-width: 1060px;
+      max-width: 720px;
       justify-content: center;
     }
 
-    @media (max-width: 1080px) {
-      .cards {
-        grid-template-columns: repeat(2, 1fr);
-        max-width: 720px;
-      }
-      .cards .card:last-child {
-        grid-column: 1 / -1;
-        max-width: 340px;
-        justify-self: center;
-      }
-    }
-
-    @media (max-width: 700px) {
+    @media (max-width: 720px) {
       .cards {
         grid-template-columns: 1fr;
         max-width: 420px;
-      }
-      .cards .card:last-child {
-        grid-column: auto;
-        max-width: none;
-        justify-self: auto;
       }
     }
 
@@ -374,11 +357,11 @@
   <!-- Cards -->
   <div class="cards">
 
-    <!-- Card 1: Type A — Official Distributor -->
+    <!-- Card 1: Type A — Distributor -->
     <a class="card" href="01-dashboard.html?type=A">
       <span class="badge badge-blue">Type A</span>
 
-      <h2 class="card-title">Official Distributor</h2>
+      <h2 class="card-title">Distributor</h2>
       <p class="card-subtitle">Seed / JV Partner</p>
 
       <p class="card-description">
@@ -402,14 +385,14 @@
         </div>
       </div>
 
-      <span class="cta cta-primary">View as Official Distributor →</span>
+      <span class="cta cta-primary">View as Distributor →</span>
     </a>
 
-    <!-- Card 2: Type B — Institutional Client (Standard) -->
+    <!-- Card 2: Type B — Institutional Customer -->
     <a class="card" href="01-dashboard.html?type=B1">
       <span class="badge badge-grey">Type B</span>
 
-      <h2 class="card-title">Institutional Client</h2>
+      <h2 class="card-title">Institutional Customer</h2>
       <p class="card-subtitle">Standard — no yield</p>
 
       <p class="card-description">
@@ -433,38 +416,7 @@
         </div>
       </div>
 
-      <span class="cta cta-secondary">View as Standard Client →</span>
-    </a>
-
-    <!-- Card 3: Type B+ — Institutional Client (with Yield) -->
-    <a class="card" href="01-dashboard.html?type=B2">
-      <span class="badge badge-emerald">Type B+</span>
-
-      <h2 class="card-title">Institutional Client</h2>
-      <p class="card-subtitle">Category 2 Distributor — with yield</p>
-
-      <p class="card-description">
-        Institutional clients who have a formal yield arrangement with Loop — Category 2 distributors.
-        Same mint/redeem capabilities as standard clients, plus access to the yield dashboard.
-      </p>
-
-      <ul class="features">
-        <li class="feature"><span class="feature-icon yes">✓</span> Mint &amp; Redeem</li>
-        <li class="feature"><span class="feature-icon yes">✓</span> Transaction history</li>
-        <li class="feature"><span class="feature-icon yes">✓</span> Settings &amp; wallet management</li>
-        <li class="feature"><span class="feature-icon yes">✓</span> Yield dashboard (6% p.a.)</li>
-        <li class="feature unavailable"><span class="feature-icon no">✗</span> Locked seed position (n/a)</li>
-      </ul>
-
-      <div class="persona">
-        <div class="persona-avatar persona-avatar-emerald">KV</div>
-        <div class="persona-info">
-          <span class="persona-name">Kofi Vanderpuye</span>
-          <span class="persona-org">MoneyBadger</span>
-        </div>
-      </div>
-
-      <span class="cta cta-emerald">View as Category 2 Distributor →</span>
+      <span class="cta cta-secondary">View as Institutional Customer →</span>
     </a>
 
   </div>

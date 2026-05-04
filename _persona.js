@@ -45,6 +45,11 @@ const PERSONAS = {
     distributorYieldNextPaymentDate: '1 May 2026',
     distributorYieldLifetime: 142800.00,
     distributorClients: 3,               // number of sub-clients under this distributor
+    // Pending transactions
+    pendingTransactions: [
+      { type: 'mint',  amount: 250000.00,  status: 'waiting_deposit',  bxRef: 'BX-0043', sub: 'Awaiting ZAR deposit from customer bank · Est. 30–60 min', time: 'Today 08:52 SAST' },
+      { type: 'mint',  amount: 500000.00,  status: 'deposit_received', bxRef: 'BX-0042', sub: 'Awaiting mint confirmation · ~2–5 min',                    time: 'Today 09:14 SAST' },
+    ],
     // Luno wallet
     lunoWallet: {
       linked: false,
@@ -60,7 +65,7 @@ const PERSONAS = {
 
   B1: {
     type: 'B1',
-    typeLabel: 'Institutional Client',
+    typeLabel: 'Institutional Customer',
     typeTag: 'Standard — no yield',
     userName: 'Aisha Mokoena',
     userInitials: 'AM',
@@ -77,6 +82,10 @@ const PERSONAS = {
     primaryWallet: { label: 'Primary', address: '4pKnRmLqBx7wTv2nYsZxP9rM8kNqLpRt', addressShort: '4pKn...LpRt' },
     bankName: 'Nedbank',
     bankAccountMasked: '••••3301',
+    // Pending transactions
+    pendingTransactions: [
+      { type: 'mint',  amount: 150000.00,  status: 'deposit_received', bxRef: 'BX-0117', sub: 'Awaiting mint confirmation · ~2–5 min', time: 'Today 10:03 SAST' },
+    ],
     // Distributor
     isDistributor: false,
     distributorTier: null,
@@ -101,7 +110,7 @@ const PERSONAS = {
 
   B2: {
     type: 'B2',
-    typeLabel: 'Institutional Client',
+    typeLabel: 'Institutional Customer',
     typeTag: 'Category 2 Distributor — with yield',
     userName: 'Kofi Vanderpuye',
     userInitials: 'KV',
@@ -118,6 +127,10 @@ const PERSONAS = {
     primaryWallet: { label: 'Hot Wallet', address: '8mRpNkLxBq7wTv3nYsZrP6rN9kMqLpZb', addressShort: '8mRp...LpZb' },
     bankName: 'FNB',
     bankAccountMasked: '••••8844',
+    // Pending transactions
+    pendingTransactions: [
+      { type: 'mint',  amount: 75000.00,   status: 'waiting_deposit',  bxRef: 'BX-0083', sub: 'Awaiting ZAR deposit from customer bank · Est. 30–60 min', time: 'Today 11:22 SAST' },
+    ],
     // Distributor
     isDistributor: true,
     distributorTier: 'Category2',

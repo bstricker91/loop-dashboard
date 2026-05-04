@@ -47,7 +47,7 @@ const PERSONAS = {
     distributorClients: 3,               // number of sub-clients under this distributor
     // Luno wallet
     lunoWallet: {
-      linked: true,
+      linked: false,
       label: 'Standard Bank — Luno Custody Wallet',
       address: '3xLm9pQrNkBv5wTy2nZsRxP7rK4mLqBz',
       addressShort: '3xLm...LqBz',
@@ -67,9 +67,9 @@ const PERSONAS = {
     userRole: 'Admin',
     orgName: 'Cedar Money',
     bxRef: 'BX-0117',
-    totalBalance: null,
-    availableBalance: null,
-    lockedBalance: null,
+    totalBalance: 12500000.00,
+    availableBalance: 12500000.00,
+    lockedBalance: 0,
     hasLockedBalance: false,
     wallets: [
       { label: 'Primary', address: '4pKnRmLqBx7wTv2nYsZxP9rM8kNqLpRt', addressShort: '4pKn...LpRt', status: 'active' },
@@ -89,13 +89,13 @@ const PERSONAS = {
     // Luno wallet
     lunoWallet: {
       linked: false,
-      label: null,
-      address: null,
-      addressShort: null,
-      lunoAccountId: null,
-      balance: null,
-      lastSynced: null,
-      network: null,
+      label: 'Cedar Money — Luno Custody Wallet',
+      address: '2nKpRmLxBq6wTv4nYsZrQ8rN5kMpLqRt',
+      addressShort: '2nKp...LqRt',
+      lunoAccountId: 'LUNO-CM-0117',
+      balance: 12500000.00,
+      lastSynced: '1 minute ago',
+      network: 'Solana',
     },
   },
 
@@ -129,7 +129,7 @@ const PERSONAS = {
     distributorClients: 1,
     // Luno wallet
     lunoWallet: {
-      linked: true,
+      linked: false,
       label: 'MoneyBadger — Luno Hot Wallet',
       address: '6rNmPkLxBq4wTv8nYsZrQ5rN2kMpLqZt',
       addressShort: '6rNm...LqZt',
@@ -150,6 +150,16 @@ function getPersona() {
   var params = new URLSearchParams(window.location.search);
   var type = params.get('type') || 'A';
   return PERSONAS[type] || PERSONAS.A;
+}
+
+
+function applyConnectionState(persona) {
+  // Check if the user has completed the Luno connection flow in this session.
+  // This simulates a real API integration persisting across page navigation.
+  if (localStorage.getItem('lunoConnected') === 'true') {
+    persona.lunoWallet.linked = true;
+  }
+  return persona;
 }
 
 

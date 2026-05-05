@@ -337,13 +337,13 @@
           <div class="zar-equiv" id="zar-equiv"></div>
 
           <div class="step-actions">
-            <button class="btn btn-primary" id="step1-continue" onclick="goToStep(2)" disabled>Review payout account →</button>
+            <button class="btn btn-primary" id="step1-continue" onclick="goToStep(2)" disabled>Review redemption request →</button>
           </div>
         </div>
 
         <!-- ── Step 2: Confirm payout details ───────────────── -->
         <div class="step-panel" id="step-2">
-          <h2 class="step-heading">Confirm your payout account</h2>
+          <h2 class="step-heading">Confirm redemption request</h2>
           <p class="step-sub">ZAR will be paid to the account below within 1–2 business days.</p>
 
           <!-- Payout account (read-only) -->
@@ -389,7 +389,7 @@
 
         <!-- ── Step 3: Redemption submitted ─────────────────── -->
         <div class="step-panel" id="step-3">
-          <h2 class="step-heading" id="step3-heading">Redemption submitted</h2>
+          <h2 class="step-heading" id="step3-heading">ZARU queued for redemption</h2>
           <p class="step-sub" id="step3-body">Your ZARU has been queued for redemption. ZAR will be transferred to your account within 1–2 business days.</p>
 
           <div class="confirm-box">
@@ -536,7 +536,7 @@
       document.getElementById('confirm-account').textContent = bankStr;
       var heading = document.getElementById('step3-heading');
       if (heading) {
-        heading.textContent = formatZAR(amt2) + ' queued for redemption';
+        heading.textContent = 'ZARU ' + formatNumber(amt2, 2) + ' queued for redemption';
       }
       var body = document.getElementById('step3-body');
       if (body) {

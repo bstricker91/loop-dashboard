@@ -640,15 +640,15 @@
 
           <!-- ── Luno Wallet ────────────────────────────────── -->
           <div class="tab-panel active" id="panel-luno">
-            <div class="settings-title">Luno Custody Wallet</div>
-            <div class="settings-sub">Your linked Luno custody wallet for on-chain settlement and balance visibility.</div>
+            <div class="settings-title">Luno Wallet's</div>
+            <div class="settings-sub">Your connected Luno ZARU wallet for on-chain settlement and balance visibility.</div>
 
             <!-- Linked variant -->
             <div id="luno-set-linked" style="display:none;">
               <div class="card mb-4">
                 <div class="card-header">
-                  <span class="card-title" id="luno-set-label">Standard Bank — Luno Custody Wallet</span>
-                  <span class="badge badge-success"><span class="dot"></span>Linked</span>
+                  <span class="card-title" id="luno-set-label">Standard Bank — Luno Wallet's</span>
+                  <span class="badge badge-success"><span class="dot"></span>Connected</span>
                 </div>
                 <div class="card-body">
                   <div class="account-row">
@@ -703,7 +703,7 @@
                     <span style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#4F7CFF,#2563EB);display:inline-grid;place-items:center;color:white;font-size:10px;font-weight:700;">L</span>
                     Connect Luno
                   </div>
-                  <span class="badge badge-pending">Not linked</span>
+                  <span class="badge badge-pending">Not connected</span>
                 </div>
                 <div class="card-body">
 
@@ -723,10 +723,10 @@
                       </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom:24px;">
                       <label class="form-label">Luno API Key</label>
                       <input id="luno-api-key-input" class="form-input" type="text"
-                        placeholder="Paste your Luno read-only API key" autocomplete="off" />
+                        placeholder="Paste your read-only API key from Luno" autocomplete="off" />
                       <span class="form-hint">
                         Generate a read-only API key in your Luno account under Security → API Keys.
                         Loop only requires read permissions — no trading or withdrawal access is needed.
@@ -734,12 +734,12 @@
                     </div>
 
                     <div class="form-group">
-                      <label class="form-label">Luno Wallet Address (Solana)</label>
+                      <label class="form-label">ZARU Wallet Address</label>
                       <input id="luno-wallet-addr-input" class="form-input" type="text"
-                        placeholder="Paste your Solana wallet address from Luno" autocomplete="off" />
+                        placeholder="Paste your ZARU wallet address from Luno" autocomplete="off" />
                       <span class="form-hint">
-                        This must match a whitelisted address registered with Loop.
-                        Contact your Loop relationship manager if you need to whitelist a new address.
+                        This must match a trusted address registered with Loop.
+                        Contact your Loop relationship manager if you need to add a new address.
                       </span>
                     </div>
 

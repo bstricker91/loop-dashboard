@@ -1098,10 +1098,6 @@
   var PAGE_SIZE        = 10;
 
   /* ── Helpers ────────────────────────────────────────────── */
-  function fmt(n) {
-    return 'R ' + n.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
-
   function addMins(timeStr, mins) {
     var parts = timeStr.match(/(\d{1,2}):(\d{2})/);
     if (!parts) return timeStr;
@@ -1155,9 +1151,9 @@
     });
     var net = totalMint - totalBurn;
     document.getElementById('count-display').textContent  = filteredRows.length + ' transaction' + (filteredRows.length !== 1 ? 's' : '');
-    document.getElementById('minted-display').textContent = fmt(totalMint);
-    document.getElementById('burned-display').textContent = fmt(totalBurn);
-    document.getElementById('net-display').textContent    = (net >= 0 ? '+' : '') + fmt(net);
+    document.getElementById('minted-display').textContent = formatZAR(totalMint);
+    document.getElementById('burned-display').textContent = formatZAR(totalBurn);
+    document.getElementById('net-display').textContent    = (net >= 0 ? '+' : '') + formatZAR(net);
 
     renderPagination(filteredRows.length);
   }
@@ -1438,7 +1434,7 @@
         '<span class="sp-value"><span class="badge badge-info">' + data.currency + '</span></span>' +
       '</div>' +
       '<div class="sp-row"><span class="sp-label">Amount</span>' +
-        '<span class="sp-value mono">' + fmt(data.zarAmt) + '</span>' +
+        '<span class="sp-value mono">' + formatZAR(data.zarAmt) + '</span>' +
       '</div>' +
       '<div class="sp-row"><span class="sp-label">Status</span>' +
         '<span class="sp-value"><span class="badge ' + statusClass + '"><span class="dot"></span>' + statusLabel + '</span></span>' +

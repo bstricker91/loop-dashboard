@@ -133,6 +133,46 @@
     .eft-field-label { font-size: 12px; color: var(--ink-500); }
     .eft-field-value { font-size: 13.5px; font-weight: 600; color: var(--ink-900); text-align: right; }
 
+    /* ── Burn address box (Step 3) ──────────────────────────── */
+    .burn-addr-box {
+      background: var(--accent-soft);
+      border: 2px solid var(--accent-border);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 20px;
+    }
+    .burn-addr-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .burn-addr-label {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em; color: var(--accent);
+    }
+    .burn-addr-value {
+      font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+      color: var(--ink-900); word-break: break-all; line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    .burn-addr-note { font-size: 12px; color: var(--accent); font-weight: 500; margin-top: 4px; }
+    .burn-addr-copy { background: white; color: var(--accent); font-weight: 700; }
+    .burn-addr-copy:hover { background: var(--accent); color: white; }
+    .burn-addr-copy.copied { color: var(--emerald); }
+
+    /* ── Send amount display (Step 3) ───────────────────────── */
+    .send-amount-box {
+      background: var(--ink-50); border: 1.5px solid var(--ink-150);
+      border-radius: var(--radius-md); padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .send-amount-label { font-size: 12px; color: var(--ink-500); }
+    .send-amount-value {
+      font-family: var(--font-mono); font-size: 20px; font-weight: 700;
+      color: var(--ink-900);
+    }
+    .send-amount-unit { font-size: 13px; font-weight: 600; color: var(--accent); margin-left: 6px; }
+
     /* ── Toast ──────────────────────────────────────────────── */
     .toast {
       position: fixed; bottom: 24px; right: 24px;
@@ -301,8 +341,10 @@
             <div class="step-num" id="sn-2">2</div>
             <div class="step-connector" id="sc-2"></div>
             <div class="step-num" id="sn-3">3</div>
+            <div class="step-connector" id="sc-3"></div>
+            <div class="step-num" id="sn-4">4</div>
           </div>
-          <span class="step-progress-label" id="step-label">Step 1 of 3</span>
+          <span class="step-progress-label" id="step-label">Step 1 of 4</span>
         </div>
 
         <!-- ── Step 1: Enter amount ──────────────────────────── -->
@@ -387,24 +429,68 @@
           </div>
         </div>
 
-        <!-- ── Step 3: Redemption submitted ─────────────────── -->
+        <!-- ── Step 3: Send ZARU on-chain ───────────────────── -->
         <div class="step-panel" id="step-3">
-          <h2 class="step-heading" id="step3-heading">ZARU queued for redemption</h2>
-          <p class="step-sub" id="step3-body">Your ZARU has been queued for redemption. ZAR will be transferred to your account within 1–2 business days.</p>
+          <h2 class="step-heading">Send ZARU to your burn address</h2>
+          <p class="step-sub">Transfer the exact amount below to your assigned burn address on Solana. Once received, your ZARU will be burned automatically and ZAR sent to your linked bank account.</p>
+
+          <!-- Warning -->
+          <div class="alert alert-warning mb-4">
+            <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <div>Send <strong>exactly</strong> the amount shown. Sending a different amount will delay your redemption.</div>
+          </div>
+
+          <!-- Amount to send -->
+          <div class="send-amount-box">
+            <span class="send-amount-label">Amount to send</span>
+            <span>
+              <span class="send-amount-value" id="step3-send-amount">—</span>
+              <span class="send-amount-unit">ZARU</span>
+            </span>
+          </div>
+
+          <!-- Burn address -->
+          <div class="burn-addr-box">
+            <div class="burn-addr-header">
+              <span class="burn-addr-label">Your burn address · Solana</span>
+              <button class="copy-btn burn-addr-copy" id="step3-copy-btn" onclick="copyBurnAddress()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                Copy
+              </button>
+            </div>
+            <div class="burn-addr-value" id="step3-burn-address">—</div>
+            <div class="burn-addr-note">This address is unique to your account. Do not share it with third parties.</div>
+          </div>
+
+          <div class="step-actions">
+            <button class="btn btn-primary" onclick="goToStep(4)">I've sent the ZARU →</button>
+            <button class="step-back" onclick="goToStep(2)">← Back</button>
+          </div>
+        </div>
+
+        <!-- ── Step 4: Redemption submitted ─────────────────── -->
+        <div class="step-panel" id="step-4">
+          <h2 class="step-heading" id="step4-heading">ZARU queued for redemption</h2>
+          <p class="step-sub" id="step4-body">Your ZARU has been queued for redemption. ZAR will be transferred to your account within 1–2 business days.</p>
 
           <div class="confirm-box">
             <div>
               <div class="eft-field">
                 <span class="eft-field-label">Amount redeemed</span>
-                <span class="eft-field-value" id="confirm-zaru">—</span>
+                <span class="eft-field-value" id="step4-confirm-zaru">—</span>
               </div>
               <div class="eft-field">
                 <span class="eft-field-label">Estimated ZAR payout</span>
-                <span class="eft-field-value" id="confirm-zar" style="color:var(--emerald);">—</span>
+                <span class="eft-field-value" id="step4-confirm-zar" style="color:var(--emerald);">—</span>
               </div>
               <div class="eft-field">
                 <span class="eft-field-label">Payout account</span>
-                <span class="eft-field-value" id="confirm-account">—</span>
+                <span class="eft-field-value" id="step4-confirm-account">—</span>
               </div>
               <div class="eft-field" style="border-bottom:none;padding-bottom:0;">
                 <span class="eft-field-label">Status</span>
@@ -504,44 +590,53 @@
 
   /* ── Step flow ──────────────────────────────────────────── */
   function goToStep(n) {
-    [1, 2, 3].forEach(function (i) {
+    [1, 2, 3, 4].forEach(function (i) {
       document.getElementById('step-' + i).classList.toggle('active', i === n);
       var sn = document.getElementById('sn-' + i);
       sn.classList.remove('active', 'done');
       if (i < n) sn.classList.add('done');
       else if (i === n) sn.classList.add('active');
     });
-    [1, 2].forEach(function (i) {
+    [1, 2, 3].forEach(function (i) {
       document.getElementById('sc-' + i).classList.toggle('done', i < n);
     });
-    document.getElementById('step-label').textContent = 'Step ' + n + ' of 3';
+    document.getElementById('step-label').textContent = 'Step ' + n + ' of 4';
 
     if (n === 2) {
       var rawVal = document.getElementById('amount-input').value;
       var amt = parseFloat(rawVal) || 0;
-      var fmtZARU = formatZARU(amt);
-      var fmtZAR  = 'ZAR ' + formatNumber(amt, 2);
-      document.getElementById('summary-zaru').textContent = fmtZARU;
-      document.getElementById('summary-zar').textContent  = fmtZAR;
+      document.getElementById('summary-zaru').textContent = formatZARU(amt);
+      document.getElementById('summary-zar').textContent  = 'ZAR ' + formatNumber(amt, 2);
     }
 
     if (n === 3) {
-      var rawVal2 = document.getElementById('amount-input').value;
-      var amt2 = parseFloat(rawVal2) || 0;
-      var fmtZARU2 = formatZARU(amt2);
-      var fmtZAR2  = 'ZAR ' + formatNumber(amt2, 2);
+      var rawVal3 = document.getElementById('amount-input').value;
+      var amt3 = parseFloat(rawVal3) || 0;
+      var sendAmtEl = document.getElementById('step3-send-amount');
+      if (sendAmtEl) sendAmtEl.textContent = formatNumber(amt3, 2);
+      var burnAddrEl = document.getElementById('step3-burn-address');
+      if (burnAddrEl) burnAddrEl.textContent = persona.burnAddress || '—';
+    }
+
+    if (n === 4) {
+      var rawVal4 = document.getElementById('amount-input').value;
+      var amt4 = parseFloat(rawVal4) || 0;
+      var fmtZARU4 = formatZARU(amt4);
+      var fmtZAR4  = 'ZAR ' + formatNumber(amt4, 2);
       var bankStr  = (persona.bankName || 'Standard Bank') + ' ' + (persona.bankAccountMasked || '••••7412');
-      document.getElementById('confirm-zaru').textContent    = fmtZARU2;
-      document.getElementById('confirm-zar').textContent     = fmtZAR2;
-      document.getElementById('confirm-account').textContent = bankStr;
-      var heading = document.getElementById('step3-heading');
-      if (heading) {
-        heading.textContent = 'ZARU ' + formatNumber(amt2, 2) + ' queued for redemption';
+      document.getElementById('step4-confirm-zaru').textContent    = fmtZARU4;
+      document.getElementById('step4-confirm-zar').textContent     = fmtZAR4;
+      document.getElementById('step4-confirm-account').textContent = bankStr;
+      var heading4 = document.getElementById('step4-heading');
+      if (heading4) {
+        heading4.textContent = 'ZARU ' + formatNumber(amt4, 2) + ' queued for redemption';
       }
-      var body = document.getElementById('step3-body');
-      if (body) {
-        body.textContent = formatZAR(amt2) + ' will be transferred to '
-          + (persona.bankName || 'your account') + ' within 1–2 business days.';
+      var body4 = document.getElementById('step4-body');
+      if (body4) {
+        var isLarge = amt4 >= 5000000;
+        body4.textContent = isLarge
+          ? 'ZAR will be transferred to ' + (persona.bankName || 'your account') + ' during standard SA banking hours (weekdays only, SAMOS settlement).'
+          : 'ZAR will be transferred to ' + (persona.bankName || 'your account') + ' within standard SA banking settlement times — including Saturdays within cutoff hours.';
       }
     }
 
@@ -553,6 +648,26 @@
     navigator.clipboard.writeText(value).then(function () {
       var toast = document.getElementById('toast');
       document.getElementById('toast-msg').textContent = 'Copied to clipboard';
+      toast.classList.add('show');
+      setTimeout(function () { toast.classList.remove('show'); }, 2200);
+    });
+  }
+
+  function copyBurnAddress() {
+    var addr = persona.burnAddress;
+    if (!addr) return;
+    navigator.clipboard.writeText(addr).then(function () {
+      var btn = document.getElementById('step3-copy-btn');
+      if (btn) {
+        btn.classList.add('copied');
+        btn.textContent = 'Copied';
+        setTimeout(function () {
+          btn.classList.remove('copied');
+          btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy';
+        }, 2200);
+      }
+      var toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = 'Burn address copied';
       toast.classList.add('show');
       setTimeout(function () { toast.classList.remove('show'); }, 2200);
     });

@@ -20,7 +20,8 @@
     .step-flow { max-width: 560px; margin: 0 auto; }
 
     /* ── Step indicator ─────────────────────────────────────── */
-    .step-indicator { display: flex; align-items: center; margin-bottom: 28px; }
+    .step-indicator { display: flex; flex-direction: column; align-items: center; margin-bottom: 28px; }
+    .step-row { display: flex; align-items: center; width: 100%; }
     .step-num {
       width: 28px; height: 28px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
@@ -32,7 +33,7 @@
     .step-num.done   { background: var(--emerald); color: white; }
     .step-connector { flex: 1; height: 2px; background: var(--ink-150); margin: 0 8px; transition: background 200ms; }
     .step-connector.done { background: var(--emerald); }
-    .step-progress-label { font-size: 12px; color: var(--ink-400); margin-left: 14px; white-space: nowrap; }
+    .step-progress-label { font-size: 12px; color: var(--ink-400); margin-top: 8px; text-align: center; }
 
     /* ── Step panels ────────────────────────────────────────── */
     .step-panel { display: none; }
@@ -286,7 +287,6 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">Redeem</h1>
-          <p class="page-subtitle">Exchange your ZARU for ZAR — a guided 3-step flow.</p>
         </div>
       </div>
 
@@ -295,18 +295,20 @@
 
         <!-- Step indicator -->
         <div class="step-indicator">
-          <div class="step-num active" id="sn-1">1</div>
-          <div class="step-connector" id="sc-1"></div>
-          <div class="step-num" id="sn-2">2</div>
-          <div class="step-connector" id="sc-2"></div>
-          <div class="step-num" id="sn-3">3</div>
+          <div class="step-row">
+            <div class="step-num active" id="sn-1">1</div>
+            <div class="step-connector" id="sc-1"></div>
+            <div class="step-num" id="sn-2">2</div>
+            <div class="step-connector" id="sc-2"></div>
+            <div class="step-num" id="sn-3">3</div>
+          </div>
           <span class="step-progress-label" id="step-label">Step 1 of 3</span>
         </div>
 
         <!-- ── Step 1: Enter amount ──────────────────────────── -->
         <div class="step-panel active" id="step-1">
           <h2 class="step-heading">How much ZARU do you want to redeem?</h2>
-          <p class="step-sub">Enter the amount of ZARU to exchange for ZAR. The equivalent will be transferred to your registered payout account.</p>
+          <p class="step-sub">Enter the amount of ZARU to exchange for ZAR. The equivalent will be transferred to your approved bank account.</p>
 
           <!-- Available balance (Luno-linked only) -->
           <div id="balance-hint-wrap" style="display:none;">
@@ -332,17 +334,17 @@
             />
             <span class="amount-input-unit">ZARU</span>
           </div>
-          <div class="zar-equiv" id="zar-equiv">Enter an amount to see the ZAR equivalent</div>
+          <div class="zar-equiv" id="zar-equiv"></div>
 
           <div class="step-actions">
-            <button class="btn btn-primary" id="step1-continue" onclick="goToStep(2)" disabled>Continue →</button>
+            <button class="btn btn-primary" id="step1-continue" onclick="goToStep(2)" disabled>Review payout account →</button>
           </div>
         </div>
 
         <!-- ── Step 2: Confirm payout details ───────────────── -->
         <div class="step-panel" id="step-2">
           <h2 class="step-heading">Confirm your payout account</h2>
-          <p class="step-sub">ZAR will be paid to the account below within 1–2 business days of redemption.</p>
+          <p class="step-sub">ZAR will be paid to the account below within 1–2 business days.</p>
 
           <!-- Payout account (read-only) -->
           <div class="payout-row">
@@ -387,7 +389,7 @@
 
         <!-- ── Step 3: Redemption submitted ─────────────────── -->
         <div class="step-panel" id="step-3">
-          <h2 class="step-heading">Redemption submitted</h2>
+          <h2 class="step-heading" id="step3-heading">Redemption submitted</h2>
           <p class="step-sub" id="step3-body">Your ZARU has been queued for redemption. ZAR will be transferred to your account within 1–2 business days.</p>
 
           <div class="confirm-box">
@@ -418,7 +420,7 @@
           </div>
 
           <div class="step-actions">
-            <button class="btn btn-secondary" onclick="location.href='01-dashboard.html'">
+            <button class="btn btn-secondary" onclick="location.href='01-dashboard.html' + window.location.search">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
                 <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
@@ -474,7 +476,7 @@
     if (hintWrap) hintWrap.style.display = '';
     var balDisplay = document.getElementById('balance-display');
     if (balDisplay && lw.balance != null) {
-      balDisplay.textContent = lw.balance.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      balDisplay.textContent = formatNumber(lw.balance, 2);
     }
   }
 
@@ -485,20 +487,16 @@
   if (payoutAcctEl) payoutAcctEl.textContent = 'Account ending ' + (persona.bankAccountMasked || '••••7412');
 
   /* ── Amount input ───────────────────────────────────────── */
-  function formatZARU(n) {
-    return n.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
-
   function onAmountInput(val) {
     var n = parseFloat(val);
     var equivEl = document.getElementById('zar-equiv');
     var continueBtn = document.getElementById('step1-continue');
     if (n > 0 && !isNaN(n)) {
-      equivEl.textContent = '≈ ZAR ' + formatZARU(n);
+      equivEl.textContent = '≈ ZAR ' + formatNumber(n, 2);
       equivEl.classList.add('has-value');
       continueBtn.removeAttribute('disabled');
     } else {
-      equivEl.textContent = 'Enter an amount to see the ZAR equivalent';
+      equivEl.textContent = '';
       equivEl.classList.remove('has-value');
       continueBtn.setAttribute('disabled', '');
     }
@@ -521,8 +519,8 @@
     if (n === 2) {
       var rawVal = document.getElementById('amount-input').value;
       var amt = parseFloat(rawVal) || 0;
-      var fmtZARU = formatZARU(amt) + ' ZARU';
-      var fmtZAR  = 'ZAR ' + formatZARU(amt);
+      var fmtZARU = formatZARU(amt);
+      var fmtZAR  = 'ZAR ' + formatNumber(amt, 2);
       document.getElementById('summary-zaru').textContent = fmtZARU;
       document.getElementById('summary-zar').textContent  = fmtZAR;
     }
@@ -530,15 +528,19 @@
     if (n === 3) {
       var rawVal2 = document.getElementById('amount-input').value;
       var amt2 = parseFloat(rawVal2) || 0;
-      var fmtZARU2 = formatZARU(amt2) + ' ZARU';
-      var fmtZAR2  = 'ZAR ' + formatZARU(amt2);
+      var fmtZARU2 = formatZARU(amt2);
+      var fmtZAR2  = 'ZAR ' + formatNumber(amt2, 2);
       var bankStr  = (persona.bankName || 'Standard Bank') + ' ' + (persona.bankAccountMasked || '••••7412');
       document.getElementById('confirm-zaru').textContent    = fmtZARU2;
       document.getElementById('confirm-zar').textContent     = fmtZAR2;
       document.getElementById('confirm-account').textContent = bankStr;
+      var heading = document.getElementById('step3-heading');
+      if (heading) {
+        heading.textContent = formatZAR(amt2) + ' queued for redemption';
+      }
       var body = document.getElementById('step3-body');
       if (body) {
-        body.textContent = 'Your ' + fmtZARU2 + ' has been queued for redemption. ZAR will be transferred to '
+        body.textContent = formatZAR(amt2) + ' will be transferred to '
           + (persona.bankName || 'your account') + ' within 1–2 business days.';
       }
     }

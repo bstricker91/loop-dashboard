@@ -204,32 +204,6 @@
       gap: var(--gap);
     }
 
-    /* ── Float alert banner ─────────────────────────────────── */
-    .float-banner {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 16px;
-      background: #FFFBEB;
-      border-bottom: 1px solid #FEF3C7;
-      font-size: 12px;
-      color: #78350F;
-      font-weight: 500;
-    }
-    .float-banner-text { flex: 1; }
-    .float-banner-dismiss {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #92400E;
-      padding: 0 2px;
-      font-size: 16px;
-      line-height: 1;
-      opacity: 0.55;
-      flex-shrink: 0;
-      font-family: var(--font-sans);
-    }
-    .float-banner-dismiss:hover { opacity: 1; }
 
     /* ── Toast ──────────────────────────────────────────────── */
     .toast {
@@ -653,7 +627,6 @@
         <div class="card stat-card" id="total-balance-linked">
           <div class="stat-label">TOTAL BALANCE</div>
           <div class="stat-value mono">R 48,247,380.00</div>
-          <div class="stat-sub">≈ ZAR 48,247,380</div>
 
           <div class="balance-split">
             <div class="balance-row">
@@ -694,7 +667,7 @@
         <!-- Card 3: Luno Wallet — linked -->
         <div class="card stat-card" id="luno-stat-linked" style="display:none;">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
-            <span class="stat-label">INSTITUTE CUSTODY AT LUNO</span>
+            <span class="stat-label">LUNO PORTFOLIO HOLDINGS</span>
             <span class="badge badge-success" style="font-size:10px;">
               <span class="dot"></span> Live
             </span>
@@ -704,7 +677,7 @@
           <div style="margin-top:10px;">
             <div class="copy-field" style="font-size:12px;">
               <span class="copy-field-value" id="luno-stat-address">—</span>
-              <button class="copy-btn" id="luno-stat-copy">Copy</button>
+              <button class="copy-btn" id="luno-stat-copy" title="Copy ZARU wallet address">Copy</button>
             </div>
           </div>
           <div class="stat-sub" id="luno-stat-synced" style="margin-top:6px;font-size:11.5px;">—</div>
@@ -719,16 +692,16 @@
             </a>
           </div>
           <div style="font-size:11.5px; color:var(--ink-400); margin-top:8px; text-align:center;">
-            Opens Luno — log in to access your portfolio
+            This will open Luno in a new window. Log in to access your portfolio.
           </div>
         </div>
 
         <!-- Card 3: Luno Wallet — unlinked -->
         <div class="card stat-card" id="luno-stat-unlinked" style="display:none;flex-direction:column;justify-content:space-between;">
           <div>
-            <span class="stat-label">INSTITUTE CUSTODY AT LUNO</span>
+            <span class="stat-label">LUNO PORTFOLIO HOLDINGS</span>
             <div class="stat-sub" style="margin-top:8px;">
-              Link your Luno custody wallet to see live ZARU balances here.
+              Connect your Luno custody wallet to see live ZARU balances here.
             </div>
           </div>
           <button class="btn btn-secondary btn-sm" style="margin-top:16px;width:100%;"
@@ -749,11 +722,6 @@
           </div>
         </div>
 
-        <div class="float-banner" id="float-banner">
-          <span class="float-banner-text">⚡ OTC Float: R 8.2M — within normal range (R5M–R15M)</span>
-          <button class="float-banner-dismiss" onclick="document.getElementById('float-banner').style.display='none'" aria-label="Dismiss">×</button>
-        </div>
-
         <div id="pending-list"></div>
       </div>
 
@@ -767,8 +735,8 @@
           <table class="data">
             <thead>
               <tr>
-                <th>Type</th>
-                <th>Amount</th>
+                <th>Request</th>
+                <th style="text-align:right;">Amount</th>
                 <th>Wallet</th>
                 <th>Status</th>
                 <th>Date</th>
@@ -777,17 +745,16 @@
             <tbody>
               <tr>
                 <td><span class="badge badge-info">MINT</span></td>
-                <td class="td-mono">R 2,000,000.00</td>
+                <td class="td-mono" style="text-align:right;">R 2,000,000.00</td>
                 <td>
                   <div class="wallet-label">FX Hot Desk</div>
-                  <div class="wallet-addr">→ 7xKp...3mNw</div>
                 </td>
                 <td><span class="badge badge-success"><span class="dot"></span>Completed</span></td>
                 <td class="text-muted text-sm" style="white-space:nowrap;">25 Apr 2026</td>
               </tr>
               <tr>
-                <td><span class="badge badge-neutral">REDEMPTION</span></td>
-                <td class="td-mono">R 500,000.00</td>
+                <td><span class="badge badge-neutral">REDEEM</span></td>
+                <td class="td-mono" style="text-align:right;">R 500,000.00</td>
                 <td>
                   <div class="wallet-label">Primary</div>
                 </td>
@@ -796,7 +763,7 @@
               </tr>
               <tr>
                 <td><span class="badge badge-info">MINT</span></td>
-                <td class="td-mono">R 5,000,000.00</td>
+                <td class="td-mono" style="text-align:right;">R 5,000,000.00</td>
                 <td>
                   <div class="wallet-label">FX Hot Desk</div>
                 </td>
@@ -804,8 +771,8 @@
                 <td class="text-muted text-sm" style="white-space:nowrap;">18 Apr 2026</td>
               </tr>
               <tr>
-                <td><span class="badge badge-neutral">REDEMPTION</span></td>
-                <td class="td-mono">R 1,000,000.00</td>
+                <td><span class="badge badge-neutral">REDEEM</span></td>
+                <td class="td-mono" style="text-align:right;">R 1,000,000.00</td>
                 <td>
                   <div class="wallet-label">Primary</div>
                 </td>
@@ -814,7 +781,7 @@
               </tr>
               <tr>
                 <td><span class="badge badge-info">MINT</span></td>
-                <td class="td-mono">R 7,000,000.00</td>
+                <td class="td-mono" style="text-align:right;">R 7,000,000.00</td>
                 <td>
                   <div class="wallet-label">FX Hot Desk</div>
                 </td>
@@ -931,8 +898,6 @@
     if (statCards[0]) {
       var sv = statCards[0].querySelector('.stat-value.mono');
       if (sv) sv.textContent = formatZAR(persona.totalBalance);
-      var ssub = statCards[0].querySelector('.stat-sub');
-      if (ssub) ssub.textContent = '\u2248 ZAR ' + Math.round(persona.totalBalance).toLocaleString('en-ZA');
       var avail = statCards[0].querySelector('.balance-row-value.emerald');
       if (avail) avail.textContent = formatZAR(persona.availableBalance);
       var lockedRow = statCards[0].querySelectorAll('.balance-row')[1];
@@ -997,7 +962,9 @@
 
     // Luno wallet stat card
     var lw = persona.lunoWallet;
-    if (lw.linked) {
+    if (lw.linked && persona.type === 'B1') {
+      // Cedar Money / Aisha — hide the Luno Portfolio Holdings card when connected
+    } else if (lw.linked) {
       var linked = document.getElementById('luno-stat-linked');
       if (linked) {
         linked.style.display = '';
@@ -1101,10 +1068,10 @@
 
   /* ── Side panel ─────────────────────────────────────────── */
   var SP_DATA = [
-    { type: 'MINT', amount: 'R 2,000,000.00', wallet: 'FX Hot Desk', addr: '7xKp...3mNw', status: 'Completed', date: '25 Apr 2026', ref: 'BX-0037', fee: 'R 0.00' },
-    { type: 'REDEMPTION', amount: 'R 500,000.00',   wallet: 'Primary',     addr: null,          status: 'Settled',   date: '22 Apr 2026', ref: 'BX-0035', fee: 'R 0.00' },
-    { type: 'MINT', amount: 'R 5,000,000.00', wallet: 'FX Hot Desk', addr: null,          status: 'Completed', date: '18 Apr 2026', ref: 'BX-0031', fee: 'R 0.00' },
-    { type: 'REDEMPTION', amount: 'R 1,000,000.00', wallet: 'Primary',     addr: null,          status: 'Settled',   date: '12 Apr 2026', ref: 'BX-0028', fee: 'R 0.00' },
+    { type: 'MINT',   amount: 'R 2,000,000.00', wallet: 'FX Hot Desk', addr: null, status: 'Completed', date: '25 Apr 2026', ref: 'BX-0037', fee: 'R 0.00' },
+    { type: 'REDEEM', amount: 'R 500,000.00',   wallet: 'Primary',     addr: null, status: 'Settled',   date: '22 Apr 2026', ref: 'BX-0035', fee: 'R 0.00' },
+    { type: 'MINT',   amount: 'R 5,000,000.00', wallet: 'FX Hot Desk', addr: null, status: 'Completed', date: '18 Apr 2026', ref: 'BX-0031', fee: 'R 0.00' },
+    { type: 'REDEEM', amount: 'R 1,000,000.00', wallet: 'Primary',     addr: null, status: 'Settled',   date: '12 Apr 2026', ref: 'BX-0028', fee: 'R 0.00' },
     { type: 'MINT', amount: 'R 7,000,000.00', wallet: 'FX Hot Desk', addr: null,          status: 'Completed', date: '5 Apr 2026',  ref: 'BX-0024', fee: 'R 0.00' }
   ];
 

@@ -25,8 +25,14 @@
     /* ── Step indicator ─────────────────────────────────────── */
     .step-indicator {
       display: flex;
+      flex-direction: column;
       align-items: center;
       margin-bottom: 28px;
+    }
+    .step-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
     }
     .step-num {
       width: 28px; height: 28px; border-radius: 50%;
@@ -44,7 +50,7 @@
     .step-connector.done { background: var(--emerald); }
     .step-progress-label {
       font-size: 12px; color: var(--ink-400);
-      margin-left: 14px; white-space: nowrap;
+      margin-top: 8px; text-align: center;
     }
 
     /* ── Step panels ────────────────────────────────────────── */
@@ -122,36 +128,30 @@
     }
     .step-back:hover { color: var(--ink-900); }
 
-    /* ── BX reference emphasis ──────────────────────────────── */
-    .ref-field-wrap {
+    /* ── Reference number box (Step 2) ──────────────────────── */
+    .ref-box {
       background: var(--accent-soft);
       border: 2px solid var(--accent-border);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      margin-top: 6px;
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-top: 20px;
     }
-    .ref-field-header {
+    .ref-box-header {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
-    .ref-field-label {
+    .ref-box-label {
       font-size: 11px; font-weight: 700;
       text-transform: uppercase; letter-spacing: 0.07em; color: var(--accent);
     }
-    .critical-badge {
-      background: var(--accent); color: white;
-      font-size: 9.5px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      padding: 2px 8px; border-radius: 999px;
+    .ref-box-value {
+      font-family: var(--font-mono); font-size: 24px; font-weight: 700;
+      color: var(--ink-900); letter-spacing: 0.04em;
     }
-    .ref-copy-field { background: white; border-color: var(--accent-border); }
-    .ref-copy-field .copy-field-value {
-      font-size: 17px; font-weight: 700; color: var(--ink-900); letter-spacing: 0.04em;
-    }
-    .ref-copy-field .copy-btn { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
-    .ref-copy-field .copy-btn:hover { background: var(--accent); color: white; }
-    .ref-copy-field .copy-btn.copied { color: var(--emerald); }
-    .ref-field-note { font-size: 11.5px; color: var(--accent); font-weight: 500; margin-top: 8px; }
+    .ref-box-note { font-size: 12px; color: var(--accent); font-weight: 500; margin-top: 8px; }
+    .ref-box-copy { background: white; color: var(--accent); font-weight: 700; }
+    .ref-box-copy:hover { background: var(--accent); color: white; }
+    .ref-box-copy.copied { color: var(--emerald); }
 
     /* ── Asset selector pill ────────────────────────────────── */
     .asset-pill {
@@ -332,7 +332,6 @@
               </svg>
             </div>
           </div>
-          <p class="page-subtitle">A guided 3-step flow — select your wallet, make the EFT, and we handle the rest.</p>
         </div>
       </div>
 
@@ -341,71 +340,51 @@
 
         <!-- Step indicator -->
         <div class="step-indicator">
-          <div class="step-num active" id="sn-1">1</div>
-          <div class="step-connector" id="sc-1"></div>
-          <div class="step-num" id="sn-2">2</div>
-          <div class="step-connector" id="sc-2"></div>
-          <div class="step-num" id="sn-3">3</div>
+          <div class="step-row">
+            <div class="step-num active" id="sn-1">1</div>
+            <div class="step-connector" id="sc-1"></div>
+            <div class="step-num" id="sn-2">2</div>
+            <div class="step-connector" id="sc-2"></div>
+            <div class="step-num" id="sn-3">3</div>
+          </div>
           <span class="step-progress-label" id="step-label">Step 1 of 3</span>
         </div>
 
         <!-- ── Step 1: Select wallet ──────────────────────────── -->
         <div class="step-panel active" id="step-1">
-          <h2 class="step-heading">Where should ZARU be sent?</h2>
-          <p class="step-sub">Select the whitelisted wallet that will receive your minted stablecoin.</p>
+          <h2 class="step-heading">Where should minted ZARU be sent?</h2>
+          <p class="step-sub">Select a trusted wallet that will receive your minted stablecoin.</p>
           <div id="wallet-options"></div>
           <div class="step-actions">
-            <button class="btn btn-primary" id="step1-continue" onclick="goToStep(2)" disabled>Continue →</button>
+            <button class="btn btn-primary" id="step1-continue" onclick="goToStep(2)" disabled>Select wallet →</button>
           </div>
         </div>
 
-        <!-- ── Step 2: EFT payment details ──────────────────────── -->
+        <!-- ── Step 2: Create a request to mint ─────────────────── -->
         <div class="step-panel" id="step-2">
-          <h2 class="step-heading">Make your EFT payment</h2>
-          <p class="step-sub">Send a ZAR EFT to Loop's account below. Your ZARU is minted automatically once your deposit settles — no amount entry needed.</p>
+          <h2 class="step-heading">Create a request to mint</h2>
+          <p class="step-sub">Make a transfer to Loop's bank account below. Your ZARU will be minted automatically once your deposit settles - no amount entry needed.</p>
 
-          <!-- BX Reference — critical -->
-          <div class="card mb-4">
-            <div class="card-body">
-              <div class="ref-field-wrap" style="margin-top:0;">
-                <div class="ref-field-header">
-                  <span class="ref-field-label">Your BX Reference</span>
-                  <span class="critical-badge">Include in every payment</span>
-                </div>
-                <div class="copy-field ref-copy-field">
-                  <span class="copy-field-value" id="step2-bx-ref">BX-0042</span>
-                  <button class="copy-btn" id="step2-bx-copy-btn" onclick="copyField('BX-0042', this)">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                    </svg>
-                    Copy
-                  </button>
-                </div>
-                <div class="ref-field-note">Must match exactly — including hyphens. Do not alter or abbreviate.</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Warning -->
+          <!-- Warning banner -->
           <div class="alert alert-warning mb-4">
             <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
               <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
-            <div>
-              <strong>Always include <span class="bx-ref-inline">BX-0042</span> as your payment description.</strong> Missing or incorrect references delay your mint by up to 1 business day.
-            </div>
+            <div>Always include <strong><span class="bx-ref-inline">BX-0042ZARU</span></strong> as your reference. Missing or incorrect references delay your mint by up to 1 business day.</div>
           </div>
 
-          <!-- Bank account details -->
+          <!-- Bank account card -->
           <div class="card mb-4">
             <div class="card-header">
               <span class="card-title">Loop bank account</span>
               <span class="badge badge-info" id="step2-bank-badge">Standard Bank</span>
             </div>
             <div class="card-body">
+
+              <!-- Bank selector -->
               <div class="form-group" style="margin-bottom:18px;">
-                <label class="form-label">Your sending bank</label>
+                <label class="form-label">Select the bank you're using to make the transfer</label>
                 <div class="form-hint" style="margin-bottom:10px;">Determines the correct Loop account for fastest settlement.</div>
                 <div style="display:flex;flex-wrap:wrap;gap:8px;" id="bank-selector">
                   <button class="bank-pill active" data-bank="standard" onclick="selectBank('standard',this)">Standard Bank</button>
@@ -416,23 +395,41 @@
                   <button class="bank-pill" data-bank="other" onclick="selectBank('other',this)">Other</button>
                 </div>
               </div>
-              <div class="eft-fields" id="eft-fields"></div>
-            </div>
-          </div>
 
-          <!-- Settlement timing -->
-          <div class="alert alert-info mb-4" id="settlement-alert">
-            <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <div>
-              <div id="settlement-badge" style="margin-bottom:6px;"></div>
-              <span id="settlement-text"></span>
+              <!-- Settlement indicator -->
+              <div class="alert alert-info mb-4" id="settlement-alert">
+                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <div>
+                  <div id="settlement-badge" style="margin-bottom:6px;"></div>
+                  <span id="settlement-text"></span>
+                </div>
+              </div>
+
+              <!-- Bank details table -->
+              <div class="eft-fields" id="eft-fields"></div>
+
+              <!-- Reference number — most prominent element -->
+              <div class="ref-box">
+                <div class="ref-box-header">
+                  <span class="ref-box-label">Reference number</span>
+                  <button class="copy-btn ref-box-copy" id="step2-bx-copy-btn" onclick="copyField('BX-0042ZARU', this)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+                <div class="ref-box-value" id="step2-bx-ref-zaru">BX-0042ZARU</div>
+                <div class="ref-box-note">Make sure to include in every transfer. The reference must match exactly. Do not alter or abbreviate.</div>
+              </div>
+
             </div>
           </div>
 
           <div class="step-actions">
-            <button class="btn btn-primary" onclick="goToStep(3)">I've sent the EFT →</button>
+            <button class="btn btn-primary" onclick="goToStep(3)">I've made the transfer →</button>
             <button class="step-back" onclick="goToStep(1)">← Back</button>
           </div>
         </div>
@@ -440,7 +437,7 @@
         <!-- ── Step 3: Confirmation ───────────────────────────── -->
         <div class="step-panel" id="step-3">
           <h2 class="step-heading">Mint request submitted</h2>
-          <p class="step-sub">We're watching for your deposit. Once it arrives, ZARU will be minted and sent to your wallet automatically — usually within 2–5 minutes.</p>
+          <p class="step-sub">Once it arrives, ZARU will be minted and sent to your ZARU wallet automatically — usually within 2–5 minutes.</p>
 
           <div class="confirm-box">
             <div style="display:flex;flex-direction:column;gap:0;">
@@ -449,16 +446,16 @@
                 <span class="eft-field-value" id="confirm-wallet-name" style="text-align:right;">—</span>
               </div>
               <div class="eft-field">
-                <span class="eft-field-label">BX Reference</span>
-                <span class="eft-field-value" id="confirm-bx-ref" style="font-family:var(--font-mono);text-align:right;">—</span>
+                <span class="eft-field-label">Estimated time</span>
+                <span class="eft-field-value" style="text-align:right;">1 to 2 hours</span>
               </div>
               <div class="eft-field" style="border-bottom:none;padding-bottom:0;">
                 <span class="eft-field-label">Amount</span>
-                <span class="eft-field-value" style="color:var(--ink-500);text-align:right;">Any ZAR amount</span>
+                <span class="eft-field-value" style="color:var(--ink-500);text-align:right;">Matches ZAR amount deposited</span>
               </div>
             </div>
             <div class="confirm-box-note">
-              Your pending mint will appear on the Dashboard as soon as your deposit is detected. You can submit another mint at any time while this one is in progress.
+              Your pending mint will appear on the Dashboard as soon as your deposit is detected. You can create another mint at any time while this one is in progress.
             </div>
           </div>
 
@@ -466,11 +463,11 @@
             <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
             </svg>
-            <div>Checking for deposit… This page will update automatically once your EFT is matched.</div>
+            <div>Checking for deposit… This page will update automatically once your deposit lands.</div>
           </div>
 
           <div class="step-actions">
-            <button class="btn btn-secondary" onclick="location.href='01-dashboard.html'">
+            <button class="btn btn-secondary" onclick="location.href='01-dashboard.html' + window.location.search">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
                 <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
@@ -552,9 +549,7 @@
       var wallets = persona.wallets || (persona.primaryWallet ? [persona.primaryWallet] : []);
       var wallet = wallets[selectedWalletIdx] || wallets[0];
       var cw = document.getElementById('confirm-wallet-name');
-      var cb = document.getElementById('confirm-bx-ref');
       if (cw) cw.textContent = wallet ? wallet.label : '—';
-      if (cb) cb.textContent = persona.bxRef;
     }
     window.scrollTo(0, 0);
   }
@@ -595,16 +590,14 @@
 
   /* ── BX ref fields ──────────────────────────────────────── */
   function updateBxFields() {
-    var refVal = document.getElementById('step2-bx-ref');
-    if (refVal) refVal.textContent = persona.bxRef;
-    var refBtn = document.getElementById('step2-bx-copy-btn');
-    if (refBtn) {
-      var oc = refBtn.getAttribute('onclick');
-      if (oc) refBtn.setAttribute('onclick', oc.replace(/BX-\d+/g, persona.bxRef));
-    }
+    var bxZaru = persona.bxRef + 'ZARU';
     document.querySelectorAll('.bx-ref-inline').forEach(function (el) {
-      el.textContent = persona.bxRef;
+      el.textContent = bxZaru;
     });
+    var refDisplay = document.getElementById('step2-bx-ref-zaru');
+    if (refDisplay) refDisplay.textContent = bxZaru;
+    var refBtn = document.getElementById('step2-bx-copy-btn');
+    if (refBtn) refBtn.setAttribute('onclick', 'copyField(\'' + bxZaru + '\', this)');
   }
 
   /* ── Bank account data ──────────────────────────────────── */

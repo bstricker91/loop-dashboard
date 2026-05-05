@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Zaru Loop Dashboard — Review Feedback Widget
+// ZARU Loop Dashboard — Review Feedback Widget
 // Adds a floating button on every page. On submit, creates a GitHub issue
 // tagged with the current page and the reviewer's name.
 // Optional: attach a screenshot — uploaded to the repo and linked in the issue.

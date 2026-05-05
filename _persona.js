@@ -48,12 +48,12 @@ const PERSONAS = {
     // Pending transactions
     pendingTransactions: [
       { type: 'mint',  amount: 250000.00,  status: 'waiting_deposit',  bxRef: 'BX-0043', sub: 'Awaiting ZAR deposit from customer bank · Est. 30–60 min', time: 'Today 08:52 SAST' },
-      { type: 'mint',  amount: 500000.00,  status: 'deposit_received', bxRef: 'BX-0042', sub: 'Awaiting mint confirmation · ~2–5 min',                    time: 'Today 09:14 SAST' },
+      { type: 'mint',  amount: 500000.00,  status: 'deposit_received', bxRef: 'BX-0042', sub: 'Awaiting mint completion · ~2–5 min',                    time: 'Today 09:14 SAST' },
     ],
     // Luno wallet
     lunoWallet: {
       linked: false,
-      label: 'Standard Bank — Luno Custody Wallet',
+      label: 'Standard Bank — Luno ZARU Wallet',
       address: '3xLm9pQrNkBv5wTy2nZsRxP7rK4mLqBz',
       addressShort: '3xLm...LqBz',
       lunoAccountId: 'LUNO-SBT-0042',
@@ -84,7 +84,7 @@ const PERSONAS = {
     bankAccountMasked: '••••3301',
     // Pending transactions
     pendingTransactions: [
-      { type: 'mint',  amount: 150000.00,  status: 'deposit_received', bxRef: 'BX-0117', sub: 'Awaiting mint confirmation · ~2–5 min', time: 'Today 10:03 SAST' },
+      { type: 'mint',  amount: 150000.00,  status: 'deposit_received', bxRef: 'BX-0117', sub: 'Awaiting mint completion · ~2–5 min', time: 'Today 10:03 SAST' },
     ],
     // Distributor
     isDistributor: false,
@@ -98,7 +98,7 @@ const PERSONAS = {
     // Luno wallet
     lunoWallet: {
       linked: false,
-      label: 'Cedar Money — Luno Custody Wallet',
+      label: 'Cedar Money — Luno ZARU Wallet',
       address: '2nKpRmLxBq6wTv4nYsZrQ8rN5kMpLqRt',
       addressShort: '2nKp...LqRt',
       lunoAccountId: 'LUNO-CM-0117',
@@ -176,12 +176,20 @@ function applyConnectionState(persona) {
 }
 
 
-/* ── formatZAR ────────────────────────────────────────────────
-   Formats a number as a ZAR currency string.
-   e.g. 48247380 → "R 48,247,380.00"
+/* ── Number formatting utilities ──────────────────────────────
+   All use en-US locale: comma thousands separator, full-stop decimal.
+   e.g. 1250000 → "R 1,250,000.00" / "1,250,000.00 ZARU"
    ──────────────────────────────────────────────────────────── */
-function formatZAR(amount) {
-  return 'R ' + amount.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function formatZAR(value) {
+  return 'R ' + Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function formatZARU(value) {
+  return Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ZARU';
+}
+
+function formatNumber(value, decimals) {
+  return Number(value).toLocaleString('en-US', { minimumFractionDigits: decimals || 0, maximumFractionDigits: decimals || 0 });
 }
 
 

@@ -33,6 +33,8 @@ const PERSONAS = {
       { label: 'Cold Wallet',  address: '9mLqR2pXnK7wBv4tYsZrQxP8nM3kLqRw', addressShort: '9mLq...RqRw', status: 'active' },
     ],
     primaryWallet: { label: 'FX Hot Desk', address: '7xKp4rNnLm8QpBw3mNwYsT9zR2kXvL6m', addressShort: '7xKp...3mNw' },
+    burnAddress: 'BnRdm1xKp7wQvL4tNmZsR3pY9kBxLqMnVwR8zT2pBv6Q',
+    burnAddressShort: 'BnRd...v6Q',
     // Bank account
     bankName: 'Standard Bank',
     bankAccountMasked: '••••7412',
@@ -80,6 +82,8 @@ const PERSONAS = {
       { label: 'Primary', address: '4pKnRmLqBx7wTv2nYsZxP9rM8kNqLpRt', addressShort: '4pKn...LpRt', status: 'active' },
     ],
     primaryWallet: { label: 'Primary', address: '4pKnRmLqBx7wTv2nYsZxP9rM8kNqLpRt', addressShort: '4pKn...LpRt' },
+    burnAddress: 'CkTfn2yLq8xRwM5uPnAsS4qZ1mCyMrNoXxS9aU3qCw7R',
+    burnAddressShort: 'CkTf...w7R',
     bankName: 'Nedbank',
     bankAccountMasked: '••••3301',
     // Pending transactions
@@ -125,6 +129,8 @@ const PERSONAS = {
       { label: 'Hot Wallet', address: '8mRpNkLxBq7wTv3nYsZrP6rN9kMqLpZb', addressShort: '8mRp...LpZb', status: 'active' },
     ],
     primaryWallet: { label: 'Hot Wallet', address: '8mRpNkLxBq7wTv3nYsZrP6rN9kMqLpZb', addressShort: '8mRp...LpZb' },
+    burnAddress: 'DmVgp3zMs9ySwN6vQoBtT5rA2nDzNsOpYyT1bV4rDx8S',
+    burnAddressShort: 'DmVg...x8S',
     bankName: 'FNB',
     bankAccountMasked: '••••8844',
     // Pending transactions
